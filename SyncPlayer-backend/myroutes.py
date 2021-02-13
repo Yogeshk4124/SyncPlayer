@@ -3,7 +3,8 @@ import random
 
 activeRooms = {0}
 activeUsers = {(0, 0)}
-activeHosts={(0, 0)}
+activeHosts = {(0, 0)}
+acitvePlayers = {(0,0)}
 
 def home():
     return render_template("home.html")
@@ -64,12 +65,28 @@ def getUsers(room_id):
             temp.append(i[1])
     return jsonify(temp)
 
-def seekTo(room_id, seek_time):
-    return jsonify({"status":"building"})
-    
-
-def getCurrentTime(room_id):
+def startPlayer(room_id):
     room_id = int(room_id)
+    acitvePlayers.add((room_id, 0))
+    return jsonify({"status":"ok"})
+
+def seekTo(room_id, seek_time):
+    room_id = int(room_id)
+    seek_time = int(seek_time)
+    for i in acitvePlayers:
+        if(i[0]==room_id):
+            acitvePlayers.remove(i)
+            break
+    acitvePlayers.add((room_id, seek_time))
+    return jsonify({"status":"ok"})
+
+
+def getCurrentSecond(room_id):
+    room_id = int(room_id)
+    for i in acitvePlayers:
+        if(i[0]==room_id):
+            return jsonify({"second": i[1]})
+    return jsonify({"status":"room not found or not active"})
 
 # $env:FLASK_APP = "helloflask.py"
 # $env:FLASK_ENV = "development"
