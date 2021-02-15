@@ -30,6 +30,7 @@ dependencies:
   assets_audio_player: ^2.0.13+6
   file_picker: ^2.1.6
   sleek_circular_slider: ^1.2.0+web
+  google_fonts: ^1.1.2
 
 
 

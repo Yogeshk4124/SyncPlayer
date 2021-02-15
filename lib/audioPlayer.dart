@@ -6,8 +6,8 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:marquee/marquee.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'MarqueeText.dart';
 
@@ -41,13 +41,6 @@ class _audioPlayerState extends State<audioPlayer> {
         minutes: int.parse(twoDigitMinutes),
         seconds: int.parse(twoDigitSeconds));
     return d;
-  }
-
-  Widget _wrapWithStuff(Widget child) {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Container(height: 50.0, color: Colors.white, child: child),
-    );
   }
 
   String _printDurationAsString(Duration duration) {
@@ -214,14 +207,25 @@ class _audioPlayerState extends State<audioPlayer> {
                         },
                       ),
                       if (text == "Music")
-                        Text(text, style: TextStyle(fontSize: 40))
+                        Text(
+                          text,
+                          style: GoogleFonts.poiretOne(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 40,
+                            color: Colors.white,
+                          ),
+                        )
                       else
                         Container(
-                          height: 42,
+                          height: 46,
                           width: MediaQuery.of(context).size.width * 0.5,
                           child: MarqueeText(
                             text: text,
-                            textStyle: TextStyle(fontSize: 40),
+                            textStyle: GoogleFonts.poiretOne(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 40,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       GestureDetector(
@@ -378,10 +382,49 @@ class _audioPlayerState extends State<audioPlayer> {
                     //   // ucallback providing an ending value (when a pan gesture ends)
                     // },
                     innerWidget: (double value) {
-                      return Image.asset(
-                        "assets/icon.png",
-                        scale: 2,
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            height: MediaQuery.of(context).size.width * 0.58,
+                            width: MediaQuery.of(context).size.width * 0.58,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              // borderRadius: BorderRadius.all(Radius.circular(20)),
+                              gradient: new LinearGradient(
+                                colors: [
+                                  Color(0xffF61976),
+                                  Color(0xffF9657F),
+                                ],
+                              ),
+
+                              // color: Colors.white,
+                            ),
+                            child: Center(
+                              child: Container(
+                                height:
+                                MediaQuery.of(context).size.width * 0.50,
+                                width: MediaQuery.of(context).size.width * 0.50,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: new LinearGradient(
+                                    colors: [
+                                      Color(0xffF9657F),
+                                      Color(0xffF61976)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    // color: Colors.pink,
+                                  ),
+                                ),
+                                child: Icon(CupertinoIcons.double_music_note),
+                              ),
+                            ),
+                          ),
+                        ],
                       );
+
                     },
                   );
                 }
@@ -428,7 +471,7 @@ class _audioPlayerState extends State<audioPlayer> {
                       stream: assetsAudioPlayer.isPlaying,
                       builder: (context, asyncSnapshot) {
                         final bool isPlaying = asyncSnapshot.data;
-                        if (isPlaying == false) {
+                        if (assetsAudioPlayer.isPlaying.value == false) {
                           pIcon = Icons.play_circle_fill;
                         } else
                           pIcon = Icons.pause_circle_filled;
