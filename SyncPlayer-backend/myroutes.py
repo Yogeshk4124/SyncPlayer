@@ -4,7 +4,7 @@ import random
 activeRooms = {0}
 activeUsers = {(0, 0)}
 activeHosts = {(0, 0)}
-acitvePlayers = {(0,0)}
+activePlayers = {(0,0)}
 
 def home():
     return render_template("home.html")
@@ -22,7 +22,6 @@ def createRoom():
    	#ready data for return
     host_id = addUser(room_id)
     activeHosts.add((room_id, host_id))
-    print(host_id)
     returnData = {"Room-id": room_id}
     
     #return data
@@ -32,7 +31,26 @@ def createRoom():
 def closeRoom(room_id):
 	# delete all users with room id
     room_id = int(room_id)
+   
     if room_id in activeRooms:
+        
+        for i in activeHosts: #delete Host 
+            if(i[0] == room_id):
+        	    activeHosts.remove(i)
+        	    break
+        while(True): #delete all users in room
+            flag=0
+            for i in activeUsers:
+                if(i[0] == room_id):
+                    activeUsers.remove(i)
+                    flag=1
+                    break
+            if(flag == 0):
+                break	
+        for i in activePlayers:
+            if(i[0]==room_id):
+                activePlayers.remove(i)
+                break
         activeRooms.discard(room_id) # delete room id
         return jsonify({"status":"ok"})
     else:
@@ -67,7 +85,7 @@ def getUsers(room_id):
 
 def startPlayer(room_id):
     room_id = int(room_id)
-    acitvePlayers.add((room_id, 0))
+    activePlayers.add((room_id, 0))
     return jsonify({"status":"ok"})
 
 def seekTo(room_id, seek_time):
