@@ -1,0 +1,140 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+
+    <body>
+    	Instructions:<br>
+    	1.load a video<br>
+    	2.create a room or join a room using room id<br>
+    	3.sit back and enjoy<br>
+        <input type="file" accept="video/*"/><br>
+        <video id="video-player" width="800" height="300" controls>
+        </video><br>
+        <div id="message"></div><br>
+
+        <button id="create-room-button">Create Room</button>
+        <p id="room-id">Please create a room</p>
+        <button id="fetch-room-members">Fetch users</button>
+        <p id = "users"></p>
+        <br>
+        
+        <button id = "start-player-as-host">Start Player as host</button><br>
+        <input type="text" id="custom-room-id" value="Enter room-id to start as guest"></input><button id = "start-player-as-guest">Start Player-as-guest</button><br>
+        <br>
+        
+        
+
+    </body>
+</html>
+
+<script>
+    function seekTo(second)
+    {
+        var vid = document.getElementById("video-player");
+        if(Math.abs(vid.currentTime-second)>5)
+        {
+            vid.currentTime = second;
+            vid.play();
+        }
+    }
+    var roomId=-1;
+    var currSec=0;
+    $(document).ready(function(){
+        document.getElementById("fetch-room-members").style.display="none";
+        
+        $("#create-room-button").click(function(){
+            if(roomId!=-1)
+            {
+                $.getJSON("http://20.197.61.11:8000/closeRoom/"+roomId, function(data){
+                    console.log(data);
+                    roomId = -1;
+                    document.getElementById("create-room-button").innerHTML="Create room";
+                    document.getElementById("fetch-room-members").style.display="none";
+                    document.getElementById("room-id").innerHTML="Please create a room";
+                    document.getElementById("users").style.display="";
+                    
+                }); 
+                return ;  
+            }
+            $.getJSON("http://20.197.61.11:8000/createRoom", function(data){
+                document.getElementById("room-id").innerHTML = "Yout Room id: "+data["Room-id"];
+                roomId = data["Room-id"]; 
+                document.getElementById("create-room-button").innerHTML="close room";
+                
+                document.getElementById("fetch-room-members").style.display="block";
+            });
+        });
+        var tempInterval=-1;
+        $("#fetch-room-members").click(function(){
+                    if(roomId==-1)
+                        return ;
+                    tempInterval = setInterval(function(){
+
+                        $.getJSON("http://20.197.61.11:8000/getUsers/"+roomId, function(data){
+                            console.log(data);
+                            document.getElementById("users").innerHTML = "Users: " +data;
+                            
+                    });
+                    
+                }, 3000);
+        });
+        $("#start-player-as-guest").click(function()
+        {
+            roomId = document.getElementById("custom-room-id").value;
+            if(tempInterval!=-1)
+                clearInterval(tempInterval);
+               
+                    document.getElementById("users").innerHTML = "Player started";
+                    tempInterval = setInterval(function(data2){
+                        $.getJSON("http://20.197.61.11:8000/getCurrentSecond/"+roomId, function(data2){
+                            document.getElementById("users").innerHTML="Current Second: " + data2["second"];
+                            seekTo(data2["second"]);
+                        });
+                    }, 5000);
+            
+        });
+        $("#start-player-as-host").click(function()
+        {
+        document.getElementById("users").innerHTML = "Player started";
+        $.getJSON("http://20.197.61.11:8000/startPlayer/"+roomId, function(data){
+             
+            setInterval(function(){
+                $.getJSON("http://20.197.61.11:8000/seekTo/"+roomId+"/"+currSec, function(dataSec){
+                currSec+=3;
+                console.log(dataSec);
+                });
+            }, 3000);
+        });
+        });
+        
+    
+    });
+
+    (function localFileVideoPlayer() {
+	'use strict'
+  var URL = window.URL || window.webkitURL
+  var displayMessage = function (message, isError) {
+    var element = document.querySelector('#message')
+    element.innerHTML = message
+    element.className = isError ? 'error' : 'info'
+  }
+  var playSelectedFile = function (event) {
+    var file = this.files[0]
+    var type = file.type
+    var videoNode = document.querySelector('video')
+    var canPlay = videoNode.canPlayType(type)
+    if (canPlay === '') canPlay = 'no'
+    var message = 'Can play type "' + type + '": ' + canPlay
+    var isError = canPlay === 'no'
+    displayMessage(message, isError)
+    if (isError) {
+      return
+    }
+    var fileURL = URL.createObjectURL(file)
+    videoNode.src = fileURL
+  }
+  var inputNode = document.querySelector('input')
+  inputNode.addEventListener('change', playSelectedFile, false)
+})()
+</script>
