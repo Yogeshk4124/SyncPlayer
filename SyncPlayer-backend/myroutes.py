@@ -94,17 +94,17 @@ def startPlayer(room_id):
 def seekTo(room_id, seek_time):
     room_id = int(room_id)
     seek_time = int(seek_time)
-    for i in acitvePlayers:
+    for i in activePlayers:
         if(i[0]==room_id):
-            acitvePlayers.remove(i)
+            activePlayers.remove(i)
             break
-    acitvePlayers.add((room_id, seek_time))
+    activePlayers.add((room_id, seek_time))
     return jsonify({"status":"ok"})
 
 
 def getCurrentSecond(room_id):
     room_id = int(room_id)
-    for i in acitvePlayers:
+    for i in activePlayers:
         if(i[0]==room_id):
             return jsonify({"second": i[1]})
     return jsonify({"status":"room not found or not active"})
