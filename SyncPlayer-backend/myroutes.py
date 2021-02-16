@@ -6,6 +6,9 @@ activeUsers = {(0, 0)}
 activeHosts = {(0, 0)}
 activePlayers = {(0,0)}
 
+def player():
+	return render_template("player.html")
+
 def home():
     return render_template("home.html")
     

@@ -12,6 +12,8 @@ app.add_url_rule('/getUsers/<room_id>', view_func=myroutes.getUsers,  methods=['
 app.add_url_rule('/startPlayer/<room_id>', view_func=myroutes.startPlayer,  methods=['GET', 'POST'])
 app.add_url_rule('/seekTo/<room_id>/<seek_time>', view_func=myroutes.seekTo,  methods=['GET', 'POST'])
 app.add_url_rule('/getCurrentSecond/<room_id>', view_func=myroutes.getCurrentSecond,  methods=['GET', 'POST'])
+app.add_url_rule('/player', view_func=myroutes.player,  methods=['GET', 'POST'])
+
 
 
 #main
