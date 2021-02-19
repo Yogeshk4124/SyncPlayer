@@ -6,7 +6,7 @@
     <body>
     	Instructions:<br>
     	1.load a video<br>
-    	2.create a room or join a room using room id<br>
+    	2.create a room and run player as host or join a room using room id<br>
     	3.sit back and enjoy<br>
         <input type="file" accept="video/*"/><br>
         <video id="video-player" width="800" height="300" controls>
@@ -14,12 +14,11 @@
         <div id="message"></div><br>
 
         <button id="create-room-button">Create Room</button>
-        <p id="room-id">Please create a room</p>
+        <p id="room-id">Please create a room, then start player as host</p>
         <button id="fetch-room-members">Fetch users</button>
         <p id = "users"></p>
         <br>
-        
-        <button id = "start-player-as-host">Start Player as host</button><br>
+        <button id = "start-player-as-host">Start Player as host</button><br><br>OR<br><br>
         <input type="text" id="custom-room-id" value="Enter room-id to start as guest"></input><button id = "start-player-as-guest">Start Player-as-guest</button><br>
         <br>
         
@@ -29,9 +28,16 @@
 </html>
 
 <script>
+    var prevFetch=-1;
     function seekTo(second)
     {
         var vid = document.getElementById("video-player");
+        if(second == prevFetch)
+        {
+            vid.pause();
+            return ;
+        }
+        prevFetch = second;
         if(Math.abs(vid.currentTime-second)>5)
         {
             vid.currentTime = second;
@@ -39,7 +45,6 @@
         }
     }
     var roomId=-1;
-    var currSec=0;
     $(document).ready(function(){
         document.getElementById("fetch-room-members").style.display="none";
         
@@ -96,18 +101,19 @@
         });
         $("#start-player-as-host").click(function()
         {
-        document.getElementById("users").innerHTML = "Player started";
-        $.getJSON("http://20.197.61.11:8000/startPlayer/"+roomId, function(data){
-             
-            setInterval(function(){
-                $.getJSON("http://20.197.61.11:8000/seekTo/"+roomId+"/"+currSec, function(dataSec){
-                currSec+=3;
-                console.log(dataSec);
-                });
-            }, 3000);
+            document.getElementById("users").innerHTML = "Player started";
+
+            $.getJSON("http://20.197.61.11:8000/startPlayer/"+roomId, function(data){
+
+                    setInterval(function(){
+
+                        var currSec = document.getElementById("video-player").currentTime;
+                        currSec = Math.floor(currSec);
+                        $.getJSON("http://20.197.61.11:8000/seekTo/"+roomId+"/"+currSec);
+                    
+                    }, 3000);
+            });
         });
-        });
-        
     
     });
 
