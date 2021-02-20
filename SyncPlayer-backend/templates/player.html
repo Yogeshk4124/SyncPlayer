@@ -11,8 +11,16 @@
     	2. create a room and control player as host or join a room using room id<br>
     	3. sit back and enjoy<br>
         <input type="file" accept="video/*"/><br>
-        <video id="video-player" width="800" height="300" controls>
-        </video><br><br>
+        <div id="player-div">
+            <video id="video-player" width="800" height="300" controls>
+            </video>
+            <div id="chatroom" style="float:right; border-color: white; margin-right: 20px; border-width: 4px; border-style: solid; padding: 4px;">
+                <h3 ><u>Chat room:</u></h3>
+                <p id="chats">please create or join a room to start chatting.</p>
+                <input id="chat-box-input" type="text" style="margin-top:200px"/><button id="send-chat-button">message</button>
+            </div>
+        </div>
+        <br>
         <p id="room-id">Please create a room, then start player as host</p>
         <div id="create-room-div">
             <button id="create-room-button">Create Room</button>
@@ -24,12 +32,14 @@
         </div>
         <b>NOTE: Your videos are not sent to our servers, only current playback time is sent and recieved. All users must have their copy of video on their local machines.</b>
         <br>For reporting any bugs, reach me out at: github.com/harmonpreet012
-        <br><br>><button onclick="switchColorScheme()">Switch colour scheme?</button>
+        <br><br><button onclick="switchColorScheme()">Switch colour scheme?</button>
         
     </body>
 </html>
 
 <script>
+    document.getElementById("chat-box-input").disabled="true";
+    document.getElementById("send-chat-button").disabled="true";
     function switchColorScheme()
     {
         if(document.getElementById("body").style.color== "white")
@@ -62,6 +72,7 @@
     var roomId=-1;
     $(document).ready(function(){
         
+        
         $("#create-room-button").click(function(){
             if(roomId!=-1)
             {
@@ -73,13 +84,39 @@
                 }); 
                 return ;  
             }
+            
             $.getJSON("http://20.197.61.11:8000/createRoom", function(data){
                 document.getElementById("room-id").innerHTML = "Yout Room id: "+data["Room-id"];
                 roomId = data["Room-id"]; 
                 document.getElementById("create-room-button").innerHTML="close room";
+                document.getElementById("join-room-div").style.display="none";
+                
+                $.getJSON("http://localhost:5000/createRoom/"+roomId, function(data1)
+                {
+                        document.getElementById("chat-box-input").disabled=false;
+                        document.getElementById("send-chat-button").disabled=false;
+                        setInterval(function(){
+                            $.getJSON("http://localhost:5000/getMessages/"+roomId, function(data2){
+                            document.getElementById("chats").innerHTML="";
+                            console.log(data2);
+                            for( var i=data2.length-1 ; i>-1 ; i--)
+                                document.getElementById("chats").innerHTML +=data2[i]+"<br>";
+                                
+                            }); 
+                    }, 3000);
+                });
                 
             });
+            
+            
         });
+        $("#send-chat-button").click(function(){
+            myMessage= document.getElementById("chat-box-input").value;
+            $.getJSON("http://localhost:5000/sendMessage/"+roomId+"/"+myMessage, function(data){
+                console.log(data);
+            });
+        });
+
         var tempInterval=-1;
         $("#start-player-as-guest").click(function()
         {
@@ -87,17 +124,26 @@
             document.getElementById("create-room-div").style.display="none";
             document.getElementById("join-room-div").style.display="none";
             document.getElementById("room-id").innerHTML="You joined room: " +roomId;
-            
+            document.getElementById("chat-box-input").disabled=false;
+            document.getElementById("send-chat-button").disabled=false;
             
             if(tempInterval!=-1)
                 clearInterval(tempInterval);
                
                     tempInterval = setInterval(function(data2){
                         $.getJSON("http://20.197.61.11:8000/getCurrentSecond/"+roomId, function(data2){
-                            console.log(data2);
                             seekTo(data2["second"]);
                         });
                     }, 5000);
+                    setInterval(function(){
+                            $.getJSON("http://localhost:5000/getMessages/"+roomId, function(data3){
+                            document.getElementById("chats").innerHTML="";
+                                
+                            for( var i=data3.length-1 ; i>-1 ; i--)
+                                document.getElementById("chats").innerHTML +=data3[i]+"<br>";
+                                    
+                            }); 
+                    }, 3000);
             
         });
         $("#start-player-as-host").click(function()
