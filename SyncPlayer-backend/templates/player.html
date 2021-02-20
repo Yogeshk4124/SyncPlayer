@@ -1,33 +1,48 @@
 <html>
     <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
 
-    <body>
-    	Instructions:<br>
-    	1.load a video<br>
-    	2.create a room and run player as host or join a room using room id<br>
-    	3.sit back and enjoy<br>
+    <body id = "body" style="margin-left: 20px; color:white; background-color: black;">
+        <h1>Welcome to SyncPlayer Web</h1>
+    	<b><u>Instructions:</u></b><br>
+    	1. load a video<br>
+    	2. create a room and control player as host or join a room using room id<br>
+    	3. sit back and enjoy<br>
         <input type="file" accept="video/*"/><br>
         <video id="video-player" width="800" height="300" controls>
-        </video><br>
-        <div id="message"></div><br>
-
-        <button id="create-room-button">Create Room</button>
+        </video><br><br>
         <p id="room-id">Please create a room, then start player as host</p>
-        <button id="fetch-room-members">Fetch users</button>
-        <p id = "users"></p>
-        <br>
-        <button id = "start-player-as-host">Start Player as host</button><br><br>OR<br><br>
-        <input type="text" id="custom-room-id" value="Enter room-id to start as guest"></input><button id = "start-player-as-guest">Start Player-as-guest</button><br>
-        <br>
+        <div id="create-room-div">
+            <button id="create-room-button">Create Room</button>
+            <button id = "start-player-as-host">Start Player as host</button> 
+        </div>
+        <div id="join-room-div">
+            <br>&nbsp; OR
+            <input type="text" id="custom-room-id" value="Enter room-id to start as guest"></input><button id = "start-player-as-guest">Start Player-as-guest</button><br> 
+        </div>
+        <b>NOTE: Your videos are not sent to our servers, only current playback time is sent and recieved. All users must have their copy of video on their local machines.</b>
+        <br>For reporting any bugs, reach me out at: github.com/harmonpreet012
+        <br><br>><button onclick="switchColorScheme()">Switch colour scheme?</button>
         
-        
-
     </body>
 </html>
 
 <script>
+    function switchColorScheme()
+    {
+        if(document.getElementById("body").style.color== "white")
+            document.getElementById("body").style.color = "black";
+        else
+            document.getElementById("body").style.color = "white";
+        
+        if(document.getElementById("body").style.backgroundColor== "white")
+            document.getElementById("body").style.backgroundColor = "black";
+        else
+            document.getElementById("body").style.backgroundColor = "white";
+        
+    }
     var prevFetch=-1;
     function seekTo(second)
     {
@@ -46,7 +61,6 @@
     }
     var roomId=-1;
     $(document).ready(function(){
-        document.getElementById("fetch-room-members").style.display="none";
         
         $("#create-room-button").click(function(){
             if(roomId!=-1)
@@ -55,10 +69,7 @@
                     console.log(data);
                     roomId = -1;
                     document.getElementById("create-room-button").innerHTML="Create room";
-                    document.getElementById("fetch-room-members").style.display="none";
                     document.getElementById("room-id").innerHTML="Please create a room";
-                    document.getElementById("users").style.display="";
-                    
                 }); 
                 return ;  
             }
@@ -67,33 +78,23 @@
                 roomId = data["Room-id"]; 
                 document.getElementById("create-room-button").innerHTML="close room";
                 
-                document.getElementById("fetch-room-members").style.display="block";
             });
         });
         var tempInterval=-1;
-        $("#fetch-room-members").click(function(){
-                    if(roomId==-1)
-                        return ;
-                    tempInterval = setInterval(function(){
-
-                        $.getJSON("http://20.197.61.11:8000/getUsers/"+roomId, function(data){
-                            console.log(data);
-                            document.getElementById("users").innerHTML = "Users: " +data;
-                            
-                    });
-                    
-                }, 3000);
-        });
         $("#start-player-as-guest").click(function()
         {
             roomId = document.getElementById("custom-room-id").value;
+            document.getElementById("create-room-div").style.display="none";
+            document.getElementById("join-room-div").style.display="none";
+            document.getElementById("room-id").innerHTML="You joined room: " +roomId;
+            
+            
             if(tempInterval!=-1)
                 clearInterval(tempInterval);
                
-                    document.getElementById("users").innerHTML = "Player started";
                     tempInterval = setInterval(function(data2){
                         $.getJSON("http://20.197.61.11:8000/getCurrentSecond/"+roomId, function(data2){
-                            document.getElementById("users").innerHTML="Current Second: " + data2["second"];
+                            console.log(data2);
                             seekTo(data2["second"]);
                         });
                     }, 5000);
@@ -101,18 +102,25 @@
         });
         $("#start-player-as-host").click(function()
         {
-            document.getElementById("users").innerHTML = "Player started";
-
-            $.getJSON("http://20.197.61.11:8000/startPlayer/"+roomId, function(data){
-
-                    setInterval(function(){
-
-                        var currSec = document.getElementById("video-player").currentTime;
-                        currSec = Math.floor(currSec);
-                        $.getJSON("http://20.197.61.11:8000/seekTo/"+roomId+"/"+currSec);
-                    
-                    }, 3000);
-            });
+            if(roomId!=-1)
+            {
+                document.getElementById("start-player-as-host").innerHTML="player started";
+                document.getElementById("join-room-div").style.display="none";
+                document.getElementById("start-player-as-host").disabled="true";
+                document.getElementById("create-room-button").style.display="none";
+                
+                $.getJSON("http://20.197.61.11:8000/startPlayer/"+roomId, function(data){
+                        setInterval(function(){
+                            console.log(data);
+                            var currSec = document.getElementById("video-player").currentTime;
+                            currSec = Math.floor(currSec);
+                            $.getJSON("http://20.197.61.11:8000/seekTo/"+roomId+"/"+currSec);
+                        
+                        }, 3000);
+                });
+            }
+            else
+                alert("please create a room first");
         });
     
     });
@@ -120,23 +128,13 @@
     (function localFileVideoPlayer() {
 	'use strict'
   var URL = window.URL || window.webkitURL
-  var displayMessage = function (message, isError) {
-    var element = document.querySelector('#message')
-    element.innerHTML = message
-    element.className = isError ? 'error' : 'info'
-  }
+  
   var playSelectedFile = function (event) {
     var file = this.files[0]
     var type = file.type
     var videoNode = document.querySelector('video')
     var canPlay = videoNode.canPlayType(type)
-    if (canPlay === '') canPlay = 'no'
-    var message = 'Can play type "' + type + '": ' + canPlay
-    var isError = canPlay === 'no'
-    displayMessage(message, isError)
-    if (isError) {
-      return
-    }
+    
     var fileURL = URL.createObjectURL(file)
     videoNode.src = fileURL
   }
