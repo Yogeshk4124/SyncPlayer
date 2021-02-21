@@ -2,16 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
-import 'package:SyncPlayer/RadiantGradientIcon.dart';
+import 'package:SyncPlayer/Utils/RadiantGradientIcon.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'MarqueeText.dart';
+import 'Utils/MarqueeText.dart';
 import 'package:http/http.dart' as http;
-import 'SliderInnerWidget.dart';
+import 'Utils/SliderInnerWidget.dart';
 
 class audioPlayerJoin extends StatefulWidget {
   audioPlayerJoin({Key key, @required this.RoomId}) : super(key: key);
