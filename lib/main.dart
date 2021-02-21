@@ -1,6 +1,7 @@
 import 'package:SyncPlayer/player.dart';
 import 'package:flutter/material.dart';
 
+import 'Home.dart';
 import 'audioPlayer.dart';
 
 void main() {
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData.dark(),
-      home: audioPlayer(title: 'Flutter Demo Home Page'),
+      home: Home(),
     );
   }
 }

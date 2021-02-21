@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:SyncPlayer/RadiantGradientIcon.dart';
@@ -8,21 +10,22 @@ import 'package:file_picker/file_picker.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'MarqueeText.dart';
-import 'SliderInnerWidget.dart';
 import 'package:http/http.dart' as http;
+import 'SliderInnerWidget.dart';
 
-class audioPlayer extends StatefulWidget {
-  audioPlayer({Key key, @required this.RoomId}) : super(key: key);
+class audioPlayerJoin extends StatefulWidget {
+  audioPlayerJoin({Key key, @required this.RoomId}) : super(key: key);
   final int RoomId;
 
   @override
-  _audioPlayerState createState() => _audioPlayerState();
+  _audioPlayerJoinState createState() => _audioPlayerJoinState();
 }
 
 // ignore: camel_case_types
-class _audioPlayerState extends State<audioPlayer> {
-  String mp3Uri = '', song = ' null';
+class _audioPlayerJoinState extends State<audioPlayerJoin> {
+  String mp3Uri = '';
   int current = 0;
+  int ct = -1;
   final assetsAudioPlayer = AssetsAudioPlayer();
   IconData pIcon;
   double seekerCurrent = 0;
@@ -61,16 +64,12 @@ class _audioPlayerState extends State<audioPlayer> {
     }
   }
 
-  void updateCurrentSec(int sec) {
-    print("updating sec and room:" +
-        widget.RoomId.toString() +
-        "," +
-        sec.toString());
-    Future<http.Response> response = http.get(
-        'http://20.197.61.11:8000/seekTo/' +
-            widget.RoomId.toString() +
-            '/' +
-            sec.toString());
+  Future getSec() async {
+    http.Response response = await http.get(
+        'http://20.197.61.11:8000/getCurrentSecond/' +
+            widget.RoomId.toString());
+    var decodedData = jsonDecode(response.body);
+    return decodedData['second'];
   }
 
   @override
@@ -79,6 +78,20 @@ class _audioPlayerState extends State<audioPlayer> {
       return source.firstWhere((element) => element.path == fromPath);
     }
 
+    Timer.periodic(Duration(seconds: 1), (Timer t) {
+      Future x = getSec();
+      x.then((value) {
+        int temp = int.parse(value.toString());
+        if (ct != -2 && (temp - ct).abs() > 5) {
+          ct = temp;
+          seekTo(Duration(seconds: temp));
+        }
+        if (ct == -1)
+          assetsAudioPlayer.pause();
+        else if (assetsAudioPlayer.current.value != null)
+          assetsAudioPlayer.play();
+      });
+    });
     return Scaffold(
       backgroundColor: Color(0xff14174E),
       body: SafeArea(
@@ -102,7 +115,7 @@ class _audioPlayerState extends State<audioPlayer> {
                     },
                   ),
                   Text(
-                    'Music',
+                    "Music",
                     style: GoogleFonts.poiretOne(
                       fontWeight: FontWeight.w900,
                       fontSize: 40,
@@ -123,165 +136,81 @@ class _audioPlayerState extends State<audioPlayer> {
                 ],
               ),
             ),
-            Text(widget.RoomId.toString()),
+            // min: 0,
+            // max: assetsAudioPlayer.current.value == null
+            //     ? 1
+            //     : assetsAudioPlayer.current.value.audio.duration.inSeconds
+            //     .toDouble(),
+            // initialValue: assetsAudioPlayer.current.value == null
+            //     ? 0
+            //     : (ct == -1 ? 0 : ct.toDouble()),
+
             StreamBuilder(
-              stream: assetsAudioPlayer.currentPosition,
-              builder: (context, asyncSnapshot) {
-                SleekCircularSlider s;
-                String time = "00:00";
-                final Duration position = asyncSnapshot.data;
-                if (assetsAudioPlayer.currentPosition.value == null ||
-                    assetsAudioPlayer.current.value == null) {
-                  s = SleekCircularSlider(
-                    min: 0,
-                    max: 1,
-                    initialValue: 0,
-                    appearance: CircularSliderAppearance(
-                      angleRange: 360,
-                      animationEnabled: false,
-                      size: MediaQuery.of(context).size.width * 0.65,
-                      startAngle: 270,
-                      animDurationMultiplier: 300,
-                      customWidths: CustomSliderWidths(
-                          trackWidth: 2, progressBarWidth: 3, handlerSize: 4),
-                      customColors: CustomSliderColors(progressBarColors: [
-                        Color(0xffF9657F),
-                        Color(0xffF61976)
-                      ], trackColors: [
-                        Color(0x66F9657F),
-                        Color(0x66F61976)
-                      ]),
-                      //#F9657F->#F61976
-                    ),
-                    innerWidget: (double value) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            height: MediaQuery.of(context).size.width * 0.58,
-                            width: MediaQuery.of(context).size.width * 0.58,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              // borderRadius: BorderRadius.all(Radius.circular(20)),
-                              gradient: new LinearGradient(
-                                colors: [
-                                  Color(0xffF61976),
-                                  Color(0xffF9657F),
-                                ],
-                              ),
-
-                              // color: Colors.white,
-                            ),
-                            child: Center(
-                              child: Container(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.50,
-                                width: MediaQuery.of(context).size.width * 0.50,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: new LinearGradient(
-                                    colors: [
-                                      Color(0xffF9657F),
-                                      Color(0xffF61976)
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    // color: Colors.pink,
-                                  ),
-                                ),
-                                child: Padding(
-                                    padding: EdgeInsets.only(right: 15),
-                                    child: Icon(
-                                        CupertinoIcons.double_music_note,
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.30)),
-                              ),
-                            ),
+                stream: assetsAudioPlayer.currentPosition,
+                builder: (context, asyncSnapshot) {
+                  if (assetsAudioPlayer.current != null)
+                    return Column(
+                      children: [
+                        Text(_printDurationAsString(Duration(seconds: assetsAudioPlayer.currentPosition.value.inSeconds))),
+                        SleekCircularSlider(
+                          min: 0,
+                          max: assetsAudioPlayer.current.value==null?1:assetsAudioPlayer.current.value.audio.duration.inSeconds.toDouble(),
+                          initialValue: assetsAudioPlayer.currentPosition.value.inSeconds.toDouble(),
+                          appearance: CircularSliderAppearance(
+                            angleRange: 360,
+                            animationEnabled: false,
+                            size: MediaQuery.of(context).size.width * 0.65,
+                            startAngle: 270,
+                            animDurationMultiplier: 300,
+                            customWidths: CustomSliderWidths(
+                                trackWidth: 2, progressBarWidth: 3, handlerSize: 4),
+                            customColors: CustomSliderColors(progressBarColors: [
+                              Color(0xffF9657F),
+                              Color(0xffF61976)
+                            ], trackColors: [
+                              Color(0x66F9657F),
+                              Color(0x66F61976)
+                            ]),
+                            //#F9657F->#F61976
                           ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  // if (assetsAudioPlayer.isPlaying.value == false)
-                  //   updateCurrentSec(-1);
-                  // else
-                  if(assetsAudioPlayer.isPlaying.value==true)
-                    updateCurrentSec(
-                        assetsAudioPlayer.currentPosition.value.inSeconds);
-                  print("check2:" +
-                      assetsAudioPlayer.currentPosition.value.inSeconds
-                          .toString());
-
-                  time = _printDurationAsString(
-                      new Duration(seconds: position.inSeconds.toInt()));
-                  s = SleekCircularSlider(
-                    appearance: CircularSliderAppearance(
-                      angleRange: 360,
-                      size: MediaQuery.of(context).size.width * 0.65,
-                      startAngle: 270,
-                      animDurationMultiplier: 300,
-                      customWidths: CustomSliderWidths(
-                          trackWidth: 2, progressBarWidth: 4, handlerSize: 4),
-                      customColors: CustomSliderColors(progressBarColors: [
-                        Color(0xffF9657F),
-                        Color(0xffF61976)
-                      ], trackColors: [
-                        Color(0x66F9657F),
-                        Color(0x66F61976)
-                      ]),
-                      //#F9657F->#F61976
-                    ),
-                    min: 0,
-                    max: assetsAudioPlayer
-                        .current.value.audio.duration.inSeconds
-                        .toDouble(),
-                    initialValue: assetsAudioPlayer
-                                .currentPosition.value.inSeconds
-                                .toDouble() >
-                            assetsAudioPlayer
-                                .current.value.audio.duration.inSeconds
-                                .toDouble()
-                        ? 0
-                        : assetsAudioPlayer.currentPosition.value.inSeconds
-                            .toDouble(),
-                    onChange: (double value) {
-                      setState(
-                        () {
-                          Duration d = new Duration(seconds: value.toInt());
-                          d = _printDuration(d);
-                          seekTo(d);
-                        },
-                      );
-                    },
-                    onChangeEnd: (double value) {
-                      setState(
-                        () {
-                          Duration d = new Duration(seconds: value.toInt());
-                          d = _printDuration(d);
-                          seekTo(d);
-                        },
-                      );
-                    },
-                    onChangeStart: (double value) {},
-                    innerWidget: (double value) {
-                      return SliderInnerWidget();
-                    },
-                  );
-                }
-                return Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(time),
-                    ),
-                    s,
-                  ],
-                );
-              },
-            ),
+                          innerWidget: (double value) {
+                            return SliderInnerWidget();
+                          },
+                        ),
+                      ],
+                    );
+                  else
+                    return Column(
+                      children: [
+                        Text("00:00"),
+                        SleekCircularSlider(
+                          min: 0,
+                          max: 1,
+                          initialValue: 0,
+                          appearance: CircularSliderAppearance(
+                            angleRange: 360,
+                            animationEnabled: false,
+                            size: MediaQuery.of(context).size.width * 0.65,
+                            startAngle: 270,
+                            animDurationMultiplier: 300,
+                            customWidths: CustomSliderWidths(
+                                trackWidth: 2, progressBarWidth: 3, handlerSize: 4),
+                            customColors: CustomSliderColors(progressBarColors: [
+                              Color(0xffF9657F),
+                              Color(0xffF61976)
+                            ], trackColors: [
+                              Color(0x66F9657F),
+                              Color(0x66F61976)
+                            ]),
+                            //#F9657F->#F61976
+                          ),
+                          innerWidget: (double value) {
+                            return SliderInnerWidget();
+                          },
+                        ),
+                      ],
+                    );
+                }),
             StreamBuilder(
               stream: assetsAudioPlayer.current,
               builder: (context, asyncSnapshot) {
@@ -308,7 +237,6 @@ class _audioPlayerState extends State<audioPlayer> {
                 }
               },
             ),
-
             Padding(
               padding: EdgeInsets.all(40),
               child: Column(
@@ -319,7 +247,7 @@ class _audioPlayerState extends State<audioPlayer> {
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            prev();
+                            // prev();
                           });
                         },
                         child: Icon(
@@ -330,7 +258,7 @@ class _audioPlayerState extends State<audioPlayer> {
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            skipprev();
+                            // skipprev();
                           });
                         },
                         child: Icon(
@@ -344,17 +272,12 @@ class _audioPlayerState extends State<audioPlayer> {
                             final bool isPlaying = asyncSnapshot.data;
                             if (assetsAudioPlayer.isPlaying.value == false) {
                               pIcon = Icons.play_circle_fill;
-                              updateCurrentSec(-1);
-                            } else {
-                              print("good current");
-                              // updateCurrentSec(
-                              //     assetsAudioPlayer.currentPosition.value.inSeconds);
+                            } else
                               pIcon = Icons.pause_circle_filled;
-                            }
                             return GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  playOrpause();
+                                  // playOrpause();
                                 });
                               },
                               child: RadiantGradientMask(
@@ -370,7 +293,7 @@ class _audioPlayerState extends State<audioPlayer> {
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            skipnext();
+                            // skipnext();
                           });
                         },
                         child: Icon(
@@ -438,53 +361,36 @@ class _audioPlayerState extends State<audioPlayer> {
     assetsAudioPlayer.toggleShuffle();
   }
 
-  void open() {
-    song = "entering";
+  void open() async {
+    // FilePickerResult result =
+    // await FilePicker.platform.pickFiles(allowMultiple: true);
+    // if (result != null) {
+    //   List<File> files = result.paths.map((path) => File(path)).toList();
+    //   for (File file in files) {
+    //     audios.add(Audio.file(file.path));
+    //   }
+    //   assetsAudioPlayer.open(
+    //     Playlist(audios: audios),
+    //     autoStart: false,
+    //   );
+    // } else {
+    //   // User canceled the picker
+    // }
     Future<FilePickerResult> result = FilePicker.platform.pickFiles();
     File file;
     // flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi
     result.then((value) {
       if (value != null) {
-        // List<File> files = value.paths.map((path) => File(path)).toList();
-        // for (File file in files) {
-        //   audios.add(Audio.file(file.path));
-        //   song=file.path;
-        // }
-        song = "result received";
         file = File(value.files.single.path);
         audios.add(Audio.file(file.path));
         assetsAudioPlayer.open(
           Playlist(audios: audios),
           autoStart: false,
         );
-        song = "result done";
       } else {
-        song = "failed";
         // User canceled the picker
       }
     });
-    // FilePickerResult result =
-    //     await FilePicker.platform.pickFiles();
-    // song="stuck";
-    // flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi
-    // if (result != null) {
-    //   song="getting";
-    //   List<File> files = result.paths.map((path) => File(path)).toList();
-    //   song="here";
-    //   for (File file in files) {
-    //     audios.add(Audio.file(file.path));
-    //     song=file.path;
-    //   }
-    //   song="open";
-    //   assetsAudioPlayer.open(
-    //     Playlist(audios: audios),
-    //     autoStart: false,
-    //   );
-    //   song="start";
-    // } else {
-    //   song="failed";
-    //   // User canceled the picker
-    // }
   }
 
   void next() {
@@ -512,8 +418,16 @@ class _audioPlayerState extends State<audioPlayer> {
   void skipprev() async {
     assetsAudioPlayer.seekBy(new Duration(seconds: -10));
   }
+
   @override
-  deactivate() {
+  // ignore: must_call_super
+  void deactivate() {
+    assetsAudioPlayer.stop();
+  }
+
+  @override
+  // ignore: must_call_super
+  void dispose() {
     assetsAudioPlayer.stop();
   }
 }
