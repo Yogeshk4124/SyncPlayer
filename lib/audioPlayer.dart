@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 
 class audioPlayer extends StatefulWidget {
   audioPlayer({Key key, @required this.RoomId}) : super(key: key);
-  final int RoomId;
+  int RoomId;
 
   @override
   _audioPlayerState createState() => _audioPlayerState();
@@ -80,7 +80,8 @@ class _audioPlayerState extends State<audioPlayer> {
     }
 
     return Scaffold(
-      backgroundColor: Color(0xff14174E),
+      backgroundColor: Colors.black,
+      // backgroundColor: Color(0xff14174E),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -139,7 +140,7 @@ class _audioPlayerState extends State<audioPlayer> {
                     appearance: CircularSliderAppearance(
                       angleRange: 360,
                       animationEnabled: false,
-                      size: MediaQuery.of(context).size.width * 0.65,
+                      size: MediaQuery.of(context).size.width * 0.60,
                       startAngle: 270,
                       animDurationMultiplier: 300,
                       customWidths: CustomSliderWidths(
@@ -159,8 +160,8 @@ class _audioPlayerState extends State<audioPlayer> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            height: MediaQuery.of(context).size.width * 0.58,
-                            width: MediaQuery.of(context).size.width * 0.58,
+                            height: MediaQuery.of(context).size.width * 0.52,
+                            width: MediaQuery.of(context).size.width * 0.52,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               // borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -176,8 +177,8 @@ class _audioPlayerState extends State<audioPlayer> {
                             child: Center(
                               child: Container(
                                 height:
-                                    MediaQuery.of(context).size.width * 0.50,
-                                width: MediaQuery.of(context).size.width * 0.50,
+                                    MediaQuery.of(context).size.width * 0.46,
+                                width: MediaQuery.of(context).size.width * 0.46,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   gradient: new LinearGradient(

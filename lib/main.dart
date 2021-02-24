@@ -1,7 +1,9 @@
+import 'package:SyncPlayer/Home3.dart';
 import 'package:flutter/material.dart';
 
 import 'Home.dart';
-import 'audioPlayer.dart';
+import 'Home2.dart';
+import 'Home4.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData.dark(),
-      home: Home(),
+      home: Home4(),
     );
   }
 }

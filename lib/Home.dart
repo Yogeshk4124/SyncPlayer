@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:SyncPlayer/audioPlayer.dart';
 import 'package:SyncPlayer/audioPlayerJoin.dart';
+import 'package:SyncPlayer/videoPlayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -88,6 +89,7 @@ class _HomeState extends State<Home> {
                         context,
                         MaterialPageRoute(builder: (context) {
                           return audioPlayer(RoomId: decodedData['Room-id'],);
+                          // return videoPlayer();
                         }),
                       );
                     } else
