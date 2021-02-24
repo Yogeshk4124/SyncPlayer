@@ -1,4 +1,3 @@
-import 'package:SyncPlayer/Home3.dart';
 import 'package:flutter/material.dart';
 
 import 'Home4.dart';
