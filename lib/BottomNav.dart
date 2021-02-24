@@ -3,7 +3,7 @@ import 'package:SyncPlayer/videoPlayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
-import 'Home2.dart';
+import 'Configuration.dart';
 
 Future<Map<String, dynamic>> getData() async {
   return Future.delayed(Duration(seconds: 0), () => {'Create':'-1','Join':'-1'});

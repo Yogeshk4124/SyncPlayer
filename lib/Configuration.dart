@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:SyncPlayer/Utils/Configuration.dart';
-import 'package:SyncPlayer/audioPlayer.dart';
 import 'package:SyncPlayer/audioPlayerJoin.dart';
-import 'package:SyncPlayer/videoPlayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
