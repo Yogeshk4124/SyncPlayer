@@ -1,8 +1,6 @@
 import 'package:SyncPlayer/Home3.dart';
 import 'package:flutter/material.dart';
 
-import 'Home.dart';
-import 'Home2.dart';
 import 'Home4.dart';
 
 void main() {
