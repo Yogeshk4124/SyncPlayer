@@ -31,9 +31,11 @@ dependencies:
   sleek_circular_slider: ^1.2.0+web
   google_fonts: ^1.1.2
   http: ^0.12.2
-  video_player: ^1.0.1
+  provider: 4.0.5
+  flutter_widgets: ^0.1.12
+#  video_player: ^1.0.1
   flutter_snake_navigationbar: ^0.4.4
-  flutter_spinkit: ^4.1.2
+  flick_video_player: ^0.1.1
 
 dev_dependencies:
   flutter_test:

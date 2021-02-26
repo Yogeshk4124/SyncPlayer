@@ -7,8 +7,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'videoPlayerWidget.dart';
 class videoPlayer extends StatefulWidget {
-  // final int RoomId;
-  // videoPlayer({@required this.RoomId});
+  final int RoomId;
+  videoPlayer({@required this.RoomId});
+
   @override
   _videoPlayerState createState() => _videoPlayerState();
 }
@@ -35,15 +36,15 @@ class _videoPlayerState extends State<videoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    Timer.periodic(Duration(seconds: 1), (Timer t) async {
-      http.Response response = await http.get(
-          'http://20.197.61.11:8000/getCurrentSecond/');
-    });
+    // Timer.periodic(Duration(seconds: 1), (Timer t) async {
+    //   http.Response response = await http.get(
+    //       'http://20.197.61.11:8000/get/');
+    // });
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            VideoPlayerWidget(controller: controller),
+            VideoPlayerWidget(controller: controller,Roomid:widget.RoomId),
             buildAddButton(),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'Configuration.dart';
+import 'V.dart';
 
 Future<Map<String, dynamic>> getData() async {
   return Future.delayed(Duration(seconds: 0), () => {'Create':'-1','Join':'-1'});
@@ -31,13 +32,14 @@ class _Home4State extends State<Home4> {
   Widget getPage(int index) {
     switch (index) {
       case 0:
-        return audioPlayer(RoomId: int.parse(data['Create']));
+        return audioPlayer(RoomId: int.parse(data['Create'])>int.parse(data['Join'])?int.parse(data['Create']):int.parse(data['Join']));
         break;
       case 1:
         return Home2(data: data,);
         break;
       case 2:
-        return videoPlayer();
+        // return videoPlayer(RoomId: int.parse(data['Create'])>int.parse(data['Join'])?int.parse(data['Create']):int.parse(data['Join']),);
+        return V(Roomid: int.parse(data['Create'])>int.parse(data['Join'])?int.parse(data['Create']):int.parse(data['Join']));
         break;
       default:
         return Home2(data: data,);
