@@ -29,7 +29,8 @@ class _VState extends State<V> {
   List<String> urls = [];
   Widget d;
   AdvFabController FABcontroller;
-  bool selected=false;
+  bool selected = false;
+
   @override
   void initState() {
     super.initState();
@@ -94,28 +95,35 @@ class _VState extends State<V> {
       });
     return Scaffold(
       backgroundColor: Colors.black,
-      floatingActionButton: AdvFab(
-        showLogs: true,
-        onFloatingActionButtonTapped: () {
-          FABcontroller.isCollapsed
-              ? FABcontroller.expandFAB()
-              : FABcontroller.collapseFAB();
-        },
-        floatingActionButtonIcon: Icons.add,
-        floatingActionButtonIconColor: Colors.red,
-        navigationBarIconActiveColor: Colors.pink,
-        navigationBarIconInactiveColor: Colors.pink[200].withOpacity(0.6),
-        collapsedColor: Colors.grey[200],
-        controller: FABcontroller,
-        useAsFloatingSpaceBar: true,
-      ),
+      floatingActionButton: selected
+          ? AdvFab(
+              showLogs: true,
+              onFloatingActionButtonTapped: () {
+                FABcontroller.isCollapsed
+                    ? FABcontroller.expandFAB()
+                    : FABcontroller.collapseFAB();
+              },
+              floatingActionButtonIcon: CupertinoIcons.chat_bubble_text_fill,
+              useAsFloatingActionButton: true,
+              useAsNavigationBar: false,
+              floatingActionButtonIconColor: Colors.white,
+              floatingActionButtonExpendedWidth: 90,
+              navigationBarIconActiveColor: Colors.pink,
+              navigationBarIconInactiveColor: Colors.pink[200].withOpacity(0.6),
+              collapsedColor: Colors.red,
+              controller: FABcontroller,
+              useAsFloatingSpaceBar: false,
+            )
+          : null,
       // FloatingActionButton(
       //   onPressed: () {},
       //   backgroundColor: Colors.red,
       //   child: Icon(CupertinoIcons.chat_bubble_text_fill,color: Colors.white,),
       // ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Text('MOVIE NIGHT !!',style: GoogleFonts.bungee(),),
           if (flickManager != null)
             VisibilityDetector(
                 key: ObjectKey(flickManager),
@@ -129,7 +137,7 @@ class _VState extends State<V> {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.symmetric(vertical: 20),
+                      padding: EdgeInsets.only(bottom: 16),
                       child: FlickVideoPlayer(
                         flickManager: flickManager,
                         preferredDeviceOrientationFullscreen: [
@@ -150,6 +158,16 @@ class _VState extends State<V> {
                           ),
                         ),
                       ),
+                    ),
+                    MaterialButton(
+                      onPressed: () {},
+                      child: Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                          child: Text("LEAVE")),
                     ),
                   ],
                 ))
@@ -192,21 +210,36 @@ class _VState extends State<V> {
                     setState(() {
                       controller = VideoPlayerController.file(file);
                       setVideo(controller);
+                      selected = !selected;
                       FABcontroller.setExpandedWidgetConfiguration(
                         showLogs: true,
-                        heightToExpandTo: 25,
-                        expendedBackgroundColor: Colors.blue[300],
+                        heightToExpandTo: 40,
+                        expendedBackgroundColor: Colors.redAccent,
                         withChild: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(15.0),
                           child: Container(
+                            color: Colors.red,
                             width: (MediaQuery.of(context).size.width),
                             height:
-                            (MediaQuery.of(context).size.height / 100) * 20,
-                            child: Image.asset("assets/images/video.jpeg"),
+                                (MediaQuery.of(context).size.height / 100) * 20,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      FABcontroller.isCollapsed
+                                          ? FABcontroller.expandFAB()
+                                          : FABcontroller.collapseFAB();
+                                    });
+                                  },
+                                  icon: Icon(CupertinoIcons.arrow_left),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
-
                     });
                   },
                   child: Container(

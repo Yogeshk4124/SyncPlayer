@@ -78,7 +78,7 @@ class _Home4State extends State<Home4> {
       bottomNavigationBar: SnakeNavigationBar.color(
         behaviour: SnakeBarBehaviour.pinned,
         snakeShape: snakeShape,
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(8),
         shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
 
         //   BeveledRectangleBorder(
