@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,16 +13,16 @@ import 'package:video_player/video_player.dart';
 import 'layouts/custom_orientation_player/controls.dart';
 import 'layouts/custom_orientation_player/data_manager.dart';
 
-class V extends StatefulWidget {
+class VideoJoin extends StatefulWidget {
   final int Roomid;
 
-  V({@required this.Roomid});
+  VideoJoin({@required this.Roomid});
 
   @override
-  _VState createState() => _VState();
+  _VideoJoinState createState() => _VideoJoinState();
 }
 
-class _VState extends State<V> {
+class _VideoJoinState extends State<VideoJoin> {
   FlickManager flickManager;
   DataManager dataManager;
   VideoPlayerController controller;
@@ -30,15 +31,7 @@ class _VState extends State<V> {
   @override
   void initState() {
     super.initState();
-    // flickManager = FlickManager(
-    //     videoPlayerController: VideoPlayerController.network(
-    //       urls[0],
-    //     ),
-    //     onVideoEnd: () {
-    //       dataManager.skipToNextVideo(Duration(seconds: 5));
-    //     });
     flickManager = null;
-    // dataManager = DataManager(flickManager: flickManager, urls: urls);
   }
 
   void setVideo(VideoPlayerController controller) {
@@ -70,17 +63,23 @@ class _VState extends State<V> {
   @override
   Widget build(BuildContext context) {
     Timer.periodic(Duration(seconds: 1), (Timer t) async {
+      // print('http://20.197.61.11:8000/getCurrentSecond/' +
+      //     widget.Roomid.toString());
       if (flickManager != null) {
-        // print(flickManager.flickVideoManager.videoPlayerValue.position.inSeconds.toString());
-        String time = flickManager.flickVideoManager.videoPlayerValue.isPlaying
-            ? flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
-            .toString()
-            : '-1';
-        http.Response response = await http.get(
-            'http://20.197.61.11:8000/seekTo/' +
-                widget.Roomid.toString() +
-                '/' +
-                time);
+        Future<http.Response> response = http.get(
+            'http://20.197.61.11:8000/getCurrentSecond/' +
+                widget.Roomid.toString());
+        response.then((value) {
+          var decodedData = jsonDecode(value.body);
+          print(decodedData['second']);
+          if (decodedData['second'] == '-1')
+            flickManager.flickControlManager.pause();
+          else {
+            flickManager.flickControlManager
+                .seekTo(Duration(seconds: decodedData['second']));
+            flickManager.flickControlManager.play();
+          }
+        });
       }
     });
 

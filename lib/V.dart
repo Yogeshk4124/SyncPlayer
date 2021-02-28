@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:video_player/video_player.dart';
 import 'layouts/custom_orientation_player/controls.dart';
 import 'layouts/custom_orientation_player/data_manager.dart';
+import 'package:adv_fab/adv_fab.dart';
 
 class V extends StatefulWidget {
   final int Roomid;
@@ -26,10 +27,13 @@ class _VState extends State<V> {
   DataManager dataManager;
   VideoPlayerController controller;
   List<String> urls = [];
-
+  Widget d;
+  AdvFabController FABcontroller;
+  bool selected=false;
   @override
   void initState() {
     super.initState();
+    FABcontroller = AdvFabController();
     // flickManager = FlickManager(
     //     videoPlayerController: VideoPlayerController.network(
     //       urls[0],
@@ -88,78 +92,136 @@ class _VState extends State<V> {
       flickManager.flickVideoManager.addListener(() {
         setState(() {});
       });
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Text(
-            "Video Player",
-            style: GoogleFonts.aBeeZee(fontSize: 30),
-          ),
-        ),
-        if (flickManager != null)
-          VisibilityDetector(
-              key: ObjectKey(flickManager),
-              onVisibilityChanged: (visibility) {
-                if (visibility.visibleFraction == 0 && this.mounted) {
-                  flickManager.flickControlManager.autoPause();
-                } else if (visibility.visibleFraction == 1) {
-                  flickManager.flickControlManager.autoResume();
-                }
-              },
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: FlickVideoPlayer(
-                      flickManager: flickManager,
-                      preferredDeviceOrientationFullscreen: [
-                        DeviceOrientation.portraitUp,
-                        DeviceOrientation.landscapeLeft,
-                        DeviceOrientation.landscapeRight,
-                      ],
-                      flickVideoWithControls: FlickVideoWithControls(
-                        controls: CustomOrientationControls(
-                          dataManager: dataManager,
+    return Scaffold(
+      backgroundColor: Colors.black,
+      floatingActionButton: AdvFab(
+        showLogs: true,
+        onFloatingActionButtonTapped: () {
+          FABcontroller.isCollapsed
+              ? FABcontroller.expandFAB()
+              : FABcontroller.collapseFAB();
+        },
+        floatingActionButtonIcon: Icons.add,
+        floatingActionButtonIconColor: Colors.red,
+        navigationBarIconActiveColor: Colors.pink,
+        navigationBarIconInactiveColor: Colors.pink[200].withOpacity(0.6),
+        collapsedColor: Colors.grey[200],
+        controller: FABcontroller,
+        useAsFloatingSpaceBar: true,
+      ),
+      // FloatingActionButton(
+      //   onPressed: () {},
+      //   backgroundColor: Colors.red,
+      //   child: Icon(CupertinoIcons.chat_bubble_text_fill,color: Colors.white,),
+      // ),
+      body: Column(
+        children: <Widget>[
+          if (flickManager != null)
+            VisibilityDetector(
+                key: ObjectKey(flickManager),
+                onVisibilityChanged: (visibility) {
+                  if (visibility.visibleFraction == 0 && this.mounted) {
+                    flickManager.flickControlManager.autoPause();
+                  } else if (visibility.visibleFraction == 1) {
+                    flickManager.flickControlManager.autoResume();
+                  }
+                },
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: FlickVideoPlayer(
+                        flickManager: flickManager,
+                        preferredDeviceOrientationFullscreen: [
+                          DeviceOrientation.portraitUp,
+                          DeviceOrientation.landscapeLeft,
+                          DeviceOrientation.landscapeRight,
+                        ],
+                        flickVideoWithControls: FlickVideoWithControls(
+                          controls: CustomOrientationControls(
+                            dataManager: dataManager,
+                          ),
                         ),
-                      ),
-                      flickVideoWithControlsFullscreen: FlickVideoWithControls(
-                        videoFit: BoxFit.fitWidth,
-                        controls: CustomOrientationControls(
-                          dataManager: dataManager,
+                        flickVideoWithControlsFullscreen:
+                            FlickVideoWithControls(
+                          videoFit: BoxFit.fitWidth,
+                          controls: CustomOrientationControls(
+                            dataManager: dataManager,
+                          ),
                         ),
                       ),
                     ),
-                  )
-                ],
-              ))
-        else
-          Container(
-            child: Text("Add Video"),
-          ),
-        MaterialButton(
-          padding: EdgeInsets.all(20),
-          onPressed: () async {
-            final file = await pickVideoFile();
-            if (file == null) return;
-            setState(() {
-              controller = VideoPlayerController.file(file);
-              setVideo(controller);
-            });
-          },
-          child: Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.orange,
-              borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ],
+                ))
+          else
+            Column(
+              children: <Widget>[
+                Image.asset(
+                  "assets/images/video.jpeg",
+                  fit: BoxFit.fill,
+                  height: MediaQuery.of(context).size.height * 0.60,
+                ),
+                Text(
+                  'Get Ready!!',
+                  style: GoogleFonts.bungee(fontSize: 32),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text(
+                        'Stream',
+                        style: GoogleFonts.roboto(),
+                      ),
+                      Text(
+                        'Movie',
+                        style: GoogleFonts.roboto(),
+                      ),
+                      Text(
+                        'Enjoy',
+                        style: GoogleFonts.roboto(),
+                      ),
+                    ],
+                  ),
+                ),
+                MaterialButton(
+                  onPressed: () async {
+                    final file = await pickVideoFile();
+                    if (file == null) return;
+                    setState(() {
+                      controller = VideoPlayerController.file(file);
+                      setVideo(controller);
+                      FABcontroller.setExpandedWidgetConfiguration(
+                        showLogs: true,
+                        heightToExpandTo: 25,
+                        expendedBackgroundColor: Colors.blue[300],
+                        withChild: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: (MediaQuery.of(context).size.width),
+                            height:
+                            (MediaQuery.of(context).size.height / 100) * 20,
+                            child: Image.asset("assets/images/video.jpeg"),
+                          ),
+                        ),
+                      );
+
+                    });
+                  },
+                  child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Color(0xffFF2929),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      child: Text('ADD VIDEO')),
+                ),
+              ],
             ),
-            child: Icon(
-              Icons.video_call_sharp,
-              size: 60,
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
