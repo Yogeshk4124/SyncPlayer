@@ -10,8 +10,8 @@ import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:video_player/video_player.dart';
-import 'layouts/custom_orientation_player/controls.dart';
-import 'layouts/custom_orientation_player/data_manager.dart';
+import '../layouts/custom_orientation_player/controls.dart';
+import '../layouts/custom_orientation_player/data_manager.dart';
 
 class VideoJoin extends StatefulWidget {
   final int Roomid;

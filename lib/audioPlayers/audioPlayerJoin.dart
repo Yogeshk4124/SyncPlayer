@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'Utils/MarqueeText.dart';
+import '../Utils/MarqueeText.dart';
 import 'package:http/http.dart' as http;
-import 'Utils/SliderInnerWidget.dart';
+import '../Utils/SliderInnerWidget.dart';
 
 class audioPlayerJoin extends StatefulWidget {
   audioPlayerJoin({Key key, @required this.RoomId}) : super(key: key);

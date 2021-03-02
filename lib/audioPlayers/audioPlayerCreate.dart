@@ -7,20 +7,20 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'Utils/MarqueeText.dart';
-import 'Utils/SliderInnerWidget.dart';
+import '../Utils/MarqueeText.dart';
+import '../Utils/SliderInnerWidget.dart';
 import 'package:http/http.dart' as http;
 
-class audioPlayer extends StatefulWidget {
-  audioPlayer({Key key, @required this.RoomId}) : super(key: key);
+class audioPlayerCreate extends StatefulWidget {
+  audioPlayerCreate({Key key, @required this.RoomId}) : super(key: key);
   int RoomId;
 
   @override
-  _audioPlayerState createState() => _audioPlayerState();
+  _audioPlayerCreateState createState() => _audioPlayerCreateState();
 }
 
 // ignore: camel_case_types
-class _audioPlayerState extends State<audioPlayer> {
+class _audioPlayerCreateState extends State<audioPlayerCreate> {
   String mp3Uri = '', song = ' null';
   int current = 0;
   final assetsAudioPlayer = AssetsAudioPlayer();

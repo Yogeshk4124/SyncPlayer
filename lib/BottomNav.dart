@@ -1,12 +1,12 @@
-import 'package:SyncPlayer/audioPlayer.dart';
-import 'package:SyncPlayer/audioPlayerJoin.dart';
+import 'package:SyncPlayer/audioPlayers/audioPlayerCreate.dart';
+import 'package:SyncPlayer/audioPlayers/audioPlayerJoin.dart';
 import 'package:SyncPlayer/videoPlayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'Configuration.dart';
-import 'V.dart';
-import 'VideoJoin.dart';
+import 'VideoPlayers/VideoCreate.dart';
+import 'VideoPlayers/VideoJoin.dart';
 
 Future<Map<String, dynamic>> getData() async {
   return Future.delayed(
@@ -39,7 +39,7 @@ class _Home4State extends State<Home4> {
           return audioPlayerJoin(
             RoomId: int.parse(data['Join']),
           );
-        return audioPlayer(RoomId: int.parse(data['Create']));
+        return audioPlayerCreate(RoomId: int.parse(data['Create']));
         break;
       case 1:
         return Home2(
@@ -52,7 +52,7 @@ class _Home4State extends State<Home4> {
           return VideoJoin(
             Roomid: int.parse(data['Join']),
           );
-        return V(Roomid: int.parse(data['Create']));
+        return VideoCreate(Roomid: int.parse(data['Create']));
         break;
       default:
         return Home2(
