@@ -58,14 +58,12 @@ class _audioPlayerState extends State<audioPlayer> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        top:true,
+        top: true,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -107,7 +105,6 @@ class _audioPlayerState extends State<audioPlayer> {
                 ],
               ),
             ),
-
             StreamBuilder(
               stream: assetsAudioPlayer.currentPosition,
               builder: (context, asyncSnapshot) {
@@ -138,54 +135,7 @@ class _audioPlayerState extends State<audioPlayer> {
                       //#F9657F->#F61976
                     ),
                     innerWidget: (double value) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            height: MediaQuery.of(context).size.width * 0.52,
-                            width: MediaQuery.of(context).size.width * 0.52,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              // borderRadius: BorderRadius.all(Radius.circular(20)),
-                              gradient: new LinearGradient(
-                                colors: [
-                                  Color(0xffF61976),
-                                  Color(0xffF9657F),
-                                ],
-                              ),
-
-                              // color: Colors.white,
-                            ),
-                            child: Center(
-                              child: Container(
-                                height:
-                                MediaQuery.of(context).size.width * 0.46,
-                                width: MediaQuery.of(context).size.width * 0.46,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: new LinearGradient(
-                                    colors: [
-                                      Color(0xffF9657F),
-                                      Color(0xffF61976)
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    // color: Colors.pink,
-                                  ),
-                                ),
-                                child: Padding(
-                                    padding: EdgeInsets.only(right: 15),
-                                    child: Icon(
-                                        CupertinoIcons.double_music_note,
-                                        size:
-                                        MediaQuery.of(context).size.width *
-                                            0.30)),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
+                      return SliderInnerWidget();
                     },
                   );
                 } else {
@@ -217,17 +167,17 @@ class _audioPlayerState extends State<audioPlayer> {
                         .current.value.audio.duration.inSeconds
                         .toDouble(),
                     initialValue: assetsAudioPlayer
-                        .currentPosition.value.inSeconds
-                        .toDouble() >
-                        assetsAudioPlayer
-                            .current.value.audio.duration.inSeconds
-                            .toDouble()
+                                .currentPosition.value.inSeconds
+                                .toDouble() >
+                            assetsAudioPlayer
+                                .current.value.audio.duration.inSeconds
+                                .toDouble()
                         ? 0
                         : assetsAudioPlayer.currentPosition.value.inSeconds
-                        .toDouble(),
+                            .toDouble(),
                     onChange: (double value) {
                       setState(
-                            () {
+                        () {
                           Duration d = new Duration(seconds: value.toInt());
                           d = _printDuration(d);
                           seekTo(d);
@@ -236,7 +186,7 @@ class _audioPlayerState extends State<audioPlayer> {
                     },
                     onChangeEnd: (double value) {
                       setState(
-                            () {
+                        () {
                           Duration d = new Duration(seconds: value.toInt());
                           d = _printDuration(d);
                           seekTo(d);
@@ -286,7 +236,6 @@ class _audioPlayerState extends State<audioPlayer> {
                 }
               },
             ),
-
             Padding(
               padding: EdgeInsets.all(40),
               child: Column(
@@ -335,13 +284,16 @@ class _audioPlayerState extends State<audioPlayer> {
                                 });
                               },
                               child: RadiantGradientMask(
-                                  child: Icon(
-                                    pIcon,
-                                    size: 80,
-                                    color: Colors.white,
-                                  ),
-                                  c1: Color(0xffF9657F),
-                                  c2: Color(0xffF61976)),
+                                child: Icon(
+                                  pIcon,
+                                  size: 80,
+                                  color: Colors.white,
+                                ),
+                                c2: Color(0xffff0000),
+                                c1: Color(0xAAd70000),
+                                // c1: Color(0xffF9657F),
+                                // c2: Color(0xffF61976),
+                              ),
                             );
                           }),
                       GestureDetector(
@@ -440,7 +392,6 @@ class _audioPlayerState extends State<audioPlayer> {
         // User canceled the picker
       }
     });
-
   }
 
   void next() {
@@ -468,6 +419,7 @@ class _audioPlayerState extends State<audioPlayer> {
   void skipprev() async {
     assetsAudioPlayer.seekBy(new Duration(seconds: -10));
   }
+
   @override
   deactivate() {
     assetsAudioPlayer.stop();
