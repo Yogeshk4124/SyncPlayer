@@ -72,9 +72,8 @@ class _Home4State extends State<Home4> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
-        child: getPage(_currentIndex),
-      ),
+      body: getPage(_currentIndex),
+
       bottomNavigationBar: SnakeNavigationBar.color(
         behaviour: SnakeBarBehaviour.pinned,
         snakeShape: snakeShape,

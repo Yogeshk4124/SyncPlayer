@@ -5,6 +5,7 @@ import 'package:SyncPlayer/audioPlayerJoin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,6 +27,7 @@ class _Home2State extends State<Home2> {
   String Jjoining = 'Enter Room Id',
       Jbutton = "Join",
       Jlink = 'http://20.197.61.11:8000/addUser/';
+  int get = 0;
 
   @override
   void initState() {
@@ -50,51 +52,6 @@ class _Home2State extends State<Home2> {
     super.dispose();
   }
 
-  Future<http.Response> createRoom() async {
-    http.Response response =
-        await http.get('http://20.197.61.11:8000/createRoom');
-    return response;
-  }
-
-  Future<void> _showMyDialog() async {
-    String valueText = "";
-
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('TextField in Dialog'),
-            content: TextField(
-              onChanged: (value) {
-                setState(() {
-                  valueText = value;
-                });
-              },
-              controller: _joinController,
-              decoration: InputDecoration(hintText: "Text Field in Dialog"),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                color: Colors.green,
-                textColor: Colors.white,
-                child: Text('OK'),
-                onPressed: () {
-                  setState(() {
-                    int codeDialog = int.parse(valueText);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return audioPlayerJoin(RoomId: codeDialog);
-                      }),
-                    );
-                  });
-                },
-              ),
-            ],
-          );
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     Widget createDestroy() {
@@ -106,7 +63,7 @@ class _Home2State extends State<Home2> {
             Text(
               creating,
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 20,
               ),
               textAlign: TextAlign.center,
             ),
@@ -119,7 +76,6 @@ class _Home2State extends State<Home2> {
                 Future<http.Response> response = http.get(link);
                 response.then((value) {
                   var decodedData = jsonDecode(value.body);
-
                   setState(() {
                     if (widget.data['Create'] == '-1') {
                       print("CD:1");
@@ -152,7 +108,9 @@ class _Home2State extends State<Home2> {
         return Container(
           child: Center(
             child: Text(
-                'You have already Joined a room Disconnect first then create'),
+                'You have already Joined a room Disconnect first then create',
+                style: GoogleFonts.roboto(),
+                textAlign: TextAlign.center),
           ),
         );
       }
@@ -168,25 +126,53 @@ class _Home2State extends State<Home2> {
             Text(
               Jjoining,
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 20,
               ),
               textAlign: TextAlign.center,
             ),
             SizedBox.fromSize(
-              size: Size(10, 30),
+              size: Size(10, 10),
             ),
             Container(
-              width: 80,
-              child: TextField(
+              width: 100,
+              height: 40,
+              child: Center(
+                  child: TextField(
+                textAlignVertical: TextAlignVertical.center,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  fillColor: Colors.white,
+                  filled: true,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
+                  fillColor: Color(0xff404040),
+                  // disabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.all(5),
+                  // enabledBorder: InputBorder.none,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
                 ),
+                textAlign: TextAlign.center,
                 controller: _joinController,
+              )),
+            ),
+            if (get == 1)
+              Container(
+                margin: EdgeInsets.only(bottom: 20,top: 5),
+                child: Text("Room Not Found",style: TextStyle(color: Colors.red),),
+              )
+            else
+              SizedBox.fromSize(
+                size: Size(40, 30),
               ),
-            ),
-            SizedBox.fromSize(
-              size: Size(40, 30),
-            ),
             MaterialButton(
               onPressed: () {
                 // print("link:" + link);
@@ -197,11 +183,16 @@ class _Home2State extends State<Home2> {
                     var decodedData = jsonDecode(value.body);
                     print("eBody:" + decodedData.toString());
                     setState(() {
-                      if (widget.data['Join'] == '-1') {
+                      if (decodedData['status'].toString() !=
+                          "room not found") {
+                        // if (widget.data['Join'] == '-1') {
                         widget.data['Join'] = decodedData['room-id'].toString();
                         Jjoining = 'Joined:' + widget.data['Join'].toString();
                         Jbutton = "Leave";
-                      }
+                        get = 0;
+                        // }
+                      } else
+                        get = 1;
                     });
                   });
                 } else {
@@ -220,7 +211,11 @@ class _Home2State extends State<Home2> {
                   decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Text(Jbutton)),
+                  child: Text(
+                    Jbutton,
+                    style: GoogleFonts.roboto(),
+                    textAlign: TextAlign.center,
+                  )),
             ),
           ],
         );
@@ -239,111 +234,105 @@ class _Home2State extends State<Home2> {
       w = createDestroy();
     else
       w = join();
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        color: Colors.black,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Text(
-                "Configuration",
-                style: GoogleFonts.poiretOne(
-                  fontSize: MediaQuery.of(context).size.width * 0.1,
-                ),
-                maxLines: 1,
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Configuration",
+              style: GoogleFonts.poiretOne(
+                fontSize: MediaQuery.of(context).size.width * 0.1,
               ),
-              SizedBox.fromSize(
-                size: Size(10, 40),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Text('Sync Player Setting',style: GoogleFonts.poiretOne(fontSize: 30),),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selected = 1;
-                      });
-                    },
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.20,
-                      width: MediaQuery.of(context).size.height * 0.20,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 40),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(
-                            MediaQuery.of(context).size.width * 0.02)),
-                        // color: Color(0xff2C353D),
-                        color: _selected == 1
-                            ? Colors.redAccent
-                            : Color(0xff181818),
-                      ),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(CupertinoIcons.person_add_solid),
-                            Text(
-                              "Create",
-                              style: TextStyle(
-                                  fontSize: MediaQuery.of(context).size.height *
-                                      0.038),
-                            ),
-                          ]),
+              maxLines: 1,
+            ),
+            SizedBox.fromSize(
+              size: Size(10, 40),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Text('Sync Player Setting',style: GoogleFonts.poiretOne(fontSize: 30),),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selected = 1;
+                    });
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.20,
+                    width: MediaQuery.of(context).size.height * 0.20,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 40),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(
+                          MediaQuery.of(context).size.width * 0.02)),
+                      // color: Color(0xff2C353D),
+                      color:
+                          _selected == 1 ? Colors.redAccent : Color(0xff181818),
                     ),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(CupertinoIcons.person_add_solid),
+                          Text(
+                            "Create",
+                            style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.038),
+                          ),
+                        ]),
                   ),
-                  SizedBox.fromSize(
-                    size: Size(10, 10),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      // Configuration c = new Configuration(data: widget.data);
-                      setState(() {
-                        _selected = 2;
-                      });
-                    },
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.20,
-                      width: MediaQuery.of(context).size.height * 0.20,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 40),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(
-                            MediaQuery.of(context).size.width * 0.02)),
-                        // color: Color(0xff2C353D),
-                        color: _selected == 2
-                            ? Colors.redAccent
-                            : Color(0xff181818),
-                      ),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(CupertinoIcons.dot_radiowaves_left_right),
-                            Text(
-                              "Join",
-                              style: TextStyle(
-                                  fontSize: MediaQuery.of(context).size.height *
-                                      0.038),
-                            ),
-                          ]),
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.all(20),
-                  decoration: BoxDecoration(color: Color(0xff181818)),
-                  child: w,
                 ),
-              )
-            ],
-          ),
+                SizedBox.fromSize(
+                  size: Size(10, 10),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    // Configuration c = new Configuration(data: widget.data);
+                    setState(() {
+                      _selected = 2;
+                    });
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.20,
+                    width: MediaQuery.of(context).size.height * 0.20,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 40),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(
+                          MediaQuery.of(context).size.width * 0.02)),
+                      // color: Color(0xff2C353D),
+                      color:
+                          _selected == 2 ? Colors.redAccent : Color(0xff181818),
+                    ),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(CupertinoIcons.dot_radiowaves_left_right),
+                          Text(
+                            "Join",
+                            style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.038),
+                          ),
+                        ]),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                margin: EdgeInsets.all(20),
+                decoration: BoxDecoration(color: Color(0xff181818)),
+                child: w,
+              ),
+            )
+          ],
         ),
       ),
     );
