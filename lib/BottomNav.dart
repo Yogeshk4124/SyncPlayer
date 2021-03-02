@@ -7,6 +7,7 @@ import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'Configuration.dart';
 import 'VideoPlayers/VideoCreate.dart';
 import 'VideoPlayers/VideoJoin.dart';
+import 'audioPlayers/audioPlayer.dart';
 
 Future<Map<String, dynamic>> getData() async {
   return Future.delayed(
@@ -25,21 +26,28 @@ class _Home4State extends State<Home4> {
   @override
   void initState() {
     super.initState();
-    getData().then((values) {
-      setState(() {
-        data = values;
-      });
-    });
+    // getData().then((values) {
+    //   setState(() {
+    //     data = values;
+    //   });
+    // });
+    data = {'Create': '-1', 'Join': '-1'};
   }
 
   Widget getPage(int index) {
+    print(data.toString());
     switch (index) {
       case 0:
-        if (data['Join'] != '-1')
+        if (data['Join'] == '-1' && data['Create'] == '-1') {
+          print('C1');
+          return audioPlayer();
+        }
+        else if (data['Join'] != '-1')
           return audioPlayerJoin(
             RoomId: int.parse(data['Join']),
           );
-        return audioPlayerCreate(RoomId: int.parse(data['Create']));
+        else
+          return audioPlayerCreate(RoomId: int.parse(data['Create']));
         break;
       case 1:
         return Home2(
@@ -47,7 +55,7 @@ class _Home4State extends State<Home4> {
         );
         break;
       case 2:
-        // return videoPlayer(RoomId: int.parse(data['Create'])>int.parse(data['Join'])?int.parse(data['Create']):int.parse(data['Join']),);
+      // return videoPlayer(RoomId: int.parse(data['Create'])>int.parse(data['Join'])?int.parse(data['Create']):int.parse(data['Join']),);
         if (data['Join'] != '-1')
           return VideoJoin(
             Roomid: int.parse(data['Join']),
@@ -78,7 +86,7 @@ class _Home4State extends State<Home4> {
         behaviour: SnakeBarBehaviour.pinned,
         snakeShape: snakeShape,
         padding: EdgeInsets.all(8),
-        shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
 
         //   BeveledRectangleBorder(
         //     borderRadius: const BorderRadius.only(
@@ -90,7 +98,8 @@ class _Home4State extends State<Home4> {
         snakeViewColor: Colors.black,
 
         selectedItemColor:
-            snakeShape == SnakeShape.indicator ? Color(0xffFF2929): Color(0xffFF2929),
+        snakeShape == SnakeShape.indicator ? Color(0xffFF2929) : Color(
+            0xffFF2929),
         unselectedItemColor: Color(0xff606060),
 
         ///configuration for SnakeNavigationBar.gradient
