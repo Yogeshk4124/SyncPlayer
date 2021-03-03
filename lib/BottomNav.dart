@@ -40,30 +40,30 @@ class _Home4State extends State<Home4> {
       case 0:
         if (data['Join'] == '-1' && data['Create'] == '-1') {
           print('C1');
-          return new audioPlayer();
+          return audioPlayer();
         }
         else if (data['Join'] != '-1')
-          return new audioPlayerJoin(
+          return audioPlayerJoin(
             RoomId: int.parse(data['Join']),
           );
         else
-          return new audioPlayerCreate(RoomId: int.parse(data['Create']));
+          return audioPlayerCreate(RoomId: int.parse(data['Create']));
         break;
       case 1:
-        return new Home2(
+        return Home2(
           data: data,
         );
         break;
       case 2:
       // return videoPlayer(RoomId: int.parse(data['Create'])>int.parse(data['Join'])?int.parse(data['Create']):int.parse(data['Join']),);
         if (data['Join'] != '-1')
-          return new VideoJoin(
+          return VideoJoin(
             Roomid: int.parse(data['Join']),
           );
-        return new VideoCreate(Roomid: int.parse(data['Create']));
+        return VideoCreate(Roomid: int.parse(data['Create']));
         break;
       default:
-        return new Home2(
+        return Home2(
           data: data,
         );
         break;

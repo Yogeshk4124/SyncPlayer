@@ -62,13 +62,8 @@ class _VideoCreateState extends State<VideoCreate> {
   @override
   void dispose() {
     if (flickManager != null) flickManager.dispose();
+    print("disposing");
     super.dispose();
-  }
-
-  @override
-  void deactivate() {
-    if (flickManager != null) flickManager.dispose();
-    super.deactivate();
   }
 
   skipToVideo(String url) {
