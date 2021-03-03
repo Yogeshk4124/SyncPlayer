@@ -20,6 +20,8 @@ class VideoCreate extends StatefulWidget {
 
   @override
   _VideoCreateState createState() => _VideoCreateState();
+  @override
+  _VideoCreateState destroyState()=>null;
 }
 
 class _VideoCreateState extends State<VideoCreate> {
@@ -44,6 +46,7 @@ class _VideoCreateState extends State<VideoCreate> {
     //       dataManager.skipToNextVideo(Duration(seconds: 5));
     //     });
     flickManager = null;
+
     // dataManager = DataManager(flickManager: flickManager, urls: urls);
   }
 
@@ -64,8 +67,8 @@ class _VideoCreateState extends State<VideoCreate> {
 
   @override
   void deactivate() {
-    super.deactivate();
     if (flickManager != null) flickManager.dispose();
+    super.deactivate();
   }
 
   skipToVideo(String url) {
