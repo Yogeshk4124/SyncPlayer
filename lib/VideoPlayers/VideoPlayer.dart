@@ -1,0 +1,203 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:flick_video_player/flick_video_player.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_widgets/flutter_widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:video_player/video_player.dart';
+import '../layouts/custom_orientation_player/controls.dart';
+import '../layouts/custom_orientation_player/data_manager.dart';
+
+class VideoPlayer extends StatefulWidget {
+  @override
+  _VideoPlayerState createState() => _VideoPlayerState();
+
+  @override
+  _VideoPlayerState destroyState() => null;
+}
+
+class _VideoPlayerState extends State<VideoPlayer> {
+  FlickManager flickManager;
+  DataManager dataManager;
+  VideoPlayerController controller;
+  List<String> urls = [];
+  Widget d;
+  bool selected = false;
+  int f = 1, complete = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // flickManager = FlickManager(
+    //     videoPlayerController: VideoPlayerController.network(
+    //       urls[0],
+    //     ),
+    //     onVideoEnd: () {
+    //       dataManager.skipToNextVideo(Duration(seconds: 5));
+    //     });
+    flickManager = null;
+
+    // dataManager = DataManager(flickManager: flickManager, urls: urls);
+  }
+
+  void setVideo(VideoPlayerController controller) {
+    flickManager = FlickManager(
+        videoPlayerController: controller,
+        onVideoEnd: () {
+          dataManager.skipToNextVideo(Duration(seconds: 5));
+        });
+    dataManager = DataManager(flickManager: flickManager, urls: urls);
+  }
+
+  @override
+  void dispose() {
+    if (flickManager != null) flickManager.dispose();
+    super.dispose();
+  }
+
+  skipToVideo(String url) {
+    // flickManager.handleChangeVideo(VideoPlayerController.network(url));
+  }
+
+//0:01:39.251000
+  @override
+  Widget build(BuildContext context) {
+    if (f == 1 && flickManager != null) {
+      f = 0;
+      flickManager.flickVideoManager.addListener(() {
+        setState(() {});
+      });
+    }
+    return AnnotatedRegion(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // Text('MOVIE NIGHT !!',style: GoogleFonts.bungee(),),
+              if (flickManager != null)
+                VisibilityDetector(
+                    key: ObjectKey(flickManager),
+                    onVisibilityChanged: (visibility) {
+                      if (visibility.visibleFraction == 0 && this.mounted) {
+                        flickManager.flickControlManager.autoPause();
+                      } else if (visibility.visibleFraction == 1) {
+                        flickManager.flickControlManager.autoResume();
+                      }
+                    },
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(bottom: 16),
+                          child: FlickVideoPlayer(
+                            flickManager: flickManager,
+                            preferredDeviceOrientationFullscreen: [
+                              DeviceOrientation.portraitUp,
+                              DeviceOrientation.landscapeLeft,
+                              DeviceOrientation.landscapeRight,
+                            ],
+                            flickVideoWithControls: FlickVideoWithControls(
+                              controls: CustomOrientationControls(
+                                dataManager: dataManager,
+                              ),
+                            ),
+                            flickVideoWithControlsFullscreen:
+                                FlickVideoWithControls(
+                              videoFit: BoxFit.fitWidth,
+                              controls: CustomOrientationControls(
+                                dataManager: dataManager,
+                              ),
+                            ),
+                          ),
+                        ),
+                        MaterialButton(
+                          onPressed: () {},
+                          child: Container(
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                              ),
+                              child: Text("LEAVE")),
+                        ),
+                      ],
+                    ))
+              else
+                Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      Image.asset(
+                        "assets/images/video.jpeg",
+                        fit: BoxFit.fill,
+                        height: MediaQuery.of(context).size.height * 0.60,
+                      ),
+                      Text(
+                        'Get Ready!!',
+                        style: GoogleFonts.bungee(fontSize: 32),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Text(
+                              'Stream',
+                              style: GoogleFonts.roboto(),
+                            ),
+                            Text(
+                              'Movie',
+                              style: GoogleFonts.roboto(),
+                            ),
+                            Text(
+                              'Enjoy',
+                              style: GoogleFonts.roboto(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      MaterialButton(
+                        onPressed: () async {
+                          final file = await pickVideoFile();
+                          if (file == null) return;
+                          setState(() {
+                            controller = VideoPlayerController.file(file);
+                            setVideo(controller);
+                            selected = !selected;
+                          });
+                        },
+                        child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 25, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Color(0xffFF2929),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                            ),
+                            child: Text('ADD VIDEO')),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<File> pickVideoFile() async {
+    final result = await FilePicker.platform.pickFiles(); //type: FileType.video
+    if (result == null) return null;
+    urls.add(result.files.single.path);
+    return File(result.files.single.path);
+  }
+}

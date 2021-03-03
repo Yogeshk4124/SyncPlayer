@@ -7,6 +7,7 @@ import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'Configuration.dart';
 import 'VideoPlayers/VideoCreate.dart';
 import 'VideoPlayers/VideoJoin.dart';
+import 'VideoPlayers/VideoPlayer.dart';
 import 'audioPlayers/audioPlayer.dart';
 
 Future<Map<String, dynamic>> getData() async {
@@ -41,8 +42,7 @@ class _Home4State extends State<Home4> {
         if (data['Join'] == '-1' && data['Create'] == '-1') {
           print('C1');
           return audioPlayer();
-        }
-        else if (data['Join'] != '-1')
+        } else if (data['Join'] != '-1')
           return audioPlayerJoin(
             RoomId: int.parse(data['Join']),
           );
@@ -55,12 +55,15 @@ class _Home4State extends State<Home4> {
         );
         break;
       case 2:
-      // return videoPlayer(RoomId: int.parse(data['Create'])>int.parse(data['Join'])?int.parse(data['Create']):int.parse(data['Join']),);
-        if (data['Join'] != '-1')
+        if (data['Join'] == '-1' && data['Create'] == '-1') {
+          print('C1');
+          return VideoPlayer();
+        } else if (data['Join'] != '-1')
           return VideoJoin(
             Roomid: int.parse(data['Join']),
           );
-        return VideoCreate(Roomid: int.parse(data['Create']));
+        else
+          return VideoCreate(Roomid: int.parse(data['Create']));
         break;
       default:
         return Home2(
@@ -81,7 +84,6 @@ class _Home4State extends State<Home4> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: getPage(_currentIndex),
-
       bottomNavigationBar: SnakeNavigationBar.color(
         behaviour: SnakeBarBehaviour.pinned,
         snakeShape: snakeShape,
@@ -97,9 +99,9 @@ class _Home4State extends State<Home4> {
         ///configuration for SnakeNavigationBar.color
         snakeViewColor: Colors.black,
 
-        selectedItemColor:
-        snakeShape == SnakeShape.indicator ? Color(0xffFF2929) : Color(
-            0xffFF2929),
+        selectedItemColor: snakeShape == SnakeShape.indicator
+            ? Color(0xffFF2929)
+            : Color(0xffFF2929),
         unselectedItemColor: Color(0xff606060),
 
         ///configuration for SnakeNavigationBar.gradient
