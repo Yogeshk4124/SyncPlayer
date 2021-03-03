@@ -30,6 +30,7 @@ class _VideoCreateState extends State<VideoCreate> {
   Widget d;
   AdvFabController FABcontroller;
   bool selected = false;
+  int f = 1,complete=0;
 
   @override
   void initState() {
@@ -75,28 +76,41 @@ class _VideoCreateState extends State<VideoCreate> {
   @override
   Widget build(BuildContext context) {
     Timer.periodic(Duration(seconds: 1), (Timer t) async {
-      if (flickManager != null) {
-        // print(flickManager.flickVideoManager.videoPlayerValue.position.inSeconds.toString());
+      if (flickManager != null&&complete==0) {
+        complete=1;
+        print("cur:"+flickManager.flickVideoManager.videoPlayerValue.position.inSeconds.toString());
         String time = flickManager.flickVideoManager.videoPlayerValue.isPlaying
             ? flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
-                .toString()
-            : '-1';
-        http.Response response = await http.get(
-            'http://20.197.61.11:8000/seekTo/' +
-                widget.Roomid.toString() +
-                '/' +
-                time);
+                .toString():'-1';
+        // http.Response response = await http.get(
+        //     'http://20.197.61.11:8000/seekTo/' +
+        //         widget.Roomid.toString() +
+        //         '/' +
+        //         time);
+        String l='http://20.197.61.11:8000/seekTo/' +
+            widget.Roomid.toString() +
+            '/' +
+            time;
+        print("link:"+l);
+        Future<http.Response> response = http.get(l);
+        response.then((value){
+          setState(() {
+            complete=0;
+          });
+        });
+
       }
     });
-
-    if (flickManager != null)
+    if (f == 1 && flickManager != null) {
+      f = 0;
       flickManager.flickVideoManager.addListener(() {
         setState(() {});
       });
+    }
     return AnnotatedRegion(
-        value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-        ),
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ),
       child: Scaffold(
         backgroundColor: Colors.black,
         floatingActionButton: selected
@@ -113,7 +127,8 @@ class _VideoCreateState extends State<VideoCreate> {
                 floatingActionButtonIconColor: Colors.white,
                 floatingActionButtonExpendedWidth: 90,
                 navigationBarIconActiveColor: Colors.pink,
-                navigationBarIconInactiveColor: Colors.pink[200].withOpacity(0.6),
+                navigationBarIconInactiveColor:
+                    Colors.pink[200].withOpacity(0.6),
                 collapsedColor: Colors.red,
                 controller: FABcontroller,
                 useAsFloatingSpaceBar: false,
@@ -127,7 +142,6 @@ class _VideoCreateState extends State<VideoCreate> {
         body: SafeArea(
           top: false,
           child: Column(
-
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               // Text('MOVIE NIGHT !!',style: GoogleFonts.bungee(),),
@@ -141,7 +155,6 @@ class _VideoCreateState extends State<VideoCreate> {
                         flickManager.flickControlManager.autoResume();
                       }
                     },
-
                     child: Column(
                       children: <Widget>[
                         Container(
@@ -173,7 +186,8 @@ class _VideoCreateState extends State<VideoCreate> {
                               padding: EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Colors.red,
-                                borderRadius: BorderRadius.all(Radius.circular(20)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
                               ),
                               child: Text("LEAVE")),
                         ),
@@ -229,10 +243,12 @@ class _VideoCreateState extends State<VideoCreate> {
                                 child: Container(
                                   color: Colors.red,
                                   width: (MediaQuery.of(context).size.width),
-                                  height:
-                                      (MediaQuery.of(context).size.height / 100) * 20,
+                                  height: (MediaQuery.of(context).size.height /
+                                          100) *
+                                      20,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       IconButton(
                                         onPressed: () {
@@ -252,11 +268,12 @@ class _VideoCreateState extends State<VideoCreate> {
                           });
                         },
                         child: Container(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 25, vertical: 10),
                             decoration: BoxDecoration(
                               color: Color(0xffFF2929),
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
                             ),
                             child: Text('ADD VIDEO')),
                       ),

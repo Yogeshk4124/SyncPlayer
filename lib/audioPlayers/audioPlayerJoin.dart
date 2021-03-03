@@ -71,6 +71,11 @@ class _audioPlayerJoinState extends State<audioPlayerJoin> {
     var decodedData = jsonDecode(response.body);
     return decodedData['second'];
   }
+  @override
+  void deactivate(){
+    assetsAudioPlayer.dispose();
+    super.deactivate();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +98,7 @@ class _audioPlayerJoinState extends State<audioPlayerJoin> {
       });
     });
     return Scaffold(
-      backgroundColor: Color(0xff14174E),
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -151,11 +156,19 @@ class _audioPlayerJoinState extends State<audioPlayerJoin> {
                   if (assetsAudioPlayer.current != null)
                     return Column(
                       children: [
-                        Text(_printDurationAsString(Duration(seconds: assetsAudioPlayer.currentPosition.value.inSeconds))),
+                        Text(_printDurationAsString(Duration(
+                            seconds: assetsAudioPlayer
+                                .currentPosition.value.inSeconds))),
                         SleekCircularSlider(
                           min: 0,
-                          max: assetsAudioPlayer.current.value==null?1:assetsAudioPlayer.current.value.audio.duration.inSeconds.toDouble(),
-                          initialValue: assetsAudioPlayer.currentPosition.value.inSeconds.toDouble(),
+                          max: assetsAudioPlayer.current.value == null
+                              ? 1
+                              : assetsAudioPlayer
+                                  .current.value.audio.duration.inSeconds
+                                  .toDouble(),
+                          initialValue: assetsAudioPlayer
+                              .currentPosition.value.inSeconds
+                              .toDouble(),
                           appearance: CircularSliderAppearance(
                             angleRange: 360,
                             animationEnabled: false,
@@ -163,14 +176,18 @@ class _audioPlayerJoinState extends State<audioPlayerJoin> {
                             startAngle: 270,
                             animDurationMultiplier: 300,
                             customWidths: CustomSliderWidths(
-                                trackWidth: 2, progressBarWidth: 3, handlerSize: 4),
-                            customColors: CustomSliderColors(progressBarColors: [
-                              Color(0xffF9657F),
-                              Color(0xffF61976)
-                            ], trackColors: [
-                              Color(0x66F9657F),
-                              Color(0x66F61976)
-                            ]),
+                                trackWidth: 2,
+                                progressBarWidth: 3,
+                                handlerSize: 4),
+                            customColors: CustomSliderColors(
+                                progressBarColors: [
+                                  Color(0xffF9657F),
+                                  Color(0xffF61976)
+                                ],
+                                trackColors: [
+                                  Color(0x66F9657F),
+                                  Color(0x66F61976)
+                                ]),
                             //#F9657F->#F61976
                           ),
                           innerWidget: (double value) {
@@ -194,14 +211,18 @@ class _audioPlayerJoinState extends State<audioPlayerJoin> {
                             startAngle: 270,
                             animDurationMultiplier: 300,
                             customWidths: CustomSliderWidths(
-                                trackWidth: 2, progressBarWidth: 3, handlerSize: 4),
-                            customColors: CustomSliderColors(progressBarColors: [
-                              Color(0xffF9657F),
-                              Color(0xffF61976)
-                            ], trackColors: [
-                              Color(0x66F9657F),
-                              Color(0x66F61976)
-                            ]),
+                                trackWidth: 2,
+                                progressBarWidth: 3,
+                                handlerSize: 4),
+                            customColors: CustomSliderColors(
+                                progressBarColors: [
+                                  Color(0xffF9657F),
+                                  Color(0xffF61976)
+                                ],
+                                trackColors: [
+                                  Color(0x66F9657F),
+                                  Color(0x66F61976)
+                                ]),
                             //#F9657F->#F61976
                           ),
                           innerWidget: (double value) {
@@ -281,13 +302,14 @@ class _audioPlayerJoinState extends State<audioPlayerJoin> {
                                 });
                               },
                               child: RadiantGradientMask(
-                                  child: Icon(
-                                    pIcon,
-                                    size: 80,
-                                    color: Colors.white,
-                                  ),
-                                  c1: Color(0xffF9657F),
-                                  c2: Color(0xffF61976)),
+                                child: Icon(
+                                  pIcon,
+                                  size: 80,
+                                  color: Colors.white,
+                                ),
+                                c2: Color(0xffff0000),
+                                c1: Color(0xAAd70000),
+                              ),
                             );
                           }),
                       GestureDetector(
@@ -419,15 +441,10 @@ class _audioPlayerJoinState extends State<audioPlayerJoin> {
     assetsAudioPlayer.seekBy(new Duration(seconds: -10));
   }
 
-  @override
-  // ignore: must_call_super
-  void deactivate() {
-    assetsAudioPlayer.stop();
-  }
 
   @override
-  // ignore: must_call_super
   void dispose() {
-    assetsAudioPlayer.stop();
+    super.dispose();
+    assetsAudioPlayer.dispose();
   }
 }

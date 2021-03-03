@@ -35,7 +35,7 @@ class _Home4State extends State<Home4> {
   }
 
   Widget getPage(int index) {
-    print(data.toString());
+    // print(data.toString());
     switch (index) {
       case 0:
         if (data['Join'] == '-1' && data['Create'] == '-1') {

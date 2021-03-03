@@ -27,6 +27,7 @@ class _VideoJoinState extends State<VideoJoin> {
   DataManager dataManager;
   VideoPlayerController controller;
   List<String> urls = [];
+  int f = 1, complete = 0;
 
   @override
   void initState() {
@@ -62,31 +63,43 @@ class _VideoJoinState extends State<VideoJoin> {
 //0:01:39.251000
   @override
   Widget build(BuildContext context) {
-    Timer.periodic(Duration(seconds: 1), (Timer t) async {
+    Timer.periodic(Duration(seconds: 5), (Timer t) async {
       // print('http://20.197.61.11:8000/getCurrentSecond/' +
       //     widget.Roomid.toString());
-      if (flickManager != null) {
-        Future<http.Response> response = http.get(
-            'http://20.197.61.11:8000/getCurrentSecond/' +
-                widget.Roomid.toString());
+      if (flickManager != null && complete == 0) {
+        complete = 1;
+        String link = 'http://20.197.61.11:8000/getCurrentSecond/' +
+            widget.Roomid.toString();
+        // print("jlink:"+link);
+        Future<http.Response> response = http.get(link);
         response.then((value) {
+          complete = 0;
           var decodedData = jsonDecode(value.body);
-          print(decodedData['second']);
-          if (decodedData['second'] == '-1')
+          print("jcur:"+decodedData['second'].toString());
+          print("diff"+(int.parse(flickManager.flickVideoManager.videoPlayerValue.position.inSeconds.toString())-int.parse(decodedData['second'].toString())).abs().toString());
+          if (decodedData['second'].toString() == '-1'.toString()) {
+            print("pausing");
             flickManager.flickControlManager.pause();
-          else {
+          }else if((int.parse(flickManager.flickVideoManager.videoPlayerValue.position.inSeconds.toString())-int.parse(decodedData['second'].toString())).abs()>2){
+            print('here2');
             flickManager.flickControlManager
-                .seekTo(Duration(seconds: decodedData['second']));
+                .seekTo(Duration(seconds: int.parse(decodedData['second'].toString())));
+            flickManager.flickControlManager.play();
+          }
+          else {
+            print("here3");
             flickManager.flickControlManager.play();
           }
         });
       }
     });
 
-    if (flickManager != null)
+    if (f == 1 && flickManager != null) {
+      f = 0;
       flickManager.flickVideoManager.addListener(() {
         setState(() {});
       });
+    }
     return Column(
       children: <Widget>[
         Padding(
