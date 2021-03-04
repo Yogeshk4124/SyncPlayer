@@ -5,3 +5,5 @@
         2. /sendMessage/< room-id >/< sender-name >/< message ><br>
         3. /getMessages/< room-id ><br>
         4. /closeRoom/< room-id ><br>
+        
+        API hosted at: http://20.197.61.11:8001/
