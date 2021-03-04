@@ -48,15 +48,30 @@ class _VideoJoinState extends State<VideoJoin> {
         });
     dataManager = DataManager(flickManager: flickManager, urls: urls);
   }
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  void _clearCachedFiles() {
+    FilePicker.platform.clearTemporaryFiles().then((result) {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: result ? Colors.green : Colors.red,
+          content: Text((result
+              ? 'Temporary files removed with success.'
+              : 'Failed to clean temporary files')),
+        ),
+      );
+    });
+  }
 
   @override
   void dispose() {
     super.dispose();
     if (flickManager != null) flickManager.dispose();
+    _clearCachedFiles();
   }
 
   @override
   void deactivate() {
+    _clearCachedFiles();
     super.deactivate();
     if (flickManager != null) flickManager.dispose();
   }

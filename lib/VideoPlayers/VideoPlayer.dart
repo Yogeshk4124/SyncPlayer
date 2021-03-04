@@ -27,6 +27,19 @@ class _VideoPlayerState extends State<VideoPlayer> {
   Widget d;
   bool selected = false;
   int f = 1, complete = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  void _clearCachedFiles() {
+    FilePicker.platform.clearTemporaryFiles().then((result) {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: result ? Colors.green : Colors.red,
+          content: Text((result
+              ? 'Temporary files removed with success.'
+              : 'Failed to clean temporary files')),
+        ),
+      );
+    });
+  }
 
   @override
   void initState() {
@@ -55,11 +68,17 @@ class _VideoPlayerState extends State<VideoPlayer> {
   @override
   void dispose() {
     if (flickManager != null) flickManager.dispose();
+    _clearCachedFiles();
     super.dispose();
   }
 
   skipToVideo(String url) {
     // flickManager.handleChangeVideo(VideoPlayerController.network(url));
+  }
+  @override
+  void deactivate() {
+    _clearCachedFiles();
+    super.deactivate();
   }
 
 //0:01:39.251000

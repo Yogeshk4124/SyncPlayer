@@ -20,8 +20,9 @@ class VideoCreate extends StatefulWidget {
 
   @override
   _VideoCreateState createState() => _VideoCreateState();
+
   @override
-  _VideoCreateState destroyState()=>null;
+  _VideoCreateState destroyState() => null;
 }
 
 class _VideoCreateState extends State<VideoCreate> {
@@ -32,7 +33,7 @@ class _VideoCreateState extends State<VideoCreate> {
   Widget d;
   AdvFabController FABcontroller;
   bool selected = false;
-  int f = 1,complete=0;
+  int f = 1, complete = 0;
 
   @override
   void initState() {
@@ -49,6 +50,19 @@ class _VideoCreateState extends State<VideoCreate> {
 
     // dataManager = DataManager(flickManager: flickManager, urls: urls);
   }
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  void _clearCachedFiles() {
+    FilePicker.platform.clearTemporaryFiles().then((result) {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: result ? Colors.green : Colors.red,
+          content: Text((result
+              ? 'Temporary files removed with success.'
+              : 'Failed to clean temporary files')),
+        ),
+      );
+    });
+  }
 
   void setVideo(VideoPlayerController controller) {
     flickManager = FlickManager(
@@ -63,9 +77,14 @@ class _VideoCreateState extends State<VideoCreate> {
   void dispose() {
     if (flickManager != null) flickManager.dispose();
     print("disposing");
+    _clearCachedFiles();
     super.dispose();
   }
-
+  @override
+  void deactivate() {
+    _clearCachedFiles();
+    super.deactivate();
+  }
   skipToVideo(String url) {
     // flickManager.handleChangeVideo(VideoPlayerController.network(url));
   }
@@ -74,29 +93,31 @@ class _VideoCreateState extends State<VideoCreate> {
   @override
   Widget build(BuildContext context) {
     Timer.periodic(Duration(seconds: 1), (Timer t) async {
-      if (flickManager != null&&complete==0) {
-        complete=1;
-        print("cur:"+flickManager.flickVideoManager.videoPlayerValue.position.inSeconds.toString());
+      if (flickManager != null && complete == 0) {
+        complete = 1;
+        print("cur:" +
+            flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
+                .toString());
         String time = flickManager.flickVideoManager.videoPlayerValue.isPlaying
             ? flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
-                .toString():'-1';
+                .toString()
+            : '-1';
         // http.Response response = await http.get(
         //     'http://20.197.61.11:8000/seekTo/' +
         //         widget.Roomid.toString() +
         //         '/' +
         //         time);
-        String l='http://20.197.61.11:8000/seekTo/' +
+        String l = 'http://20.197.61.11:8000/seekTo/' +
             widget.Roomid.toString() +
             '/' +
             time;
-        print("link:"+l);
+        print("link:" + l);
         Future<http.Response> response = http.get(l);
-        response.then((value){
+        response.then((value) {
           setState(() {
-            complete=0;
+            complete = 0;
           });
         });
-
       }
     });
     if (f == 1 && flickManager != null) {

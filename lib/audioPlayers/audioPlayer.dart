@@ -18,6 +18,7 @@ class audioPlayer extends StatefulWidget {
 
 // ignore: camel_case_types
 class _audioPlayerState extends State<audioPlayer> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String mp3Uri = '', song = ' null';
   int current = 0;
   final assetsAudioPlayer = AssetsAudioPlayer();
@@ -56,6 +57,18 @@ class _audioPlayerState extends State<audioPlayer> {
       int x = playing.audio.assetAudioPath.lastIndexOf('/');
       return playing.audio.assetAudioPath.substring(x + 1);
     }
+  }
+  void _clearCachedFiles() {
+    FilePicker.platform.clearTemporaryFiles().then((result) {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: result ? Colors.green : Colors.red,
+          content: Text((result
+              ? 'Temporary files removed with success.'
+              : 'Failed to clean temporary files')),
+        ),
+      );
+    });
   }
 
   @override
@@ -369,7 +382,7 @@ class _audioPlayerState extends State<audioPlayer> {
 
   void open() {
     song = "entering";
-    Future<FilePickerResult> result = FilePicker.platform.pickFiles();
+    Future<FilePickerResult> result = FilePicker.platform.pickFiles(withReadStream: true);
     File file;
     // flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi
     result.then((value) {
@@ -380,7 +393,10 @@ class _audioPlayerState extends State<audioPlayer> {
         //   song=file.path;
         // }
         song = "result received";
+        print("Alone");
+        print("file loc:"+value.files.single.path.toString());
         file = File(value.files.single.path);
+
         audios.add(Audio.file(file.path));
         assetsAudioPlayer.open(
           Playlist(audios: audios),
@@ -421,7 +437,10 @@ class _audioPlayerState extends State<audioPlayer> {
   }
 
   @override
-  deactivate() {
+  void deactivate() {
+    _clearCachedFiles();
     assetsAudioPlayer.stop();
+    super.deactivate();
   }
+
 }
