@@ -23,6 +23,7 @@ class audioPlayerJoin extends StatefulWidget {
 
 // ignore: camel_case_types
 class _audioPlayerJoinState extends State<audioPlayerJoin> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String mp3Uri = '';
   int current = 0;
   int ct = -1;
@@ -63,6 +64,18 @@ class _audioPlayerJoinState extends State<audioPlayerJoin> {
       return playing.audio.assetAudioPath.substring(x + 1);
     }
   }
+  void _clearCachedFiles() {
+    FilePicker.platform.clearTemporaryFiles().then((result) {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: result ? Colors.green : Colors.red,
+          content: Text((result
+              ? 'Temporary files removed with success.'
+              : 'Failed to clean temporary files')),
+        ),
+      );
+    });
+  }
 
   Future getSec() async {
     http.Response response = await http.get(
@@ -73,6 +86,8 @@ class _audioPlayerJoinState extends State<audioPlayerJoin> {
   }
   @override
   void deactivate(){
+    _clearCachedFiles();
+
     assetsAudioPlayer.dispose();
     super.deactivate();
   }

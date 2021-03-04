@@ -29,7 +29,20 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
   int i = 0, j = 0;
   ValueNotifier<double> valueNotifier = ValueNotifier<double>(0);
   final audios = <Audio>[];
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  void _clearCachedFiles() {
+    FilePicker.platform.clearTemporaryFiles().then((result) {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          backgroundColor: result ? Colors.green : Colors.red,
+          content: Text((result
+              ? 'Temporary files removed with success.'
+              : 'Failed to clean temporary files')),
+        ),
+      );
+    });
+  }
 //Listen to the current playing song
   Duration _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -467,7 +480,9 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
   }
 
   @override
-  deactivate() {
+  void deactivate() {
+    _clearCachedFiles();
     assetsAudioPlayer.stop();
+    super.deactivate();
   }
 }
