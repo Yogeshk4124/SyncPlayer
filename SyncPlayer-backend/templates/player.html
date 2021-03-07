@@ -76,7 +76,7 @@
         $("#create-room-button").click(function(){
             if(roomId!=-1)
             {
-                $.getJSON("http://20.197.61.11:8000/closeRoom/"+roomId, function(data){
+                $.getJSON("http://harmonpreet012.centralindia.cloudapp.azure.com:8000/closeRoom/"+roomId, function(data){
                     console.log(data);
                     roomId = -1;
                     document.getElementById("create-room-button").innerHTML="Create room";
@@ -85,18 +85,18 @@
                 return ;  
             }
             
-            $.getJSON("http://20.197.61.11:8000/createRoom", function(data){
+            $.getJSON("http://harmonpreet012.centralindia.cloudapp.azure.com:8000/createRoom", function(data){
                 document.getElementById("room-id").innerHTML = "Yout Room id: "+data["Room-id"];
                 roomId = data["Room-id"]; 
                 document.getElementById("create-room-button").innerHTML="close room";
                 document.getElementById("join-room-div").style.display="none";
                 
-                $.getJSON("http://localhost:5000/createRoom/"+roomId, function(data1)
+                $.getJSON("http://harmonpreet012.centralindia.cloudapp.azure.com:8001/createRoom/"+roomId, function(data1)
                 {
                         document.getElementById("chat-box-input").disabled=false;
                         document.getElementById("send-chat-button").disabled=false;
                         setInterval(function(){
-                            $.getJSON("http://localhost:5000/getMessages/"+roomId, function(data2){
+                            $.getJSON("http://harmonpreet012.centralindia.cloudapp.azure.com:8001/getMessages/"+roomId, function(data2){
                             document.getElementById("chats").innerHTML="";
                             console.log(data2);
                             for( var i=data2.length-1 ; i>-1 ; i--)
@@ -112,7 +112,7 @@
         });
         $("#send-chat-button").click(function(){
             myMessage= document.getElementById("chat-box-input").value;
-            $.getJSON("http://localhost:5000/sendMessage/"+roomId+"/"+myMessage, function(data){
+            $.getJSON("http://harmonpreet012.centralindia.cloudapp.azure.com:8001/sendMessage/"+roomId+"/user0/"+myMessage, function(data){
                 console.log(data);
             });
         });
@@ -131,12 +131,12 @@
                 clearInterval(tempInterval);
                
                     tempInterval = setInterval(function(data2){
-                        $.getJSON("http://20.197.61.11:8000/getCurrentSecond/"+roomId, function(data2){
+                        $.getJSON("http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/"+roomId, function(data2){
                             seekTo(data2["second"]);
                         });
                     }, 5000);
                     setInterval(function(){
-                            $.getJSON("http://localhost:5000/getMessages/"+roomId, function(data3){
+                            $.getJSON("http://harmonpreet012.centralindia.cloudapp.azure.com:8001/getMessages/"+roomId, function(data3){
                             document.getElementById("chats").innerHTML="";
                                 
                             for( var i=data3.length-1 ; i>-1 ; i--)
@@ -155,12 +155,12 @@
                 document.getElementById("start-player-as-host").disabled="true";
                 document.getElementById("create-room-button").style.display="none";
                 
-                $.getJSON("http://20.197.61.11:8000/startPlayer/"+roomId, function(data){
+                $.getJSON("http://harmonpreet012.centralindia.cloudapp.azure.com:8000/startPlayer/"+roomId, function(data){
                         setInterval(function(){
                             console.log(data);
                             var currSec = document.getElementById("video-player").currentTime;
                             currSec = Math.floor(currSec);
-                            $.getJSON("http://20.197.61.11:8000/seekTo/"+roomId+"/"+currSec);
+                            $.getJSON("http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/"+roomId+"/"+currSec);
                         
                         }, 3000);
                 });
