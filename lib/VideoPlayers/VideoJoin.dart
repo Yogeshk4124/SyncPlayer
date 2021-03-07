@@ -127,7 +127,7 @@ class _VideoJoinState extends State<VideoJoin> {
       //     widget.Roomid.toString());
       if (flickManager != null && complete == 0) {
         complete = 1;
-        String link = 'http://20.197.61.11:8000/getCurrentSecond/' +
+        String link = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
             widget.Roomid.toString();
         // print("jlink:"+link);
         Future<http.Response> response = http.get(link);

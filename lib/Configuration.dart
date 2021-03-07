@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:ui';
-
-import 'package:SyncPlayer/audioPlayers/audioPlayerJoin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -23,10 +21,10 @@ class _Home2State extends State<Home2> {
   int _selected = 1;
   String creating = 'You have not Created/Joined any room.Create Room?',
       button = "Connect",
-      link = 'http://20.197.61.11:8000/createRoom';
+      link = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/createRoom';
   String Jjoining = 'Enter Room Id',
       Jbutton = "Join",
-      Jlink = 'http://20.197.61.11:8000/addUser/';
+      Jlink = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/addUser/';
   int get = 0;
 
   @override
@@ -39,7 +37,7 @@ class _Home2State extends State<Home2> {
     } else if (widget.data['Create'] != '-1' && widget.data['Join'] == '-1') {
       _selected = 1;
       creating = 'Created:' + widget.data['Create'].toString();
-      link = 'http://20.197.61.11:8000/closeRoom/' +
+      link = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/closeRoom/' +
           widget.data['Create'].toString();
       button = "Disconnect";
     }
@@ -81,7 +79,7 @@ class _Home2State extends State<Home2> {
                       print("CD:1");
                       widget.data['Create'] = decodedData['Room-id'].toString();
                       creating = 'Created:' + widget.data['Create'].toString();
-                      link = 'http://20.197.61.11:8000/closeRoom/' +
+                      link = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/closeRoom/' +
                           widget.data['Create'].toString();
                       button = "Disconnect";
                     } else {
@@ -90,7 +88,7 @@ class _Home2State extends State<Home2> {
                       creating =
                           'You have not Created/Joined any room.Create Room?';
                       button = "Connect";
-                      link = 'http://20.197.61.11:8000/createRoom';
+                      link = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/createRoom';
                     }
                   });
                 });

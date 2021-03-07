@@ -81,7 +81,7 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
         "," +
         sec.toString());
     Future<http.Response> response = http.get(
-        'http://20.197.61.11:8000/seekTo/' +
+        'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/' +
             widget.RoomId.toString() +
             '/' +
             sec.toString());

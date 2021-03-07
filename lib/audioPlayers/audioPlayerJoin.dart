@@ -80,7 +80,7 @@ class _audioPlayerJoinState extends State<audioPlayerJoin> {
 
   Future getSec() async {
     http.Response response = await http.get(
-        'http://20.197.61.11:8000/getCurrentSecond/' +
+        'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
             widget.RoomId.toString());
     var decodedData = jsonDecode(response.body);
     return decodedData['second'];

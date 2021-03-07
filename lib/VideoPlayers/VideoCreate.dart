@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,10 +36,15 @@ class _VideoCreateState extends State<VideoCreate> {
   AdvFabController FABcontroller;
   bool selected = false;
   int f = 1, complete = 0;
+  List msg;
 
   @override
   void initState() {
     super.initState();
+    msg = new List();
+    String link =
+        "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/createRoom/" + widget.Roomid.toString();
+    Future<http.Response> response = http.get(link);
     FABcontroller = AdvFabController();
     // flickManager = FlickManager(
     //     videoPlayerController: VideoPlayerController.network(
@@ -51,7 +57,9 @@ class _VideoCreateState extends State<VideoCreate> {
 
     // dataManager = DataManager(flickManager: flickManager, urls: urls);
   }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void _clearCachedFiles() {
     FilePicker.platform.clearTemporaryFiles().then((result) {
       _scaffoldKey.currentState.showSnackBar(
@@ -81,53 +89,56 @@ class _VideoCreateState extends State<VideoCreate> {
     _clearCachedFiles();
     super.dispose();
   }
+
   @override
   void deactivate() {
     _clearCachedFiles();
     super.deactivate();
   }
+
   // void onBack
   skipToVideo(String url) {
     // flickManager.handleChangeVideo(VideoPlayerController.network(url));
   }
+
   Future<bool> _onBackPressed() {
     return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit an App'),
-        actions: <Widget>[
-          new GestureDetector(
-            onTap: () async{
-              // if (flickManager != null) flickManager.dispose();
-              // _clearCachedFiles();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => Home4()),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit an App'),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () async {
+                  // if (flickManager != null) flickManager.dispose();
+                  // _clearCachedFiles();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Home4()),
                     (route) => false,
-              );
-            },
-            child: Text("Yes"),
+                  );
+                },
+                child: Text("Yes"),
+              ),
+              SizedBox(height: 16),
+              new GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                  // if (flickManager != null) flickManager.dispose();
+                  // _clearCachedFiles();
+                  // Navigator.pushAndRemoveUntil(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (BuildContext context) => Home4()),
+                  //   (route) => false,
+                  // );
+                },
+                child: Text("No"),
+              ),
+            ],
           ),
-          SizedBox(height: 16),
-          new GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop(false);
-              // if (flickManager != null) flickManager.dispose();
-              // _clearCachedFiles();
-              // Navigator.pushAndRemoveUntil(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (BuildContext context) => Home4()),
-              //   (route) => false,
-              // );
-            },
-            child: Text("No"),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 
@@ -137,9 +148,9 @@ class _VideoCreateState extends State<VideoCreate> {
     Timer.periodic(Duration(seconds: 1), (Timer t) async {
       if (flickManager != null && complete == 0) {
         complete = 1;
-        print("cur:" +
-            flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
-                .toString());
+        // print("cur:" +
+        //     flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
+        //         .toString());
         String time = flickManager.flickVideoManager.videoPlayerValue.isPlaying
             ? flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
                 .toString()
@@ -149,11 +160,11 @@ class _VideoCreateState extends State<VideoCreate> {
         //         widget.Roomid.toString() +
         //         '/' +
         //         time);
-        String l = 'http://20.197.61.11:8000/seekTo/' +
+        String l = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/' +
             widget.Roomid.toString() +
             '/' +
             time;
-        print("link:" + l);
+        // print("link:" + l);
         Future<http.Response> response = http.get(l);
         response.then((value) {
           setState(() {
@@ -179,12 +190,22 @@ class _VideoCreateState extends State<VideoCreate> {
           floatingActionButton: selected
               ? AdvFab(
                   showLogs: true,
-                  onFloatingActionButtonTapped: () {
+                  onFloatingActionButtonTapped: () async {
+                    msg.clear();
+                    http.Response response = await http.get(
+                        "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/getMessages/" +
+                            widget.Roomid.toString());
+                    var decodedData = jsonDecode(response.body);
+                    for (dynamic res in decodedData) {
+                      msg.add([res[0].toString(), res[1].toString()]);
+                    }
+                    print(msg.toString());
                     FABcontroller.isCollapsed
                         ? FABcontroller.expandFAB()
                         : FABcontroller.collapseFAB();
                   },
-                  floatingActionButtonIcon: CupertinoIcons.chat_bubble_text_fill,
+                  floatingActionButtonIcon:
+                      CupertinoIcons.chat_bubble_text_fill,
                   useAsFloatingActionButton: true,
                   useAsNavigationBar: false,
                   floatingActionButtonIconColor: Colors.white,
@@ -299,16 +320,18 @@ class _VideoCreateState extends State<VideoCreate> {
                               selected = !selected;
                               FABcontroller.setExpandedWidgetConfiguration(
                                 showLogs: true,
-                                heightToExpandTo: 40,
+                                heightToExpandTo:
+                                    MediaQuery.of(context).size.height * 0.10,
                                 expendedBackgroundColor: Colors.redAccent,
                                 withChild: Padding(
                                   padding: const EdgeInsets.all(15.0),
                                   child: Container(
                                     color: Colors.red,
                                     width: (MediaQuery.of(context).size.width),
-                                    height: (MediaQuery.of(context).size.height /
-                                            100) *
-                                        20,
+                                    height:
+                                        (MediaQuery.of(context).size.height /
+                                                100) *
+                                            50,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -322,6 +345,18 @@ class _VideoCreateState extends State<VideoCreate> {
                                             });
                                           },
                                           icon: Icon(CupertinoIcons.arrow_left),
+                                        ),
+                                        Text("hello",style: TextStyle(color: Colors.white,fontSize: 20),),
+                                        Column(
+                                          children: <Widget>[
+                                            for (dynamic m in msg)
+                                              Column(
+                                                children: [
+                                                  Text(m[0].toString()),
+                                                  Text(m[1].toString()),
+                                                ],
+                                              ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -352,7 +387,8 @@ class _VideoCreateState extends State<VideoCreate> {
   }
 
   Future<File> pickVideoFile() async {
-    final result = await FilePicker.platform.pickFiles(withReadStream: true); //type: FileType.video
+    final result = await FilePicker.platform
+        .pickFiles(withReadStream: true); //type: FileType.video
     if (result == null) return null;
     urls.add(result.files.single.path);
     return File(result.files.single.path);
