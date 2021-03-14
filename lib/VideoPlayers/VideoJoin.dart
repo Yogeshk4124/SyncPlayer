@@ -74,7 +74,7 @@ class _VideoJoinState extends State<VideoJoin> {
   void deactivate() {
     _clearCachedFiles();
     super.deactivate();
-    if (flickManager != null) flickManager.dispose();
+    // if (flickManager != null) flickManager.dispose();
   }
 
   skipToVideo(String url) {

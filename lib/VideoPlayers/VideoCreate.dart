@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
+import 'package:SyncPlayer/Utils/Messages.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,10 +10,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import '../BottomNav.dart';
+import '../Chats.dart';
 import '../layouts/custom_orientation_player/controls.dart';
 import '../layouts/custom_orientation_player/data_manager.dart';
+import '../Utils/Messages.dart';
 import 'package:adv_fab/adv_fab.dart';
 
 class VideoCreate extends StatefulWidget {
@@ -38,12 +42,21 @@ class _VideoCreateState extends State<VideoCreate> {
   int f = 1, complete = 0;
   List msg;
 
+  // ScrollControll sc;
+  int msgCall = 0;
+
   @override
   void initState() {
+    // sc = new ScrollController();
+    // sc.addListener(() {
+    //   setState(() {
+    //   });
+    // });
     super.initState();
     msg = new List();
     String link =
-        "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/createRoom/" + widget.Roomid.toString();
+        "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/createRoom/" +
+            widget.Roomid.toString();
     Future<http.Response> response = http.get(link);
     FABcontroller = AdvFabController();
     // flickManager = FlickManager(
@@ -160,10 +173,11 @@ class _VideoCreateState extends State<VideoCreate> {
         //         widget.Roomid.toString() +
         //         '/' +
         //         time);
-        String l = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/' +
-            widget.Roomid.toString() +
-            '/' +
-            time;
+        String l =
+            'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/' +
+                widget.Roomid.toString() +
+                '/' +
+                time;
         // print("link:" + l);
         Future<http.Response> response = http.get(l);
         response.then((value) {
@@ -179,6 +193,33 @@ class _VideoCreateState extends State<VideoCreate> {
         setState(() {});
       });
     }
+    // Timer.periodic(Duration(seconds: 1), (Timer t) async {
+    //   // print('Calling');
+    //   if (msgCall == 0) {
+    //     // print('Calling:');
+    //     msgCall = 1;
+    //     http.Response response = await http.get(
+    //         "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/getMessages/" +
+    //             widget.Roomid.toString());
+    //     msgCall = 0;
+    //     var decodedData = jsonDecode(response.body);
+    //     // print("\n\n\n\nGot" + decodedData.toString());
+    //     List temp = new List();
+    //     for (dynamic res in decodedData) {
+    //       // print("res:" + res[0].toString());
+    //       temp.add([res[0].toString(), res[1].toString()]);
+    //     }
+    //     if (temp.length != msg.length) {
+    //       print("\n\n\n\nGot" + decodedData.toString());
+    //       print(temp.length.toString() + ":" + msg.length.toString());
+    //       setState(() {
+    //         msg = temp;
+    //       });
+    //     }
+    //     // print(msg.toString());
+    //   }
+    // });
+
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: AnnotatedRegion(
@@ -190,16 +231,18 @@ class _VideoCreateState extends State<VideoCreate> {
           floatingActionButton: selected
               ? AdvFab(
                   showLogs: true,
-                  onFloatingActionButtonTapped: () async {
-                    msg.clear();
-                    http.Response response = await http.get(
-                        "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/getMessages/" +
-                            widget.Roomid.toString());
-                    var decodedData = jsonDecode(response.body);
-                    for (dynamic res in decodedData) {
-                      msg.add([res[0].toString(), res[1].toString()]);
-                    }
-                    print(msg.toString());
+                  onFloatingActionButtonTapped: () {
+                    // msg.clear();
+                    // http.Response response = await http.get(
+                    //     "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/getMessages/" +
+                    //         widget.Roomid.toString());
+                    // var decodedData = jsonDecode(response.body);
+                    // print("\n\n\n\nGot" + decodedData.toString());
+                    // for (dynamic res in decodedData) {
+                    //   print("res:" + res[0].toString());
+                    //   msg.add([res[0].toString(), res[1].toString()]);
+                    // }
+                    // print(msg.toString());
                     FABcontroller.isCollapsed
                         ? FABcontroller.expandFAB()
                         : FABcontroller.collapseFAB();
@@ -213,7 +256,7 @@ class _VideoCreateState extends State<VideoCreate> {
                   navigationBarIconActiveColor: Colors.pink,
                   navigationBarIconInactiveColor:
                       Colors.pink[200].withOpacity(0.6),
-                  collapsedColor: Colors.red,
+                  collapsedColor: Colors.redAccent,
                   controller: FABcontroller,
                   useAsFloatingSpaceBar: false,
                 )
@@ -322,11 +365,11 @@ class _VideoCreateState extends State<VideoCreate> {
                                 showLogs: true,
                                 heightToExpandTo:
                                     MediaQuery.of(context).size.height * 0.10,
-                                expendedBackgroundColor: Colors.redAccent,
+                                expendedBackgroundColor: Colors.transparent,
                                 withChild: Padding(
                                   padding: const EdgeInsets.all(15.0),
                                   child: Container(
-                                    color: Colors.red,
+                                    color: Colors.transparent,
                                     width: (MediaQuery.of(context).size.width),
                                     height:
                                         (MediaQuery.of(context).size.height /
@@ -346,18 +389,13 @@ class _VideoCreateState extends State<VideoCreate> {
                                           },
                                           icon: Icon(CupertinoIcons.arrow_left),
                                         ),
-                                        Text("hello",style: TextStyle(color: Colors.white,fontSize: 20),),
-                                        Column(
-                                          children: <Widget>[
-                                            for (dynamic m in msg)
-                                              Column(
-                                                children: [
-                                                  Text(m[0].toString()),
-                                                  Text(m[1].toString()),
-                                                ],
-                                              ),
-                                          ],
+                                        ChangeNotifierProvider(
+                                          create: (context) => Chats(),
+                                          child: Messages(
+                                            roomid: widget.Roomid,
+                                          ),
                                         ),
+                                        // Messages(roomid: widget.Roomid,),
                                       ],
                                     ),
                                   ),
