@@ -109,14 +109,6 @@ class _VideoPlayerState extends State<VideoPlayer> {
           new GestureDetector(
             onTap: () {
               Navigator.of(context).pop(false);
-              // if (flickManager != null) flickManager.dispose();
-              // _clearCachedFiles();
-              // Navigator.pushAndRemoveUntil(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (BuildContext context) => Home4()),
-              //   (route) => false,
-              // );
             },
             child: Text("No"),
           ),
@@ -135,13 +127,6 @@ class _VideoPlayerState extends State<VideoPlayer> {
     }
     return WillPopScope(
       onWillPop: _onBackPressed,
-
-      //     ()async{
-      //
-      //   if (flickManager != null) flickManager.dispose();
-      //   _clearCachedFiles();
-      //   return true;
-      // },
       child: AnnotatedRegion(
         value: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -153,7 +138,6 @@ class _VideoPlayerState extends State<VideoPlayer> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // Text('MOVIE NIGHT !!',style: GoogleFonts.bungee(),),
                 if (flickManager != null)
                   VisibilityDetector(
                       key: ObjectKey(flickManager),

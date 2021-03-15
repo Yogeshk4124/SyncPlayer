@@ -20,21 +20,16 @@ class _MessagesState extends State<Messages> {
   Column column;
 
   void initState() {
-    // msg = widget.msg;
-
     Timer.periodic(Duration(seconds: 1), (timer) {
       var pro = Provider.of<Chats>(context, listen: false);
       pro.getChats(widget.roomid);
     });
-
     super.initState();
   }
 
   @override
   // ignore: missing_return
   Widget build(BuildContext context) {
-
-    print("calling build");
     return
     SingleChildScrollView(
       scrollDirection: Axis.vertical,

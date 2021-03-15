@@ -104,14 +104,6 @@ class _VideoJoinState extends State<VideoJoin> {
           new GestureDetector(
             onTap: () {
               Navigator.of(context).pop(false);
-              // if (flickManager != null) flickManager.dispose();
-              // _clearCachedFiles();
-              // Navigator.pushAndRemoveUntil(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (BuildContext context) => Home4()),
-              //   (route) => false,
-              // );
             },
             child: Text("No"),
           ),

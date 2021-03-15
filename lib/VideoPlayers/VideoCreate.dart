@@ -193,33 +193,6 @@ class _VideoCreateState extends State<VideoCreate> {
         setState(() {});
       });
     }
-    // Timer.periodic(Duration(seconds: 1), (Timer t) async {
-    //   // print('Calling');
-    //   if (msgCall == 0) {
-    //     // print('Calling:');
-    //     msgCall = 1;
-    //     http.Response response = await http.get(
-    //         "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/getMessages/" +
-    //             widget.Roomid.toString());
-    //     msgCall = 0;
-    //     var decodedData = jsonDecode(response.body);
-    //     // print("\n\n\n\nGot" + decodedData.toString());
-    //     List temp = new List();
-    //     for (dynamic res in decodedData) {
-    //       // print("res:" + res[0].toString());
-    //       temp.add([res[0].toString(), res[1].toString()]);
-    //     }
-    //     if (temp.length != msg.length) {
-    //       print("\n\n\n\nGot" + decodedData.toString());
-    //       print(temp.length.toString() + ":" + msg.length.toString());
-    //       setState(() {
-    //         msg = temp;
-    //       });
-    //     }
-    //     // print(msg.toString());
-    //   }
-    // });
-
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: AnnotatedRegion(
@@ -232,17 +205,6 @@ class _VideoCreateState extends State<VideoCreate> {
               ? AdvFab(
                   showLogs: true,
                   onFloatingActionButtonTapped: () {
-                    // msg.clear();
-                    // http.Response response = await http.get(
-                    //     "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/getMessages/" +
-                    //         widget.Roomid.toString());
-                    // var decodedData = jsonDecode(response.body);
-                    // print("\n\n\n\nGot" + decodedData.toString());
-                    // for (dynamic res in decodedData) {
-                    //   print("res:" + res[0].toString());
-                    //   msg.add([res[0].toString(), res[1].toString()]);
-                    // }
-                    // print(msg.toString());
                     FABcontroller.isCollapsed
                         ? FABcontroller.expandFAB()
                         : FABcontroller.collapseFAB();
@@ -261,11 +223,6 @@ class _VideoCreateState extends State<VideoCreate> {
                   useAsFloatingSpaceBar: false,
                 )
               : null,
-          // FloatingActionButton(
-          //   onPressed: () {},
-          //   backgroundColor: Colors.red,
-          //   child: Icon(CupertinoIcons.chat_bubble_text_fill,color: Colors.white,),
-          // ),
           body: SafeArea(
             top: false,
             child: Column(
