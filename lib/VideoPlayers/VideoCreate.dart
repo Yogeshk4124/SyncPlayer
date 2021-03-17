@@ -35,6 +35,7 @@ class _VideoCreateState extends State<VideoCreate> {
   FlickManager flickManager;
   DataManager dataManager;
   VideoPlayerController controller;
+  TextEditingController msgController;
   List<String> urls = [];
   Widget d;
   AdvFabController FABcontroller;
@@ -320,18 +321,19 @@ class _VideoCreateState extends State<VideoCreate> {
                               selected = !selected;
                               FABcontroller.setExpandedWidgetConfiguration(
                                 showLogs: true,
+                                forceCustomHeight: true,
                                 heightToExpandTo:
-                                    MediaQuery.of(context).size.height * 0.10,
+                                    MediaQuery.of(context).size.height * 0.1,
                                 expendedBackgroundColor: Colors.transparent,
                                 withChild: Padding(
-                                  padding: const EdgeInsets.all(15.0),
+                                  padding: const EdgeInsets.only(top: 15),
                                   child: Container(
                                     color: Colors.transparent,
                                     width: (MediaQuery.of(context).size.width),
-                                    height:
-                                        (MediaQuery.of(context).size.height /
-                                                100) *
-                                            50,
+                                    height:(MediaQuery.of(context).size.height*0.60),
+                                        // (MediaQuery.of(context).size.height /
+                                        //         100) *
+                                        //     60,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -353,6 +355,38 @@ class _VideoCreateState extends State<VideoCreate> {
                                           ),
                                         ),
                                         // Messages(roomid: widget.Roomid,),
+                                        Spacer(
+                                          flex: 5,
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(50))),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Expanded(
+                                                  child: TextField(
+                                                      decoration: InputDecoration(
+                                                        enabledBorder:InputBorder.none,
+                                                        errorBorder: InputBorder.none,
+                                                        focusedBorder: InputBorder.none,
+                                                        disabledBorder: InputBorder.none,
+                                                        contentPadding: EdgeInsets.only(left: 15),
+                                                      ),
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color:
+                                                              Colors.black))),
+                                              IconButton(
+                                                  icon: Icon(Icons.send,
+                                                      color: Colors.black),
+                                                  onPressed: null),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),

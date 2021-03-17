@@ -21,8 +21,7 @@ class _MessagesState extends State<Messages> {
 
   void initState() {
     Timer.periodic(Duration(seconds: 1), (timer) {
-      var pro = Provider.of<Chats>(context, listen: false);
-      pro.getChats(widget.roomid);
+       Provider.of<Chats>(context, listen: false).getChats(widget.roomid);
     });
     super.initState();
   }
@@ -34,7 +33,6 @@ class _MessagesState extends State<Messages> {
     SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child:
-          // pro.setChats(),
           Consumer<Chats>(
         builder: (context, data, child) {
           if(data.setChats()!=null)
