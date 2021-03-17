@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:convert';
 import 'package:SyncPlayer/Utils/Messages.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
@@ -38,9 +37,11 @@ class _VideoCreateState extends State<VideoCreate> {
   TextEditingController msgController;
   List<String> urls = [];
   Widget d;
+  Color bgColor=Colors.redAccent;
   AdvFabController FABcontroller;
   bool selected = false;
-  int f = 1, complete = 0;
+  int f = 1,
+      complete = 0;
   List msg;
 
   // ScrollControll sc;
@@ -55,6 +56,7 @@ class _VideoCreateState extends State<VideoCreate> {
     // });
     super.initState();
     msg = new List();
+    msgController=new TextEditingController();
     String link =
         "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/createRoom/" +
             widget.Roomid.toString();
@@ -117,42 +119,43 @@ class _VideoCreateState extends State<VideoCreate> {
 
   Future<bool> _onBackPressed() {
     return showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit an App'),
-            actions: <Widget>[
-              new GestureDetector(
-                onTap: () async {
-                  // if (flickManager != null) flickManager.dispose();
-                  // _clearCachedFiles();
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => Home4()),
+      context: context,
+      builder: (context) =>
+      new AlertDialog(
+        title: new Text('Are you sure?'),
+        content: new Text('Do you want to exit an App'),
+        actions: <Widget>[
+          new GestureDetector(
+            onTap: () async {
+              // if (flickManager != null) flickManager.dispose();
+              // _clearCachedFiles();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => Home4()),
                     (route) => false,
-                  );
-                },
-                child: Text("Yes"),
-              ),
-              SizedBox(height: 16),
-              new GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                  // if (flickManager != null) flickManager.dispose();
-                  // _clearCachedFiles();
-                  // Navigator.pushAndRemoveUntil(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (BuildContext context) => Home4()),
-                  //   (route) => false,
-                  // );
-                },
-                child: Text("No"),
-              ),
-            ],
+              );
+            },
+            child: Text("Yes"),
           ),
-        ) ??
+          SizedBox(height: 16),
+          new GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop(false);
+              // if (flickManager != null) flickManager.dispose();
+              // _clearCachedFiles();
+              // Navigator.pushAndRemoveUntil(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (BuildContext context) => Home4()),
+              //   (route) => false,
+              // );
+            },
+            child: Text("No"),
+          ),
+        ],
+      ),
+    ) ??
         false;
   }
 
@@ -167,7 +170,7 @@ class _VideoCreateState extends State<VideoCreate> {
         //         .toString());
         String time = flickManager.flickVideoManager.videoPlayerValue.isPlaying
             ? flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
-                .toString()
+            .toString()
             : '-1';
         // http.Response response = await http.get(
         //     'http://20.197.61.11:8000/seekTo/' +
@@ -204,25 +207,25 @@ class _VideoCreateState extends State<VideoCreate> {
           backgroundColor: Colors.black,
           floatingActionButton: selected
               ? AdvFab(
-                  showLogs: true,
-                  onFloatingActionButtonTapped: () {
-                    FABcontroller.isCollapsed
-                        ? FABcontroller.expandFAB()
-                        : FABcontroller.collapseFAB();
-                  },
-                  floatingActionButtonIcon:
-                      CupertinoIcons.chat_bubble_text_fill,
-                  useAsFloatingActionButton: true,
-                  useAsNavigationBar: false,
-                  floatingActionButtonIconColor: Colors.white,
-                  floatingActionButtonExpendedWidth: 90,
-                  navigationBarIconActiveColor: Colors.pink,
-                  navigationBarIconInactiveColor:
-                      Colors.pink[200].withOpacity(0.6),
-                  collapsedColor: Colors.redAccent,
-                  controller: FABcontroller,
-                  useAsFloatingSpaceBar: false,
-                )
+            showLogs: true,
+            onFloatingActionButtonTapped: () {
+              FABcontroller.isCollapsed
+                  ? FABcontroller.expandFAB()
+                  : FABcontroller.collapseFAB();
+            },
+            floatingActionButtonIcon:
+            CupertinoIcons.chat_bubble_text_fill,
+            useAsFloatingActionButton: true,
+            useAsNavigationBar: false,
+            floatingActionButtonIconColor: Colors.red,
+            floatingActionButtonExpendedWidth: 90,
+            navigationBarIconActiveColor: Colors.pink,
+            navigationBarIconInactiveColor:
+            Colors.pink[200].withOpacity(0.6),
+            collapsedColor: Color(0xff202020),
+            controller: FABcontroller,
+            useAsFloatingSpaceBar: false,
+          )
               : null,
           body: SafeArea(
             top: false,
@@ -257,7 +260,7 @@ class _VideoCreateState extends State<VideoCreate> {
                                 ),
                               ),
                               flickVideoWithControlsFullscreen:
-                                  FlickVideoWithControls(
+                              FlickVideoWithControls(
                                 videoFit: BoxFit.fitWidth,
                                 controls: CustomOrientationControls(
                                   dataManager: dataManager,
@@ -272,7 +275,7 @@ class _VideoCreateState extends State<VideoCreate> {
                                 decoration: BoxDecoration(
                                   color: Colors.red,
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
+                                  BorderRadius.all(Radius.circular(20)),
                                 ),
                                 child: Text("LEAVE")),
                           ),
@@ -285,7 +288,10 @@ class _VideoCreateState extends State<VideoCreate> {
                         Image.asset(
                           "assets/images/video.jpeg",
                           fit: BoxFit.fill,
-                          height: MediaQuery.of(context).size.height * 0.60,
+                          height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * 0.60,
                         ),
                         Text(
                           'Get Ready!!',
@@ -323,20 +329,29 @@ class _VideoCreateState extends State<VideoCreate> {
                                 showLogs: true,
                                 forceCustomHeight: true,
                                 heightToExpandTo:
-                                    MediaQuery.of(context).size.height * 0.1,
+                                MediaQuery
+                                    .of(context)
+                                    .size
+                                    .height * 0.1,
                                 expendedBackgroundColor: Colors.transparent,
                                 withChild: Padding(
                                   padding: const EdgeInsets.only(top: 15),
                                   child: Container(
                                     color: Colors.transparent,
-                                    width: (MediaQuery.of(context).size.width),
-                                    height:(MediaQuery.of(context).size.height*0.60),
-                                        // (MediaQuery.of(context).size.height /
-                                        //         100) *
-                                        //     60,
+                                    width: (MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width),
+                                    height: (MediaQuery
+                                        .of(context)
+                                        .size
+                                        .height * 0.60),
+                                    // (MediaQuery.of(context).size.height /
+                                    //         100) *
+                                    //     60,
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: <Widget>[
                                         IconButton(
                                           onPressed: () {
@@ -365,25 +380,38 @@ class _VideoCreateState extends State<VideoCreate> {
                                                   Radius.circular(50))),
                                           child: Row(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            CrossAxisAlignment.center,
                                             children: <Widget>[
                                               Expanded(
                                                   child: TextField(
+                                                      controller: msgController,
                                                       decoration: InputDecoration(
-                                                        enabledBorder:InputBorder.none,
-                                                        errorBorder: InputBorder.none,
-                                                        focusedBorder: InputBorder.none,
-                                                        disabledBorder: InputBorder.none,
-                                                        contentPadding: EdgeInsets.only(left: 15),
+                                                        enabledBorder: InputBorder
+                                                            .none,
+                                                        errorBorder: InputBorder
+                                                            .none,
+                                                        focusedBorder: InputBorder
+                                                            .none,
+                                                        disabledBorder: InputBorder
+                                                            .none,
+                                                        contentPadding: EdgeInsets
+                                                            .only(left: 15),
                                                       ),
                                                       style: TextStyle(
                                                           fontSize: 16,
                                                           color:
-                                                              Colors.black))),
+                                                          Colors.black))),
                                               IconButton(
                                                   icon: Icon(Icons.send,
                                                       color: Colors.black),
-                                                  onPressed: null),
+                                                  onPressed: () async {
+                                                    String s="http://harmonpreet012.centralindia.cloudapp.azure.com:8001/sendMessage/"+widget.Roomid.toString()+"/ME/"+msgController.text;
+                                                    print("calling:"+s);
+                                                    http
+                                                        .Response response = await http
+                                                        .get("http://harmonpreet012.centralindia.cloudapp.azure.com:8001/sendMessage/"+widget.Roomid.toString()+"/ME/"+msgController.text);
+                                                    msgController.clear();
+                                                  }),
                                             ],
                                           ),
                                         ),
@@ -399,8 +427,7 @@ class _VideoCreateState extends State<VideoCreate> {
                                   horizontal: 25, vertical: 10),
                               decoration: BoxDecoration(
                                 color: Color(0xffFF2929),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
+                                borderRadius:BorderRadius.all(Radius.circular(20)),
                               ),
                               child: Text('ADD VIDEO')),
                         ),

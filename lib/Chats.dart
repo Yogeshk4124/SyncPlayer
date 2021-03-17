@@ -26,12 +26,17 @@ class Chats extends ChangeNotifier {
         print('msg:'+msg.toString());
         column.children.clear();
         for(dynamic m in msg)
-        column.children.add(Column(
-          children: <Widget>[
-            Text(m[0].toString(),style: TextStyle(color: Colors.white),),
-            Text(m[1].toString(),style: TextStyle(color: Colors.white),),
-          ],
-          mainAxisAlignment: MainAxisAlignment.center,
+        column.children.add(Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20),topRight: Radius.circular(20)),
+          ),
+          child: Column(
+            children: <Widget>[
+              Text(m[0].toString(),style: TextStyle(color: Colors.white),),
+              Text(m[1].toString(),style: TextStyle(color: Colors.white),),
+            ],
+            mainAxisAlignment: MainAxisAlignment.center,
+          ),
         ));
         notifyListeners();
       }
