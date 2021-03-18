@@ -21,7 +21,7 @@ class _MessagesState extends State<Messages> {
 
   void initState() {
     Timer.periodic(Duration(seconds: 1), (timer) {
-       Provider.of<Chats>(context, listen: false).getChats(widget.roomid);
+       Provider.of<Chats>(context, listen: false).getChats(context,widget.roomid);
     });
     super.initState();
   }
