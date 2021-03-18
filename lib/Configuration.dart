@@ -18,18 +18,22 @@ class Home2 extends StatefulWidget {
 
 class _Home2State extends State<Home2> {
   final _joinController = TextEditingController();
+  final _nameController = TextEditingController();
   int _selected = 1;
   String creating = 'You have not Created/Joined any room.Create Room?',
       button = "Connect",
-      link = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/createRoom';
+      link =
+          'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/createRoom';
   String Jjoining = 'Enter Room Id',
       Jbutton = "Join",
-      Jlink = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/addUser/';
+      Jlink =
+          'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/addUser/';
   int get = 0;
 
   @override
   void initState() {
     super.initState();
+    _nameController.text = "Random";
     if (widget.data['Create'] == '-1' && widget.data['Join'] != '-1') {
       _selected = 2;
       Jjoining = 'Joined:' + widget.data['Join'].toString();
@@ -37,8 +41,9 @@ class _Home2State extends State<Home2> {
     } else if (widget.data['Create'] != '-1' && widget.data['Join'] == '-1') {
       _selected = 1;
       creating = 'Created:' + widget.data['Create'].toString();
-      link = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/closeRoom/' +
-          widget.data['Create'].toString();
+      link =
+          'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/closeRoom/' +
+              widget.data['Create'].toString();
       button = "Disconnect";
     }
   }
@@ -79,8 +84,9 @@ class _Home2State extends State<Home2> {
                       print("CD:1");
                       widget.data['Create'] = decodedData['Room-id'].toString();
                       creating = 'Created:' + widget.data['Create'].toString();
-                      link = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/closeRoom/' +
-                          widget.data['Create'].toString();
+                      link =
+                          'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/closeRoom/' +
+                              widget.data['Create'].toString();
                       button = "Disconnect";
                     } else {
                       widget.data['Create'] = '-1';
@@ -88,7 +94,8 @@ class _Home2State extends State<Home2> {
                       creating =
                           'You have not Created/Joined any room.Create Room?';
                       button = "Connect";
-                      link = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/createRoom';
+                      link =
+                          'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/createRoom';
                     }
                   });
                 });
@@ -164,8 +171,11 @@ class _Home2State extends State<Home2> {
             ),
             if (get == 1)
               Container(
-                margin: EdgeInsets.only(bottom: 20,top: 5),
-                child: Text("Room Not Found",style: TextStyle(color: Colors.red),),
+                margin: EdgeInsets.only(bottom: 20, top: 5),
+                child: Text(
+                  "Room Not Found",
+                  style: TextStyle(color: Colors.red),
+                ),
               )
             else
               SizedBox.fromSize(
@@ -234,7 +244,6 @@ class _Home2State extends State<Home2> {
       w = join();
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Column(
@@ -243,7 +252,7 @@ class _Home2State extends State<Home2> {
             Text(
               "Configuration",
               style: GoogleFonts.poiretOne(
-                fontSize: MediaQuery.of(context).size.width * 0.1,
+                fontSize: MediaQuery.maybeOf(context).size.width * 0.1,
               ),
               maxLines: 1,
             ),
@@ -261,13 +270,13 @@ class _Home2State extends State<Home2> {
                     });
                   },
                   child: Container(
-                    height: MediaQuery.of(context).size.height * 0.20,
-                    width: MediaQuery.of(context).size.height * 0.20,
+                    height: MediaQuery.maybeOf(context).size.height * 0.20,
+                    width: MediaQuery.maybeOf(context).size.height * 0.20,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 40),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(
-                          MediaQuery.of(context).size.width * 0.02)),
+                          MediaQuery.maybeOf(context).size.width * 0.02)),
                       // color: Color(0xff2C353D),
                       color:
                           _selected == 1 ? Colors.redAccent : Color(0xff181818),
@@ -280,7 +289,8 @@ class _Home2State extends State<Home2> {
                             "Create",
                             style: TextStyle(
                                 fontSize:
-                                    MediaQuery.of(context).size.height * 0.038),
+                                    MediaQuery.maybeOf(context).size.height *
+                                        0.038),
                           ),
                         ]),
                   ),
@@ -296,13 +306,13 @@ class _Home2State extends State<Home2> {
                     });
                   },
                   child: Container(
-                    height: MediaQuery.of(context).size.height * 0.20,
-                    width: MediaQuery.of(context).size.height * 0.20,
+                    height: MediaQuery.maybeOf(context).size.height * 0.20,
+                    width: MediaQuery.maybeOf(context).size.height * 0.20,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 40),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(
-                          MediaQuery.of(context).size.width * 0.02)),
+                          MediaQuery.maybeOf(context).size.width * 0.02)),
                       // color: Color(0xff2C353D),
                       color:
                           _selected == 2 ? Colors.redAccent : Color(0xff181818),
@@ -315,12 +325,56 @@ class _Home2State extends State<Home2> {
                             "Join",
                             style: TextStyle(
                                 fontSize:
-                                    MediaQuery.of(context).size.height * 0.038),
+                                    MediaQuery.maybeOf(context).size.height *
+                                        0.038),
                           ),
                         ]),
                   ),
                 ),
               ],
+            ),
+            SizedBox(
+              width: 10,
+              height: 10,
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(
+                    MediaQuery.maybeOf(context).size.width * 0.02)),
+                color: Color(0xff181818),
+              ),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _nameController,
+                    textAlign: TextAlign.center,
+                    decoration: new InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                      ),
+                      contentPadding: EdgeInsets.only(bottom: -15),
+                    ),
+                  ),
+                  MaterialButton(
+                    onPressed: () {},
+                    child: Container(
+                        margin: EdgeInsets.only(top: 10),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
+                        child: Text(
+                          "Set Name",
+                          style: GoogleFonts.roboto(),
+                          textAlign: TextAlign.center,
+                        )),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Container(

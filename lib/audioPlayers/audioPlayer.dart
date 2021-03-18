@@ -175,7 +175,7 @@ class _audioPlayerState extends State<audioPlayer> {
                       appearance: CircularSliderAppearance(
                         angleRange: 360,
                         animationEnabled: false,
-                        size: MediaQuery.of(context).size.width * 0.60,
+                        size: MediaQuery.maybeOf(context).size.width * 0.60,
                         startAngle: 270,
                         animDurationMultiplier: 300,
                         customWidths: CustomSliderWidths(
@@ -203,7 +203,7 @@ class _audioPlayerState extends State<audioPlayer> {
                     s = SleekCircularSlider(
                       appearance: CircularSliderAppearance(
                         angleRange: 360,
-                        size: MediaQuery.of(context).size.width * 0.65,
+                        size: MediaQuery.maybeOf(context).size.width * 0.65,
                         startAngle: 270,
                         animDurationMultiplier: 300,
                         customWidths: CustomSliderWidths(
@@ -273,7 +273,7 @@ class _audioPlayerState extends State<audioPlayer> {
                     text = getSong();
                     return Container(
                       height: 46,
-                      width: MediaQuery.of(context).size.width * 0.8,
+                      width: MediaQuery.maybeOf(context).size.width * 0.8,
                       child: MarqueeText(
                         text: text,
                         textStyle: GoogleFonts.poiretOne(

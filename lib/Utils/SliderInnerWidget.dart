@@ -14,8 +14,8 @@ class SliderInnerWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Container(
-          height: MediaQuery.of(context).size.width * 0.54,
-          width: MediaQuery.of(context).size.width * 0.54,
+          height: MediaQuery.maybeOf(context).size.width * 0.54,
+          width: MediaQuery.maybeOf(context).size.width * 0.54,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             // borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -41,8 +41,8 @@ class SliderInnerWidget extends StatelessWidget {
           ),
           child: Center(
             child: Container(
-              height: MediaQuery.of(context).size.width * 0.46,
-              width: MediaQuery.of(context).size.width * 0.46,
+              height: MediaQuery.maybeOf(context).size.width * 0.46,
+              width: MediaQuery.maybeOf(context).size.width * 0.46,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: new LinearGradient(
@@ -70,7 +70,7 @@ class SliderInnerWidget extends StatelessWidget {
               child: Center(
                   child: Icon(
                 CupertinoIcons.double_music_note,
-                size: MediaQuery.of(context).size.width * 0.30,
+                size: MediaQuery.maybeOf(context).size.width * 0.30,
               )),
             ),
           ),

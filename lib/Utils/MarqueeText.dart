@@ -81,8 +81,8 @@ class MarqueeTextState extends State<MarqueeText>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    screenWidth = MediaQuery.of(context).size.width;
-    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.maybeOf(context).size.width;
+    screenHeight = MediaQuery.maybeOf(context).size.height;
   }
 
   Widget getBothEndsChild() {

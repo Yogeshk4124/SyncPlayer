@@ -193,7 +193,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
                         Image.asset(
                           "assets/images/video.jpeg",
                           fit: BoxFit.fill,
-                          height: MediaQuery.of(context).size.height * 0.60,
+                          height: MediaQuery.maybeOf(context).size.height * 0.60,
                         ),
                         Text(
                           'Get Ready!!',

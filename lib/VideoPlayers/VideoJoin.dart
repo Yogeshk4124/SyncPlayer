@@ -256,7 +256,7 @@ class _VideoJoinState extends State<VideoJoin> {
                         Image.asset(
                           "assets/images/video.jpeg",
                           fit: BoxFit.fill,
-                          height: MediaQuery.of(context).size.height * 0.60,
+                          height: MediaQuery.maybeOf(context).size.height * 0.60,
                         ),
                         Text(
                           'Get Ready!!',
@@ -294,17 +294,17 @@ class _VideoJoinState extends State<VideoJoin> {
                                 showLogs: true,
                                 forceCustomHeight: true,
                                 heightToExpandTo:
-                                    MediaQuery.of(context).size.height * 0.1,
+                                    MediaQuery.maybeOf(context).size.height * 0.1,
                                 expendedBackgroundColor: Colors.red,
                                 withChild: Padding(
                                   padding: const EdgeInsets.only(top: 15),
                                   child: Container(
                                     color: Colors.transparent,
-                                    width: (MediaQuery.of(context).size.width),
+                                    width: (MediaQuery.maybeOf(context).size.width),
                                     height:
-                                        (MediaQuery.of(context).size.height *
+                                        (MediaQuery.maybeOf(context).size.height *
                                             0.60),
-                                    // (MediaQuery.of(context).size.height /
+                                    // (MediaQuery.maybeOf(context).size.height /
                                     //         100) *
                                     //     60,
                                     child: Column(
