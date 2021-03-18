@@ -222,7 +222,7 @@ class _VideoCreateState extends State<VideoCreate> {
             navigationBarIconActiveColor: Colors.pink,
             navigationBarIconInactiveColor:
             Colors.pink[200].withOpacity(0.6),
-            collapsedColor: Color(0xff202020),
+            collapsedColor: Color(0xff121212),
             controller: FABcontroller,
             useAsFloatingSpaceBar: false,
           )
@@ -333,7 +333,7 @@ class _VideoCreateState extends State<VideoCreate> {
                                     .of(context)
                                     .size
                                     .height * 0.1,
-                                expendedBackgroundColor: Colors.transparent,
+                                expendedBackgroundColor: Colors.red,
                                 withChild: Padding(
                                   padding: const EdgeInsets.only(top: 15),
                                   child: Container(

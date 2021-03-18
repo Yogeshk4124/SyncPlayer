@@ -37,7 +37,7 @@ class _MessagesState extends State<Messages> {
         builder: (context, data, child) {
           if(data.setChats()!=null)
           print('Data:' + data.setChats().children.length.toString());
-          return Column(children: data.setChats().children,);
+          return Column(crossAxisAlignment:CrossAxisAlignment.start,children: data.setChats().children,);
         },
       ),
     );
