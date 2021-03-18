@@ -1,3 +1,4 @@
+import 'package:SyncPlayer/SplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData.dark(),
-      home: Home4(),
+      home: SplashScreen(),
     );
   }
 }
