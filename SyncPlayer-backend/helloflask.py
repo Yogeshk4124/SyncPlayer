@@ -18,4 +18,4 @@ app.add_url_rule('/player', view_func=myroutes.player,  methods=['GET', 'POST'])
 
 #main
 if __name__ == '__main__':
-    app.run()
+    app.run('0.0.0.0', port=8000)

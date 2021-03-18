@@ -12,4 +12,4 @@ app.add_url_rule('/sendMessage/<room_id>/<user_name>/<message>', view_func=myrou
 
 #main
 if __name__ == '__main__':
-    app.run()
+    app.run('0.0.0.0', port=8001)
