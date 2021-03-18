@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
+import 'package:SyncPlayer/Utils/Messages.dart';
 import 'package:adv_fab/adv_fab.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
@@ -10,8 +11,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import '../BottomNav.dart';
+import '../Chats.dart';
 import '../layouts/custom_orientation_player/controls.dart';
 import '../layouts/custom_orientation_player/data_manager.dart';
 
@@ -32,12 +35,13 @@ class _VideoJoinState extends State<VideoJoin> {
   int f = 1, complete = 0;
   AdvFabController FABcontroller;
   bool selected = false;
+  TextEditingController msgController;
 
   @override
   void initState() {
     super.initState();
     FABcontroller = AdvFabController();
-
+    msgController = new TextEditingController();
     flickManager = null;
   }
 
@@ -49,7 +53,9 @@ class _VideoJoinState extends State<VideoJoin> {
         });
     dataManager = DataManager(flickManager: flickManager, urls: urls);
   }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void _clearCachedFiles() {
     FilePicker.platform.clearTemporaryFiles().then((result) {
       _scaffoldKey.currentState.showSnackBar(
@@ -80,38 +86,40 @@ class _VideoJoinState extends State<VideoJoin> {
   skipToVideo(String url) {
     // flickManager.handleChangeVideo(VideoPlayerController.network(url));
   }
+
   Future<bool> _onBackPressed() {
     return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit an App'),
-        actions: <Widget>[
-          new GestureDetector(
-            onTap: () async{
-              // if (flickManager != null) flickManager.dispose();
-              // _clearCachedFiles();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => Home4()),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit an App'),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () async {
+                  // if (flickManager != null) flickManager.dispose();
+                  // _clearCachedFiles();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Home4()),
                     (route) => false,
-              );
-            },
-            child: Text("Yes"),
+                  );
+                },
+                child: Text("Yes"),
+              ),
+              SizedBox(height: 16),
+              new GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: Text("No"),
+              ),
+            ],
           ),
-          SizedBox(height: 16),
-          new GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop(false);
-            },
-            child: Text("No"),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
+
   @override
   Widget build(BuildContext context) {
     Timer.periodic(Duration(seconds: 5), (Timer t) async {
@@ -119,8 +127,9 @@ class _VideoJoinState extends State<VideoJoin> {
       //     widget.Roomid.toString());
       if (flickManager != null && complete == 0) {
         complete = 1;
-        String link = 'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
-            widget.Roomid.toString();
+        String link =
+            'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
+                widget.Roomid.toString();
         // print("jlink:"+link);
         Future<http.Response> response = http.get(link);
         response.then((value) {
@@ -173,15 +182,16 @@ class _VideoJoinState extends State<VideoJoin> {
                         ? FABcontroller.expandFAB()
                         : FABcontroller.collapseFAB();
                   },
-                  floatingActionButtonIcon: CupertinoIcons.chat_bubble_text_fill,
+                  floatingActionButtonIcon:
+                      CupertinoIcons.chat_bubble_text_fill,
                   useAsFloatingActionButton: true,
                   useAsNavigationBar: false,
-                  floatingActionButtonIconColor: Colors.white,
+                  floatingActionButtonIconColor: Colors.red,
                   floatingActionButtonExpendedWidth: 90,
                   navigationBarIconActiveColor: Colors.pink,
                   navigationBarIconInactiveColor:
                       Colors.pink[200].withOpacity(0.6),
-                  collapsedColor: Colors.red,
+                  collapsedColor: Color(0xff121212),
                   controller: FABcontroller,
                   useAsFloatingSpaceBar: false,
                 )
@@ -191,13 +201,6 @@ class _VideoJoinState extends State<VideoJoin> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    "Video Player",
-                    style: GoogleFonts.aBeeZee(fontSize: 30),
-                  ),
-                ),
                 if (flickManager != null)
                   VisibilityDetector(
                       key: ObjectKey(flickManager),
@@ -289,16 +292,21 @@ class _VideoJoinState extends State<VideoJoin> {
                               selected = !selected;
                               FABcontroller.setExpandedWidgetConfiguration(
                                 showLogs: true,
-                                heightToExpandTo: 40,
-                                expendedBackgroundColor: Colors.redAccent,
+                                forceCustomHeight: true,
+                                heightToExpandTo:
+                                    MediaQuery.of(context).size.height * 0.1,
+                                expendedBackgroundColor: Colors.red,
                                 withChild: Padding(
-                                  padding: const EdgeInsets.all(15.0),
+                                  padding: const EdgeInsets.only(top: 15),
                                   child: Container(
-                                    color: Colors.red,
+                                    color: Colors.transparent,
                                     width: (MediaQuery.of(context).size.width),
-                                    height: (MediaQuery.of(context).size.height /
-                                            100) *
-                                        20,
+                                    height:
+                                        (MediaQuery.of(context).size.height *
+                                            0.60),
+                                    // (MediaQuery.of(context).size.height /
+                                    //         100) *
+                                    //     60,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -312,6 +320,71 @@ class _VideoJoinState extends State<VideoJoin> {
                                             });
                                           },
                                           icon: Icon(CupertinoIcons.arrow_left),
+                                        ),
+                                        ChangeNotifierProvider(
+                                          create: (context) => Chats(),
+                                          child: Messages(
+                                            roomid: widget.Roomid,
+                                          ),
+                                        ),
+                                        // Messages(roomid: widget.Roomid,),
+                                        Spacer(
+                                          flex: 5,
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(50))),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Expanded(
+                                                  child: TextField(
+                                                      controller: msgController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        enabledBorder:
+                                                            InputBorder.none,
+                                                        errorBorder:
+                                                            InputBorder.none,
+                                                        focusedBorder:
+                                                            InputBorder.none,
+                                                        disabledBorder:
+                                                            InputBorder.none,
+                                                        contentPadding:
+                                                            EdgeInsets.only(
+                                                                left: 15),
+                                                      ),
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color:
+                                                              Colors.black))),
+                                              IconButton(
+                                                  icon: Icon(Icons.send,
+                                                      color: Colors.black),
+                                                  onPressed: () async {
+                                                    String s =
+                                                        "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/sendMessage/" +
+                                                            widget.Roomid
+                                                                .toString() +
+                                                            "/ME/" +
+                                                            msgController.text;
+                                                    print("calling:" + s);
+                                                    http.Response
+                                                        response =
+                                                        await http.get(
+                                                            "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/sendMessage/" +
+                                                                widget.Roomid
+                                                                    .toString() +
+                                                                "/ME/" +
+                                                                msgController
+                                                                    .text);
+                                                    msgController.clear();
+                                                  }),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -360,7 +433,8 @@ class _VideoJoinState extends State<VideoJoin> {
   }
 
   Future<File> pickVideoFile() async {
-    final result = await FilePicker.platform.pickFiles(withReadStream: true); //type: FileType.video
+    final result = await FilePicker.platform
+        .pickFiles(withReadStream: true); //type: FileType.video
     if (result == null) return null;
     urls.add(result.files.single.path);
     return File(result.files.single.path);
