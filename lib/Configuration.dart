@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:faker/faker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home2 extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -29,11 +31,22 @@ class _Home2State extends State<Home2> {
       Jlink =
           'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/addUser/';
   int get = 0;
-
+  SharedPreferences prefs;
+  setDefaultUsername()async{
+    String name = new Faker().person.firstName();
+    _nameController.text = name;
+    await prefs.setString("Username", name);
+  }
+  sharedPrefrencesHandler()async{
+    prefs = await SharedPreferences.getInstance();
+    if(prefs.getString("Username")==null)
+      setDefaultUsername();
+    else _nameController.text=prefs.getString("Username");
+  }
   @override
-  void initState() {
+  void initState(){
     super.initState();
-    _nameController.text = "Random";
+    sharedPrefrencesHandler();
     if (widget.data['Create'] == '-1' && widget.data['Join'] != '-1') {
       _selected = 2;
       Jjoining = 'Joined:' + widget.data['Join'].toString();
