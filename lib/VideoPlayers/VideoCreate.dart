@@ -10,6 +10,7 @@ import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../BottomNav.dart';
 import '../Chats.dart';
@@ -45,9 +46,11 @@ class _VideoCreateState extends State<VideoCreate> {
 
   // ScrollControll sc;
   int msgCall = 0;
-
+  SharedPreferences sharedPreferences;
+  String username;
   @override
   void initState() {
+    getUsername();
     // sc = new ScrollController();
     // sc.addListener(() {
     //   setState(() {
@@ -69,22 +72,28 @@ class _VideoCreateState extends State<VideoCreate> {
     //       dataManager.skipToNextVideo(Duration(seconds: 5));
     //     });
     flickManager = null;
-
     // dataManager = DataManager(flickManager: flickManager, urls: urls);
+  }
+  getUsername()async{
+    sharedPreferences=await SharedPreferences.getInstance();
+    setState(() {
+      username=sharedPreferences.getString("Username");
+    });
+    print("username On Call:"+username);
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _clearCachedFiles() {
     FilePicker.platform.clearTemporaryFiles().then((result) {
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          backgroundColor: result ? Colors.green : Colors.red,
-          content: Text((result
-              ? 'Temporary files removed with success.'
-              : 'Failed to clean temporary files')),
-        ),
-      );
+      // _scaffoldKey.currentState.showSnackBar(
+      //   SnackBar(
+      //     backgroundColor: result ? Colors.green : Colors.red,
+      //     content: Text((result
+      //         ? 'Temporary files removed with success.'
+      //         : 'Failed to clean temporary files')),
+      //   ),
+      // );
     });
   }
 
@@ -352,7 +361,7 @@ class _VideoCreateState extends State<VideoCreate> {
                                           icon: Icon(CupertinoIcons.arrow_left),
                                         ),
                                         ChangeNotifierProvider(
-                                          create: (context) => Chats(),
+                                          create: (context) => Chats(username.toString()),
                                           child: Messages(
                                             roomid: widget.Roomid,
                                           ),
@@ -399,18 +408,12 @@ class _VideoCreateState extends State<VideoCreate> {
                                                         "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/sendMessage/" +
                                                             widget.Roomid
                                                                 .toString() +
-                                                            "/ME/" +
+                                                            "/"+username+"/" +
                                                             msgController.text;
-                                                    print("calling:" + s);
+                                                    // print("calling:" + s);
                                                     http.Response
                                                         response =
-                                                        await http.get(
-                                                            "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/sendMessage/" +
-                                                                widget.Roomid
-                                                                    .toString() +
-                                                                "/ME/" +
-                                                                msgController
-                                                                    .text);
+                                                        await http.get(s);
                                                     msgController.clear();
                                                   }),
                                             ],

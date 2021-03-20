@@ -32,15 +32,16 @@ class _Home2State extends State<Home2> {
           'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/addUser/';
   int get = 0;
   SharedPreferences prefs;
-  setDefaultUsername()async{
-    String name = new Faker().person.firstName();
+  setDefaultUsername(String name)async{
     _nameController.text = name;
     await prefs.setString("Username", name);
   }
   sharedPrefrencesHandler()async{
     prefs = await SharedPreferences.getInstance();
-    if(prefs.getString("Username")==null)
-      setDefaultUsername();
+    if(prefs.getString("Username")==null) {
+      String name = new Faker().person.firstName();
+      setDefaultUsername(name);
+    }
     else _nameController.text=prefs.getString("Username");
   }
   @override
@@ -371,7 +372,9 @@ class _Home2State extends State<Home2> {
                     ),
                   ),
                   MaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setDefaultUsername(_nameController.text);
+                    },
                     child: Container(
                         margin: EdgeInsets.only(top: 10),
                         padding:

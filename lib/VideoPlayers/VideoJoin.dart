@@ -12,6 +12,7 @@ import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../BottomNav.dart';
 import '../Chats.dart';
@@ -36,15 +37,24 @@ class _VideoJoinState extends State<VideoJoin> {
   AdvFabController FABcontroller;
   bool selected = false;
   TextEditingController msgController;
+  SharedPreferences sharedPreferences;
+  String username;
 
   @override
   void initState() {
     super.initState();
+    getUsername();
     FABcontroller = AdvFabController();
     msgController = new TextEditingController();
     flickManager = null;
   }
-
+  getUsername()async{
+    sharedPreferences=await SharedPreferences.getInstance();
+    setState(() {
+      username=sharedPreferences.getString("Username");
+    });
+    print("username On Call:"+username);
+  }
   void setVideo(VideoPlayerController controller) {
     flickManager = FlickManager(
         videoPlayerController: controller,
@@ -58,14 +68,14 @@ class _VideoJoinState extends State<VideoJoin> {
 
   void _clearCachedFiles() {
     FilePicker.platform.clearTemporaryFiles().then((result) {
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          backgroundColor: result ? Colors.green : Colors.red,
-          content: Text((result
-              ? 'Temporary files removed with success.'
-              : 'Failed to clean temporary files')),
-        ),
-      );
+      // _scaffoldKey.currentState.showSnackBar(
+      //   SnackBar(
+      //     backgroundColor: result ? Colors.green : Colors.red,
+      //     content: Text((result
+      //         ? 'Temporary files removed with success.'
+      //         : 'Failed to clean temporary files')),
+      //   ),
+      // );
     });
   }
 
@@ -122,6 +132,7 @@ class _VideoJoinState extends State<VideoJoin> {
 
   @override
   Widget build(BuildContext context) {
+    print("username On build:"+username.toString());
     Timer.periodic(Duration(seconds: 5), (Timer t) async {
       // print('http://20.197.61.11:8000/getCurrentSecond/' +
       //     widget.Roomid.toString());
@@ -135,16 +146,16 @@ class _VideoJoinState extends State<VideoJoin> {
         response.then((value) {
           complete = 0;
           var decodedData = jsonDecode(value.body);
-          print("jcur:" + decodedData['second'].toString());
-          print("diff" +
-              (int.parse(flickManager
-                          .flickVideoManager.videoPlayerValue.position.inSeconds
-                          .toString()) -
-                      int.parse(decodedData['second'].toString()))
-                  .abs()
-                  .toString());
+          // print("jcur:" + decodedData['second'].toString());
+          // print("diff" +
+          //     (int.parse(flickManager
+          //                 .flickVideoManager.videoPlayerValue.position.inSeconds
+          //                 .toString()) -
+          //             int.parse(decodedData['second'].toString()))
+          //         .abs()
+          //         .toString());
           if (decodedData['second'].toString() == '-1'.toString()) {
-            print("pausing");
+            // print("pausing");
             flickManager.flickControlManager.pause();
           } else if ((int.parse(flickManager
                           .flickVideoManager.videoPlayerValue.position.inSeconds
@@ -152,12 +163,12 @@ class _VideoJoinState extends State<VideoJoin> {
                       int.parse(decodedData['second'].toString()))
                   .abs() >
               3) {
-            print('here2');
+            // print('here2');
             flickManager.flickControlManager.seekTo(
                 Duration(seconds: int.parse(decodedData['second'].toString())));
             flickManager.flickControlManager.play();
           } else {
-            print("here3");
+            // print("here3");
             flickManager.flickControlManager.play();
           }
         });
@@ -322,7 +333,7 @@ class _VideoJoinState extends State<VideoJoin> {
                                           icon: Icon(CupertinoIcons.arrow_left),
                                         ),
                                         ChangeNotifierProvider(
-                                          create: (context) => Chats(),
+                                          create: (context) => Chats(username),
                                           child: Messages(
                                             roomid: widget.Roomid,
                                           ),
@@ -369,18 +380,12 @@ class _VideoJoinState extends State<VideoJoin> {
                                                         "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/sendMessage/" +
                                                             widget.Roomid
                                                                 .toString() +
-                                                            "/ME/" +
+                                                            "/"+username+"/" +
                                                             msgController.text;
-                                                    print("calling:" + s);
+                                                    // print("calling:" + s);
                                                     http.Response
                                                         response =
-                                                        await http.get(
-                                                            "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/sendMessage/" +
-                                                                widget.Roomid
-                                                                    .toString() +
-                                                                "/ME/" +
-                                                                msgController
-                                                                    .text);
+                                                        await http.get(s);
                                                     msgController.clear();
                                                   }),
                                             ],
