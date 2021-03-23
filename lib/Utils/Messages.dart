@@ -2,14 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../Chats.dart';
 
 class Messages extends StatefulWidget {
-  Messages({@required this.roomid});
+  Messages({@required this.roomid, @required this.username});
 
   final int roomid;
+  final String username;
 
   @override
   _MessagesState createState() => _MessagesState();
@@ -18,28 +20,174 @@ class Messages extends StatefulWidget {
 class _MessagesState extends State<Messages> {
   List msg;
   Column column;
-
+  ScrollController scroller = new ScrollController();
+  dynamic curScroll;
   void initState() {
     Timer.periodic(Duration(seconds: 1), (timer) {
-       Provider.of<Chats>(context, listen: false).getChats(context,widget.roomid);
+      Provider.of<Chats>(context, listen: false)
+          .getChats(context, widget.roomid, scroller);
     });
+    // scroller.addListener(() {
+    //     setState(() {
+    //       scroller.animateTo(
+    //           scroller.position.maxScrollExtent, duration: Duration(seconds: 1),
+    //           curve: Curves.fastOutSlowIn);
+    //       // scroller.jumpTo(scroller.position.maxScrollExtent);
+    //     });
+    // });
     super.initState();
   }
 
   @override
   // ignore: missing_return
   Widget build(BuildContext context) {
-    return
-    SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child:
-          Consumer<Chats>(
-        builder: (context, data, child) {
-          if(data.setChats()!=null)
-          print('Data:' + data.setChats().children.length.toString());
-          return Column(crossAxisAlignment:CrossAxisAlignment.start,children: data.setChats().children,);
-        },
-      ),
-    );
+    // return
+    // SingleChildScrollView(
+    //   scrollDirection: Axis.vertical,
+    //   child:
+    //       Consumer<Chats>(
+    //     builder: (context, data, child) {
+    //       if(data.setChats()!=null)
+    //       print('Data:' + data.setChats().children.length.toString());
+    //       return Column(crossAxisAlignment:CrossAxisAlignment.start,children: data.setChats().children,);
+    //     },
+    //   ),
+    // );
+    return Container(
+        height: MediaQuery
+            .of(context)
+            .size
+            .width * 0.319,
+        // child: ListView(
+        //         controller: scroller,
+        //         shrinkWrap: true,
+        //         addSemanticIndexes: true,
+        //         scrollDirection: Axis.vertical,
+        //         children: Provider.of<Chats>(context, listen: false).setChats()),
+        child: Consumer<Chats>(builder: (context, data, child) {
+          List l = data.setChats();
+          print("updated");
+          //     return new ListView(
+          //       controller: scroller,
+          //       shrinkWrap: true,
+          //       addSemanticIndexes: true,
+          //       scrollDirection: Axis.vertical,
+          //       children: data.setChats(),
+          //     );
+          //   },
+          // ),
+          CustomScrollView sc= CustomScrollView(
+              controller: scroller,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              slivers: <Widget>[
+                SliverList(
+                  // key: centerKey,
+                    delegate: SliverChildBuilderDelegate(
+                            (BuildContext context, int index) {
+                          if (l[index][0].toString() != widget.username)
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(left: 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(100),
+                                          bottomRight: Radius.circular(100),
+                                          bottomLeft: Radius.circular(50)),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10,
+                                          right: 40,
+                                          top: 12,
+                                          bottom: 12),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            l[index][0].toString(),
+                                            style: GoogleFonts.roboto(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            l[index][1].toString(),
+                                            style: GoogleFonts.notoSans(
+                                                fontSize: 13,
+                                                color: Colors.white),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(),
+                                ],
+                              ),
+                            );
+                          else
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  Container(),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      // color: Colors.blue,
+                                      gradient: LinearGradient(
+                                          colors: [
+                                            Colors.black87,
+                                            Colors.black12
+                                          ]),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(100),
+                                        bottomLeft: Radius.circular(100),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, top: 12, bottom: 12),
+                                      child: Container(
+                                        child: Text(
+                                          l[index][1].toString(),
+                                          style: GoogleFonts.notoSans(
+                                              fontSize: 13,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                      // decoration: new BoxDecoration(color: Colors.red),
+
+                                      // decoration: BoxDecoration(
+                                      //   color: Colors.red,
+                                      //   borderRadius: BorderRadius.only(
+                                      //       bottomLeft: Radius.circular(20),
+                                      //       bottomRight: Radius.circular(20),
+                                      //       topRight: Radius.circular(20)),
+                                      // ),
+                                      // child: Text(
+                                      //   m[1].toString(),
+                                      //   style: TextStyle(color: Colors.white),
+                                      // )
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                        }, childCount: l.length))
+              ]);
+          // scroller.jumpTo(scroller.position.maxScrollExtent);
+          return sc;
+        }));
   }
 }

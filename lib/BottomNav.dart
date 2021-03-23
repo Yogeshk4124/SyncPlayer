@@ -1,3 +1,4 @@
+import 'package:SyncPlayer/VideoPlayers/addVideo.dart';
 import 'package:SyncPlayer/audioPlayers/audioPlayerCreate.dart';
 import 'package:SyncPlayer/audioPlayers/audioPlayerJoin.dart';
 import 'package:SyncPlayer/videoPlayer.dart';
@@ -5,9 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'Configuration.dart';
-import 'VideoPlayers/VideoCreate.dart';
-import 'VideoPlayers/VideoJoin.dart';
-import 'VideoPlayers/VideoPlayer.dart';
 import 'audioPlayers/audioPlayer.dart';
 
 Future<Map<String, dynamic>> getData() async {
@@ -55,15 +53,26 @@ class _Home4State extends State<Home4> {
         );
         break;
       case 2:
+        int id,type;
         if (data['Join'] == '-1' && data['Create'] == '-1') {
-          print('C1');
-          return new VideoPlayer();
-        } else if (data['Join'] != '-1')
-          return new VideoJoin(
-            Roomid: int.parse(data['Join']),
-          );
-        else
-          return new VideoCreate(Roomid: int.parse(data['Create']));
+          {  id=-1;type=1;}
+          } else if (data['Join'] != '-1') {
+          id = int.parse(data['Join']);
+        type=2;
+        }else {
+         type=3;
+         id = int.parse(data['Create']);
+        }
+        return new addVideo(Roomid: id,type:type);
+        // if (data['Join'] == '-1' && data['Create'] == '-1') {
+        //   print('C1');
+        //   return new VideoPlayer();
+        // } else if (data['Join'] != '-1')
+        //   return new VideoJoin(
+        //     Roomid: int.parse(data['Join']),
+        //   );
+        // else
+        //   return new VideoCreate(Roomid: int.parse(data['Create']));
         break;
       default:
         return new Home2(

@@ -39,6 +39,7 @@ class _Home2State extends State<Home2> {
   sharedPrefrencesHandler()async{
     prefs = await SharedPreferences.getInstance();
     if(prefs.getString("Username")==null) {
+      print("creating random");
       String name = new Faker().person.firstName();
       setDefaultUsername(name);
     }

@@ -11,6 +11,7 @@ class Chats extends ChangeNotifier {
   List msg = [];
   int msgCall = 0;
   String username="empty";
+
   Chats(String name){
     username=name;
   }
@@ -18,7 +19,7 @@ class Chats extends ChangeNotifier {
     children: <Widget>[],
   );
 
-  getChats(context, int roomid) async {
+  getChats(context, int roomid,ScrollController scrollController) async {
 
     if (msgCall == 0 && username!="empty"){
       msgCall = 1;
@@ -26,7 +27,7 @@ class Chats extends ChangeNotifier {
           "http://harmonpreet012.centralindia.cloudapp.azure.com:8001/getMessages/" +
               roomid.toString());
       var decodedData = jsonDecode(response.body);
-      List temp = new List();
+      List temp = [];
       for (dynamic res in decodedData) {
         temp.add([res[0].toString(), res[1].toString()]);
       }
@@ -142,10 +143,13 @@ class Chats extends ChangeNotifier {
               ),
             );
         notifyListeners();
+        // scrollController.animateTo(scrollController.position.maxScrollExtent, duration: Duration(seconds: 0), curve: Curves.fastOutSlowIn);
+        scrollController.animateTo(scrollController.position.maxScrollExtent, duration: Duration(seconds: 0), curve: Curves.fastOutSlowIn);
       }
       msgCall = 0;
     }
   }
 
-  Column setChats() => column;
+  // List setChats() => column.children;
+  List setChats() => msg;
 }
