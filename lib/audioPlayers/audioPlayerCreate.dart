@@ -24,6 +24,7 @@ class audioPlayerCreate extends StatefulWidget {
 class _audioPlayerCreateState extends State<audioPlayerCreate> {
   String mp3Uri = '', song = ' null';
   int current = 0;
+  GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   final assetsAudioPlayer = AssetsAudioPlayer();
   IconData pIcon;
   double seekerCurrent = 0;
@@ -44,6 +45,7 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
       );
     });
   }
+
 //Listen to the current playing song
   Duration _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -86,46 +88,48 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
             '/' +
             sec.toString());
   }
+
   Future<bool> _onBackPressed() {
     return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit an App'),
-        actions: <Widget>[
-          new GestureDetector(
-            onTap: () async{
-              // if (flickManager != null) flickManager.dispose();
-              // _clearCachedFiles();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => Home4()),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit an App'),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () async {
+                  // if (flickManager != null) flickManager.dispose();
+                  // _clearCachedFiles();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Home4()),
                     (route) => false,
-              );
-            },
-            child: Text("Yes"),
+                  );
+                },
+                child: Text("Yes"),
+              ),
+              SizedBox(height: 16),
+              new GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                  // if (flickManager != null) flickManager.dispose();
+                  // _clearCachedFiles();
+                  // Navigator.pushAndRemoveUntil(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (BuildContext context) => Home4()),
+                  //   (route) => false,
+                  // );
+                },
+                child: Text("No"),
+              ),
+            ],
           ),
-          SizedBox(height: 16),
-          new GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop(false);
-              // if (flickManager != null) flickManager.dispose();
-              // _clearCachedFiles();
-              // Navigator.pushAndRemoveUntil(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (BuildContext context) => Home4()),
-              //   (route) => false,
-              // );
-            },
-            child: Text("No"),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
+
   @override
   Widget build(BuildContext context) {
     Audio find(List<Audio> source, String fromPath) {
@@ -135,8 +139,42 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
+        key: _drawerKey,
         backgroundColor: Colors.black,
         // backgroundColor: Color(0xff14174E),
+        endDrawerEnableOpenDragGesture: false,
+        drawer: SafeArea(
+          child: Drawer(
+            child: Container(
+              child: ReorderableListView(
+                header: Text(
+                  'Playlist',
+                  style: GoogleFonts.merriweather(
+                      color: Colors.black, fontSize: 30),
+                  textAlign: TextAlign.center,
+                ),
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    dynamic temp = audios[oldIndex];
+                    audios.remove(oldIndex);
+                    audios.insert(newIndex, temp);
+                  });
+                },
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  for (int x = 0; x < audios.length; x++)
+                    ListTile(
+                      key: ValueKey(x),
+                      title: Text(audios[x]
+                          .path
+                          .substring(audios[x].path.lastIndexOf('/') + 1)),
+                      onTap: () {},
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
         body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,7 +192,7 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
                         size: 50,
                       ),
                       onTap: () {
-                        setState(() {});
+                        _drawerKey.currentState.openDrawer();
                       },
                     ),
                     Text(
@@ -449,9 +487,8 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
 
   void open() {
     song = "entering";
-    Future<FilePickerResult> result = FilePicker.platform.pickFiles(withReadStream: true);
-    File file;
-    // flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi
+    Future<FilePickerResult> result = FilePicker.platform
+        .pickFiles(withReadStream: true, allowMultiple: true);
     result.then((value) {
       if (value != null) {
         // List<File> files = value.paths.map((path) => File(path)).toList();
@@ -459,14 +496,19 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
         //   audios.add(Audio.file(file.path));
         //   song=file.path;
         // }
-        song = "result received";
-        file = File(value.files.single.path);
-        audios.add(Audio.file(file.path));
-        assetsAudioPlayer.open(
-          Playlist(audios: audios),
-          autoStart: false,
-        );
-        song = "result done";
+        List<File> files = value.paths.map((path) => File(path)).toList();
+        for (int i = 0; i < files.length; i++) {
+          audios.add(Audio.file(files[i].path));
+        }
+        // song = "result received";
+        // file = File(value.files.single.path);
+        // audios.add(Audio.file(file.path));
+        setState(() {
+          assetsAudioPlayer.open(Playlist(audios: audios),
+              autoStart: false, loopMode: LoopMode.playlist);
+        });
+
+        // song = "result done";
       } else {
         song = "failed";
         // User canceled the picker
