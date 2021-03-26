@@ -22,13 +22,16 @@ class audioPlayerCreate extends StatefulWidget {
 
 // ignore: camel_case_types
 class _audioPlayerCreateState extends State<audioPlayerCreate> {
-  String mp3Uri = '', song = ' null';
+  String mp3Uri = '',
+      song = ' null';
   int current = 0;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   final assetsAudioPlayer = AssetsAudioPlayer();
   IconData pIcon;
   double seekerCurrent = 0;
-  int i = 0, j = 0;
+  int current_divider = -1;
+  int i = 0,
+      j = 0;
   ValueNotifier<double> valueNotifier = ValueNotifier<double>(0);
   final audios = <Audio>[];
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -78,10 +81,10 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
   }
 
   void updateCurrentSec(int sec) {
-    print("updating sec and room:" +
-        widget.RoomId.toString() +
-        "," +
-        sec.toString());
+    // print("updating sec and room:" +
+    //     widget.RoomId.toString() +
+    //     "," +
+    //     sec.toString());
     Future<http.Response> response = http.get(
         'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/' +
             widget.RoomId.toString() +
@@ -89,44 +92,50 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
             sec.toString());
   }
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   Future<bool> _onBackPressed() {
     return showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit an App'),
-            actions: <Widget>[
-              new GestureDetector(
-                onTap: () async {
-                  // if (flickManager != null) flickManager.dispose();
-                  // _clearCachedFiles();
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => Home4()),
+      context: context,
+      builder: (context) =>
+      new AlertDialog(
+        title: new Text('Are you sure?'),
+        content: new Text('Do you want to exit an App'),
+        actions: <Widget>[
+          new GestureDetector(
+            onTap: () async {
+              // if (flickManager != null) flickManager.dispose();
+              // _clearCachedFiles();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => Home4()),
                     (route) => false,
-                  );
-                },
-                child: Text("Yes"),
-              ),
-              SizedBox(height: 16),
-              new GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                  // if (flickManager != null) flickManager.dispose();
-                  // _clearCachedFiles();
-                  // Navigator.pushAndRemoveUntil(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (BuildContext context) => Home4()),
-                  //   (route) => false,
-                  // );
-                },
-                child: Text("No"),
-              ),
-            ],
+              );
+            },
+            child: Text("Yes"),
           ),
-        ) ??
+          SizedBox(height: 16),
+          new GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop(false);
+              // if (flickManager != null) flickManager.dispose();
+              // _clearCachedFiles();
+              // Navigator.pushAndRemoveUntil(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (BuildContext context) => Home4()),
+              //   (route) => false,
+              // );
+            },
+            child: Text("No"),
+          ),
+        ],
+      ),
+    ) ??
         false;
   }
 
@@ -136,6 +145,48 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
       return source.firstWhere((element) => element.path == fromPath);
     }
 
+    List<Widget> getAudio() {
+      if (audios.isEmpty) return [];
+      List<Widget> l = [];
+      for (int x = 0; x <= current_divider; x++)
+        l.add(ListTile(
+          key: ValueKey(x),
+          title: Text(
+            audios[x].path.substring(audios[x].path.lastIndexOf('/') + 1),
+            style: TextStyle(color: Colors.red),
+          ),
+          onTap: () {},
+        ));
+      return l;
+    }
+
+    List<Widget> getPendingAudio() {
+      if (audios.isEmpty) return [];
+      List<Widget> l = [];
+      for (int x = 1; x < audios.length; x++)
+        l.add(ListTile(
+          key: ValueKey(x),
+          title: Text(
+              audios[x].path.substring(audios[x].path.lastIndexOf('/') + 1)),
+          onTap: () {},
+        ));
+      return l;
+    }
+
+    assetsAudioPlayer.playlistAudioFinished.listen((Playing playing) {
+      print('deleting at ' + 0.toString());
+      audios.removeAt(0);
+      print(audios.toString());
+      setState(() {
+      });
+    });
+    String current;
+    if (audios.isNotEmpty) {
+      current = audios[0]
+          .path
+          .substring(audios[0].path.lastIndexOf('/') + 1);
+      // audios.removeAt(0);
+    }
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
@@ -147,30 +198,49 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
           child: Drawer(
             child: Container(
               child: ReorderableListView(
-                header: Text(
-                  'Playlist',
-                  style: GoogleFonts.merriweather(
-                      color: Colors.black, fontSize: 30),
-                  textAlign: TextAlign.center,
+                header: Column(
+                  children: [
+                    Text(
+                      'Playlist',
+                      style: GoogleFonts.merriweather(
+                          color: Colors.black, fontSize: 30),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (audios.isNotEmpty)
+                      Container(
+                        child: ListTile(
+                          title: Text(
+                            current,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          onTap: () {},
+                        ),
+                      ),
+                  ],
                 ),
                 onReorder: (oldIndex, newIndex) {
                   setState(() {
-                    dynamic temp = audios[oldIndex];
-                    audios.remove(oldIndex);
-                    audios.insert(newIndex, temp);
-                  });
+                    print("old:" + oldIndex.toString() + " new:" +
+                        newIndex.toString());
+                    dynamic temp = audios[oldIndex+1];
+                    audios.removeAt(oldIndex+1);
+                    if (oldIndex > newIndex)
+                      audios.insert(newIndex+1, temp);
+                    else
+                      audios.insert(newIndex, temp);
+                    // if (oldIndex > newIndex) {
+                    //   audios[oldIndex + 1 + current_divider] = audios[newIndex+current_divider];
+                    //   audios[newIndex+current_divider] = temp;
+                    // }
+                    // else{
+                    //   audios[oldIndex + 1 + current_divider] = audios[newIndex-1+current_divider];
+                    //   audios[newIndex-1+current_divider] = temp;
+                    // }
+                    }
+                    );
                 },
                 padding: EdgeInsets.zero,
-                children: <Widget>[
-                  for (int x = 0; x < audios.length; x++)
-                    ListTile(
-                      key: ValueKey(x),
-                      title: Text(audios[x]
-                          .path
-                          .substring(audios[x].path.lastIndexOf('/') + 1)),
-                      onTap: () {},
-                    ),
-                ],
+                children: getPendingAudio(),
               ),
             ),
           ),
@@ -232,7 +302,10 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
                       appearance: CircularSliderAppearance(
                         angleRange: 360,
                         animationEnabled: false,
-                        size: MediaQuery.maybeOf(context).size.width * 0.60,
+                        size: MediaQuery
+                            .maybeOf(context)
+                            .size
+                            .width * 0.60,
                         startAngle: 270,
                         animDurationMultiplier: 300,
                         customWidths: CustomSliderWidths(
@@ -257,16 +330,19 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
                     if (assetsAudioPlayer.isPlaying.value == true)
                       updateCurrentSec(
                           assetsAudioPlayer.currentPosition.value.inSeconds);
-                    print("check2:" +
-                        assetsAudioPlayer.currentPosition.value.inSeconds
-                            .toString());
+                    // print("check2:" +
+                    //     assetsAudioPlayer.currentPosition.value.inSeconds
+                    //         .toString());
 
                     time = _printDurationAsString(
                         new Duration(seconds: position.inSeconds.toInt()));
                     s = SleekCircularSlider(
                       appearance: CircularSliderAppearance(
                         angleRange: 360,
-                        size: MediaQuery.maybeOf(context).size.width * 0.65,
+                        size: MediaQuery
+                            .maybeOf(context)
+                            .size
+                            .width * 0.65,
                         startAngle: 270,
                         animDurationMultiplier: 300,
                         customWidths: CustomSliderWidths(
@@ -285,17 +361,17 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
                           .current.value.audio.duration.inSeconds
                           .toDouble(),
                       initialValue: assetsAudioPlayer
-                                  .currentPosition.value.inSeconds
-                                  .toDouble() >
-                              assetsAudioPlayer
-                                  .current.value.audio.duration.inSeconds
-                                  .toDouble()
+                          .currentPosition.value.inSeconds
+                          .toDouble() >
+                          assetsAudioPlayer
+                              .current.value.audio.duration.inSeconds
+                              .toDouble()
                           ? 0
                           : assetsAudioPlayer.currentPosition.value.inSeconds
-                              .toDouble(),
+                          .toDouble(),
                       onChange: (double value) {
                         setState(
-                          () {
+                              () {
                             Duration d = new Duration(seconds: value.toInt());
                             d = _printDuration(d);
                             seekTo(d);
@@ -304,7 +380,7 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
                       },
                       onChangeEnd: (double value) {
                         setState(
-                          () {
+                              () {
                             Duration d = new Duration(seconds: value.toInt());
                             d = _printDuration(d);
                             seekTo(d);
@@ -336,7 +412,10 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
                     text = getSong();
                     return Container(
                       height: 46,
-                      width: MediaQuery.maybeOf(context).size.width * 0.8,
+                      width: MediaQuery
+                          .maybeOf(context)
+                          .size
+                          .width * 0.8,
                       child: MarqueeText(
                         text: text,
                         textStyle: GoogleFonts.poiretOne(
@@ -391,7 +470,7 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
                                 pIcon = Icons.play_circle_fill;
                                 updateCurrentSec(-1);
                               } else {
-                                print("good current");
+                                // print("good current");
                                 // updateCurrentSec(
                                 //     assetsAudioPlayer.currentPosition.value.inSeconds);
                                 pIcon = Icons.pause_circle_filled;
@@ -504,6 +583,7 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
         // file = File(value.files.single.path);
         // audios.add(Audio.file(file.path));
         setState(() {
+          current_divider = 0;
           assetsAudioPlayer.open(Playlist(audios: audios),
               autoStart: false, loopMode: LoopMode.playlist);
         });
@@ -551,9 +631,9 @@ class _audioPlayerCreateState extends State<audioPlayerCreate> {
   }
 
   void loop() async {
-    print("start:" + assetsAudioPlayer.currentLoopMode.toString());
+    // print("start:" + assetsAudioPlayer.currentLoopMode.toString());
     assetsAudioPlayer.toggleLoop();
-    print("done:" + assetsAudioPlayer.currentLoopMode.toString());
+    // print("done:" + assetsAudioPlayer.currentLoopMode.toString());
   }
 
   void skipnext() async {
