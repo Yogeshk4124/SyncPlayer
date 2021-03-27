@@ -22,7 +22,7 @@ class _Home2State extends State<Home2> {
   final _joinController = TextEditingController();
   final _nameController = TextEditingController();
   int _selected = 1;
-  String creating = 'You have not Created/Joined any room.Create Room?',
+  String creating = 'Create Room?',
       button = "Connect",
       link =
           'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/createRoom';
@@ -80,7 +80,7 @@ class _Home2State extends State<Home2> {
           children: [
             Text(
               creating,
-              style: TextStyle(
+              style: GoogleFonts.merriweather(
                 fontSize: 20,
               ),
               textAlign: TextAlign.center,
@@ -106,8 +106,8 @@ class _Home2State extends State<Home2> {
                     } else {
                       widget.data['Create'] = '-1';
                       print("CD:2");
-                      creating =
-                          'You have not Created/Joined any room.Create Room?';
+                      creating ="Create Room?";
+                          // 'You have not created/joined any room.Create Room?';
                       button = "Connect";
                       link =
                           'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/createRoom';
@@ -265,8 +265,9 @@ class _Home2State extends State<Home2> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
+
               "Configuration",
-              style: GoogleFonts.poiretOne(
+              style: GoogleFonts.robotoSlab(
                 fontSize: MediaQuery.maybeOf(context).size.width * 0.1,
               ),
               maxLines: 1,
@@ -396,8 +397,11 @@ class _Home2State extends State<Home2> {
             Expanded(
               child: Container(
                 width: double.infinity,
-                margin: EdgeInsets.all(20),
-                decoration: BoxDecoration(color: Color(0xff181818)),
+                margin: EdgeInsets.symmetric(vertical: 20,horizontal: 40),
+                
+                decoration: BoxDecoration(color: Color(0xff181818)
+                ,borderRadius: BorderRadius.all(Radius.circular(7)),
+                ),
                 child: w,
               ),
             )

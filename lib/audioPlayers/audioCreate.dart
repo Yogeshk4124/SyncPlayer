@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 import 'package:SyncPlayer/Utils/RadiantGradientIcon.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
@@ -33,16 +35,7 @@ class _audioCreateState extends State<audioCreate> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _clearCachedFiles() {
-    FilePicker.platform.clearTemporaryFiles().then((result) {
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          backgroundColor: result ? Colors.green : Colors.red,
-          content: Text((result
-              ? 'Temporary files removed with success.'
-              : 'Failed to clean temporary files')),
-        ),
-      );
-    });
+    FilePicker.platform.clearTemporaryFiles();
   }
 
 //Listen to the current playing song
@@ -124,17 +117,73 @@ class _audioCreateState extends State<audioCreate> {
 
   @override
   Widget build(BuildContext context) {
-    Audio find(List<Audio> source, String fromPath) {
-      return source.firstWhere((element) => element.path == fromPath);
+    // assetsAudioPlayer.playlistAudioFinished.listen((Playing playing) {
+    //   setState(() {
+    //   });
+    // });
+    // setState(() {});
+    List<Widget> getPendingAudio(){
+      print("getting");
+      if (audios.isEmpty||assetsAudioPlayer.current.value==null) return [];
+      List<Widget> l = [];
+      print("getting2:"+assetsAudioPlayer.current.value.index.toString());
+      for (int x = 0; x < audios.length; x++)
+        if (assetsAudioPlayer.current.value.index == x)
+          l.add(ListTile(
+              key: ValueKey(x),
+              title: Text(
+                  audios[x].path.substring(audios[x].path.lastIndexOf('/') + 1),
+                  style: TextStyle(color: Colors.red))));
+        else
+          l.add(ListTile(
+            key: ValueKey(x),
+            title: Text(
+                audios[x].path.substring(audios[x].path.lastIndexOf('/') + 1)),
+            onTap: () {},
+          ));
+      return l;
     }
-
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
         key: _drawerKey,
         backgroundColor: Colors.black,
-        // backgroundColor: Color(0xff14174E),
         endDrawerEnableOpenDragGesture: false,
+        drawer: SafeArea(
+          child: Drawer(
+            child: Container(
+              child: ReorderableListView(
+                header: Column(
+                  children: [
+                    Text(
+                      'Playlist',
+                      style: GoogleFonts.merriweather(
+                          color: Colors.black, fontSize: 30),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    print("old:" +
+                        oldIndex.toString() +
+                        " new:" +
+                        newIndex.toString());
+                    if(oldIndex==assetsAudioPlayer.current.value.index)return;
+                    dynamic temp = audios[oldIndex ];
+                    audios.removeAt(oldIndex);
+                    if (oldIndex > newIndex)
+                      audios.insert(newIndex, temp);
+                    else
+                      audios.insert(newIndex-1, temp);
+                  });
+                },
+                padding: EdgeInsets.zero,
+                children: getPendingAudio(),
+              ),
+            ),
+          ),
+        ),
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -178,37 +227,175 @@ class _audioCreateState extends State<audioCreate> {
               ),
               assetsAudioPlayer.builderRealtimePlayingInfos(
                   builder: (context, RealtimePlayingInfos infos) {
-                if (infos == null) {
-                  return SleekCircularSlider(
-                    min: 0,
-                    max: 1,
-                    initialValue: 0,
-                    appearance: CircularSliderAppearance(
-                      angleRange: 360,
-                      animationEnabled: false,
-                      size: MediaQuery.maybeOf(context).size.width * 0.60,
-                      startAngle: 270,
-                      animDurationMultiplier: 300,
-                      customWidths: CustomSliderWidths(
-                          trackWidth: 2, progressBarWidth: 3, handlerSize: 4),
-                      customColors: CustomSliderColors(progressBarColors: [
-                        Color(0xffF9657F),
-                        Color(0xffF61976)
-                      ], trackColors: [
-                        Color(0x66F9657F),
-                        Color(0x66F61976)
-                      ]),
-                      //#F9657F->#F61976
-                    ),
-                    innerWidget: (double value) {
-                      return SliderInnerWidget();
-                    },
+                if (infos == null || assetsAudioPlayer.current.value == null) {
+                  return Column(
+                    children: [
+                      SleekCircularSlider(
+                        min: 0,
+                        max: 1,
+                        initialValue: 0,
+                        appearance: CircularSliderAppearance(
+                          angleRange: 360,
+                          animationEnabled: false,
+                          size: MediaQuery.maybeOf(context).size.width * 0.60,
+                          startAngle: 270,
+                          animDurationMultiplier: 300,
+                          customWidths: CustomSliderWidths(
+                              trackWidth: 2,
+                              progressBarWidth: 3,
+                              handlerSize: 4),
+                          customColors: CustomSliderColors(progressBarColors: [
+                            Color(0xffF9657F),
+                            Color(0xffF61976)
+                          ], trackColors: [
+                            Color(0x66F9657F),
+                            Color(0x66F61976)
+                          ]),
+                          //#F9657F->#F61976
+                        ),
+                        innerWidget: (double value) {
+                          return SliderInnerWidget();
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            assetsAudioPlayer.current.value != null
+                                ? Container(
+                                    height: 46,
+                                    width:
+                                        MediaQuery.maybeOf(context).size.width *
+                                            0.8,
+                                    child: MarqueeText(
+                                      text: getSong(),
+                                      textStyle: GoogleFonts.poiretOne(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 40,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    "Nothing to Play?",
+                                    style: GoogleFonts.poiretOne(fontSize: 30),
+                                  ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      prev();
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.skip_previous,
+                                    size: 40,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      skipprev();
+                                    });
+                                  },
+                                  child: Icon(
+                                    CupertinoIcons.backward_fill,
+                                    size: 30,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      playOrpause();
+                                    });
+                                  },
+                                  child: RadiantGradientMask(
+                                    child: Icon(
+                                      (!assetsAudioPlayer.isPlaying.value)
+                                          ? Icons.play_circle_fill
+                                          : Icons.pause_circle_filled,
+                                      size: 80,
+                                      color: Colors.white,
+                                    ),
+                                    c2: Color(0xffff0000),
+                                    c1: Color(0xAAd70000),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      skipnext();
+                                    });
+                                  },
+                                  child: Icon(
+                                    CupertinoIcons.forward_fill,
+                                    size: 30,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      next();
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.skip_next,
+                                    size: 40,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (assetsAudioPlayer.volume.value
+                                                .toInt() ==
+                                            0)
+                                          assetsAudioPlayer.setVolume(1);
+                                        else
+                                          assetsAudioPlayer.setVolume(0);
+                                      });
+                                    },
+                                    child: getVolume(),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        loop();
+                                      });
+                                    },
+                                    child: Icon(
+                                      CupertinoIcons.repeat,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   );
                 }
-                print('infos: $infos');
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(_printDurationAsString(Duration(
+                          seconds: assetsAudioPlayer
+                              .currentPosition.value.inSeconds))),
+                    ),
                     SleekCircularSlider(
                       appearance: CircularSliderAppearance(
                         angleRange: 360,
@@ -361,24 +548,25 @@ class _audioCreateState extends State<audioCreate> {
                                 GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      shuffle();
+                                      if (assetsAudioPlayer.volume.value
+                                              .toInt() ==
+                                          0)
+                                        assetsAudioPlayer.setVolume(1);
+                                      else
+                                        assetsAudioPlayer.setVolume(0);
                                     });
                                   },
-                                  child: Icon(
-                                    Icons.shuffle,
-                                    size: 30,
-                                  ),
+                                  child: getVolume(),
                                 ),
                                 GestureDetector(
                                   onTap: () {
+                                    print("calling loop toogle");
                                     setState(() {
                                       loop();
                                     });
                                   },
-                                  child: Icon(
-                                    Icons.loop_outlined,
-                                    size: 30,
-                                  ),
+                                  child: getLoopIcon(),
+                                  // Icons.loop_outlined,
                                 ),
                               ],
                             ),
@@ -400,69 +588,77 @@ class _audioCreateState extends State<audioCreate> {
     assetsAudioPlayer.playOrPause();
   }
 
-  void shuffle() {
-    assetsAudioPlayer.toggleShuffle();
+  getVolume() {
+    if (assetsAudioPlayer.volume.value == 0)
+      return Icon(
+        CupertinoIcons.volume_off,
+      );
+    else
+      return Icon(CupertinoIcons.volume_up);
   }
 
-  void open() {
-    song = "entering";
-    Future<FilePickerResult> result = FilePicker.platform
+  Widget getLoopIcon() {
+    if (assetsAudioPlayer.currentLoopMode == LoopMode.single)
+      return Icon(
+        CupertinoIcons.repeat_1,
+        color: Colors.red,
+      );
+    else if (assetsAudioPlayer.currentLoopMode == LoopMode.none)
+      return Icon(
+        CupertinoIcons.repeat,
+        color: Colors.white,
+      );
+    else
+      return Icon(
+        CupertinoIcons.repeat,
+        color: Colors.red,
+      );
+  }
+
+  void open() async{
+    // Future<FilePickerResult> result = FilePicker.platform
+    //     .pickFiles(withReadStream: true, allowMultiple: true);
+    // result.then((value) {
+    //   if (value != null) {
+    //     List<File> files = value.paths.map((path) => File(path)).toList();
+    //     for (int i = 0; i < files.length; i++) {
+    //       audios.add(Audio.file(files[i].path));
+    //     }
+    //     setState(() {
+    //       assetsAudioPlayer.open(Playlist(audios: audios),
+    //           autoStart: false, loopMode: LoopMode.playlist);
+    //     });
+    //   }
+    // });
+    FilePickerResult result = await FilePicker.platform
         .pickFiles(withReadStream: true, allowMultiple: true);
-    result.then((value) {
-      if (value != null) {
-        // List<File> files = value.paths.map((path) => File(path)).toList();
-        // for (File file in files) {
-        //   audios.add(Audio.file(file.path));
-        //   song=file.path;
-        // }
-        List<File> files = value.paths.map((path) => File(path)).toList();
+      if (result != null) {
+        List<File> files = result.paths.map((path) => File(path)).toList();
         for (int i = 0; i < files.length; i++) {
           audios.add(Audio.file(files[i].path));
         }
-        // song = "result received";
-        // file = File(value.files.single.path);
-        // audios.add(Audio.file(file.path));
-        setState(() {
-          assetsAudioPlayer.open(Playlist(audios: audios),
-              autoStart: false, loopMode: LoopMode.playlist);
+        await assetsAudioPlayer.open(Playlist(audios: audios),
+            autoStart: false, loopMode: LoopMode.playlist);
+        setState((){
         });
-
-        // song = "result done";
-      } else {
-        song = "failed";
-        // User canceled the picker
       }
+  }
+
+  void next() async {
+    await assetsAudioPlayer.next();
+
+    setState(() {
+      print("current:"+assetsAudioPlayer.current.value.index.toString());
+
     });
-    // FilePickerResult result =
-    //     await FilePicker.platform.pickFiles();
-    // song="stuck";
-    // flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi
-    // if (result != null) {
-    //   song="getting";
-    //   List<File> files = result.paths.map((path) => File(path)).toList();
-    //   song="here";
-    //   for (File file in files) {
-    //     audios.add(Audio.file(file.path));
-    //     song=file.path;
-    //   }
-    //   song="open";
-    //   assetsAudioPlayer.open(
-    //     Playlist(audios: audios),
-    //     autoStart: false,
-    //   );
-    //   song="start";
-    // } else {
-    //   song="failed";
-    //   // User canceled the picker
-    // }
   }
 
-  void next() {
-    assetsAudioPlayer.next();
-  }
+  void prev() async {
+    await assetsAudioPlayer.previous();
+    setState(() {
+      print("current:"+assetsAudioPlayer.current.value.index.toString());
 
-  void prev() {
-    assetsAudioPlayer.previous();
+    });
   }
 
   void seekTo(Duration duration) async {
@@ -470,9 +666,7 @@ class _audioCreateState extends State<audioCreate> {
   }
 
   void loop() async {
-    // print("start:" + assetsAudioPlayer.currentLoopMode.toString());
     assetsAudioPlayer.toggleLoop();
-    // print("done:" + assetsAudioPlayer.currentLoopMode.toString());
   }
 
   void skipnext() async {
