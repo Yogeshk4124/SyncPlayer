@@ -137,8 +137,8 @@ class LandscapePlayerControls extends StatelessWidget {
                           //     50 - MediaQuery.of(context).size.shortestSide),
                           // offset: Offset(50,0),
                           offset: Offset(
-                              MediaQuery.of(context).size.width*0.75,
-                             -MediaQuery.of(context).size.height*0.95),
+                              MediaQuery.of(context).size.width/1.35,
+                             -MediaQuery.of(context).size.height+2),
                           // offset: Offset(50,0),
                           buttonBuilder: (BuildContext context) {
                             return Icon(Icons.chat);

@@ -24,7 +24,6 @@ class videoJoin extends StatefulWidget {
 }
 
 class _videoJoinState extends State<videoJoin> {
-  AdvFabController FABcontroller;
   FlickManager flickManager;
   TextEditingController msgController;
   int complete = 0;
@@ -34,7 +33,7 @@ class _videoJoinState extends State<videoJoin> {
   @override
   void dispose() {
     super.dispose();
-    if (flickManager != null) flickManager.dispose();
+    // if (flickManager != null) flickManager.dispose();
     _clearCachedFiles();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -55,6 +54,7 @@ class _videoJoinState extends State<videoJoin> {
     flickManager = widget.flickManager;
     Timer.periodic(Duration(seconds: 1), (Timer t) {
       if (complete == 0) {
+        print("joining call");
         complete = 1;
         String l =
             'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
@@ -65,18 +65,20 @@ class _videoJoinState extends State<videoJoin> {
             var decodedData = jsonDecode(value.body);
             int time=int.parse(decodedData['second'].toString());
             if (time < 0) {
+              print("video -negative");
               flickManager.flickControlManager.pause();
               flickManager.flickControlManager.seekTo(Duration(seconds: time.abs()));
             } else if ((flickManager.flickVideoManager
                             .videoPlayerValue.position.inSeconds-
                         time).abs() > 4) {
-              print('here2');
+              print("video +positive");
               flickManager.flickControlManager.seekTo(Duration(
                   seconds: time+1));
               flickManager.flickControlManager.play();
-            } else
+            } else {
+              print("video =neutral");
               flickManager.flickControlManager.play();
-            complete = 0;
+            }complete = 0;
           });
         // });
       }

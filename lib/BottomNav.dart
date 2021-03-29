@@ -1,7 +1,4 @@
 import 'package:SyncPlayer/VideoPlayers/addVideo.dart';
-import 'package:SyncPlayer/audioPlayers/audioPlayerCreate.dart';
-import 'package:SyncPlayer/audioPlayers/audioPlayerJoin.dart';
-import 'package:SyncPlayer/videoPlayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';

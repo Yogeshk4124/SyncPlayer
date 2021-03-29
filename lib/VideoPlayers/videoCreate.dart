@@ -68,7 +68,7 @@ class _videoCreateState extends State<videoCreate> {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
     flickManager = widget.flickManager;
-    Timer.periodic(Duration(seconds: 1), (Timer t) async {
+    Timer.periodic(Duration(seconds: 1), (Timer t){
       if (complete == 0) {
         complete = 1;
         String time = flickManager.flickVideoManager.videoPlayerValue.isPlaying
@@ -83,9 +83,7 @@ class _videoCreateState extends State<videoCreate> {
                 time;
         Future<http.Response> response = http.get(l);
         response.then((value) {
-          setState(() {
-            complete = 0;
-          });
+          complete = 0;
         });
       }
     });

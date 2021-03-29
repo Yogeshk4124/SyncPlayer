@@ -78,13 +78,18 @@ class _audioJoinState extends State<audioJoin> {
     var decodedData = jsonDecode(response.body);
     return decodedData['second'];
   }
-int complete=0;
+int complete;
   @override
   void initState() {
+    complete=0;
     print("join");
     super.initState();
   }
-
+  @override
+  void dispose(){
+    super.dispose();
+    assetsAudioPlayer.dispose();
+  }
   Future<bool> _onBackPressed() {
     return showDialog(
           context: context,
@@ -203,14 +208,18 @@ int complete=0;
                           if ( time < 0) {
                             assetsAudioPlayer.pause();
                             seekTo(Duration(seconds: time.abs()));
+                            print("audio -negative");
                           }
                           else if ((assetsAudioPlayer.currentPosition.value.inSeconds-
                               time).abs() > 4) {
                               seekTo(Duration(seconds: time));
                               assetsAudioPlayer.play();
+                              print("audio +positive");
                           }
-                          else play();
-                          complete = 0;
+                          else {
+                            print("audio =neutral");
+                            play();
+                          }complete = 0;
 
                       });
                     }

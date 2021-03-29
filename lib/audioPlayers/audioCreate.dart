@@ -41,7 +41,11 @@ class _audioCreateState extends State<audioCreate> {
   void _clearCachedFiles() {
     FilePicker.platform.clearTemporaryFiles();
   }
-
+  @override
+  void dispose(){
+    super.dispose();
+    assetsAudioPlayer.dispose();
+  }
 //Listen to the current playing song
   Duration _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");

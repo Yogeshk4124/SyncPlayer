@@ -98,7 +98,11 @@ class _audioPlayerState extends State<audioPlayer> {
         ) ??
         false;
   }
-
+  @override
+  void dispose(){
+    super.dispose();
+    assetsAudioPlayer.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([

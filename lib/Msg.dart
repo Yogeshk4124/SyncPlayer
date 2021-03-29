@@ -54,16 +54,24 @@ class _MsgState extends State<Msg> {
             children: <Widget>[
               SizedBox(width: 5,),
               Expanded(
-                  child: TextField(
-                      controller: msgController,
-                      decoration: InputDecoration(
-                        // enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        // focusedBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.only(left: 15),
-                      ),
-                      style: TextStyle(fontSize: 16, color: Colors.white))),
+                  child: Container(
+                    height: 30,
+                    child: TextField(
+                        controller: msgController,
+                        // decoration: InputDecoration(
+                        //   // enabledBorder: InputBorder.none,
+                        //   errorBorder: InputBorder.none,
+                        //   // focusedBorder: InputBorder.none,
+                        //   disabledBorder: InputBorder.none,
+                        //   contentPadding: EdgeInsets.only(left: 15),
+                        // ),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.only(topRight:Radius.circular(20) ,bottomRight: Radius.circular(20))
+                          )
+                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.white)),
+                  )),
               IconButton(
                   icon: Icon(Icons.send, color: Colors.white),
                   onPressed: () async {

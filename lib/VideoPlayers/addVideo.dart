@@ -67,9 +67,10 @@ class _addVideoState extends State<addVideo> {
   }
   @override
   void dispose(){
-    if(flickManager!=null)flickManager.dispose();
     super.dispose();
+    // if(flickManager!=null)flickManager.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
