@@ -5,9 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class Home2 extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -32,21 +34,24 @@ class _Home2State extends State<Home2> {
           'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/addUser/';
   int get = 0;
   SharedPreferences prefs;
-  setDefaultUsername(String name)async{
+
+  setDefaultUsername(String name) async {
     _nameController.text = name;
     await prefs.setString("Username", name);
   }
-  sharedPrefrencesHandler()async{
+
+  sharedPrefrencesHandler() async {
     prefs = await SharedPreferences.getInstance();
-    if(prefs.getString("Username")==null) {
+    if (prefs.getString("Username") == null) {
       print("creating random");
       String name = new Faker().person.firstName();
       setDefaultUsername(name);
-    }
-    else _nameController.text=prefs.getString("Username");
+    } else
+      _nameController.text = prefs.getString("Username");
   }
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     sharedPrefrencesHandler();
     if (widget.data['Create'] == '-1' && widget.data['Join'] != '-1') {
@@ -70,8 +75,14 @@ class _Home2State extends State<Home2> {
     super.dispose();
   }
 
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+
+    ]);
     Widget createDestroy() {
       print("error:" + widget.data.toString());
       if (widget.data['Join'] == '-1')
@@ -92,6 +103,13 @@ class _Home2State extends State<Home2> {
               onPressed: () {
                 print("link:" + link);
                 Future<http.Response> response = http.get(link);
+                BuildContext dialogContext;
+                showDialog(
+                    context: context,
+                    builder: (dcontext) {
+                      dialogContext=dcontext;
+                      return SpinKitChasingDots(color: Colors.red,size: 50,);
+                    });
                 response.then((value) {
                   var decodedData = jsonDecode(value.body);
                   setState(() {
@@ -106,14 +124,16 @@ class _Home2State extends State<Home2> {
                     } else {
                       widget.data['Create'] = '-1';
                       print("CD:2");
-                      creating ="Create Room?";
-                          // 'You have not created/joined any room.Create Room?';
+                      creating = "Create Room?";
+                      // 'You have not created/joined any room.Create Room?';
                       button = "Connect";
                       link =
                           'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/createRoom';
                     }
                   });
+                  Navigator.pop(dialogContext);
                 });
+
               },
               child: Container(
                   padding: EdgeInsets.all(20),
@@ -202,6 +222,14 @@ class _Home2State extends State<Home2> {
                 if (widget.data['Join'] == '-1') {
                   Future<http.Response> response =
                       http.get(Jlink + _joinController.text);
+                  BuildContext dialogContext;
+                  showDialog(
+                      context: context,
+                      builder: (dcontext) {
+                        dialogContext=dcontext;
+                        return SpinKitChasingDots(color: Colors.red,size: 50,);
+                      });
+
                   response.then((value) {
                     var decodedData = jsonDecode(value.body);
                     print("eBody:" + decodedData.toString());
@@ -217,6 +245,7 @@ class _Home2State extends State<Home2> {
                       } else
                         get = 1;
                     });
+                    Navigator.of(dialogContext).pop();
                   });
                 } else {
                   setState(() {
@@ -265,7 +294,6 @@ class _Home2State extends State<Home2> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-
               "Configuration",
               style: GoogleFonts.robotoSlab(
                 fontSize: MediaQuery.maybeOf(context).size.width * 0.1,
@@ -397,10 +425,10 @@ class _Home2State extends State<Home2> {
             Expanded(
               child: Container(
                 width: double.infinity,
-                margin: EdgeInsets.symmetric(vertical: 20,horizontal: 40),
-                
-                decoration: BoxDecoration(color: Color(0xff181818)
-                ,borderRadius: BorderRadius.all(Radius.circular(7)),
+                margin: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                decoration: BoxDecoration(
+                  color: Color(0xff181818),
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
                 ),
                 child: w,
               ),

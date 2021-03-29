@@ -1,6 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'dart:ui';
 import 'package:SyncPlayer/ModalTrigger.dart';
 import 'package:SyncPlayer/Utils/RadiantGradientIcon.dart';
@@ -11,25 +11,23 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:http/http.dart' as http;
 import '../BottomNav.dart';
-import '../Configuration.dart';
 import '../Utils/MarqueeText.dart';
 import '../Utils/SliderInnerWidget.dart';
-import 'package:http/http.dart' as http;
 
-class audioCreate extends StatefulWidget {
-  audioCreate({Key key, @required this.RoomId}) : super(key: key);
+class audioJoin extends StatefulWidget {
+  audioJoin({Key key, @required this.RoomId}) : super(key: key);
   int RoomId;
-
   @override
-  _audioCreateState createState() => _audioCreateState();
+  _audioJoinState createState() => _audioJoinState();
 }
 
 // ignore: camel_case_types
-class _audioCreateState extends State<audioCreate> {
+class _audioJoinState extends State<audioJoin> {
   String mp3Uri = '', song = ' null';
   int current = 0;
+  int ct = -1;
   GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
   final assetsAudioPlayer = AssetsAudioPlayer();
   IconData pIcon;
@@ -73,12 +71,12 @@ class _audioCreateState extends State<audioCreate> {
     }
   }
 
-  void updateCurrentSec(int sec) {
-    Future<http.Response> response = http.get(
-        'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/' +
-            widget.RoomId.toString() +
-            '/' +
-            sec.toString());
+  Future getSec() async {
+    http.Response response = await http.get(
+        'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
+            widget.RoomId.toString());
+    var decodedData = jsonDecode(response.body);
+    return decodedData['second'];
   }
 
   @override
@@ -94,12 +92,8 @@ class _audioCreateState extends State<audioCreate> {
             content: new Text('Do you want to exit an App'),
             actions: <Widget>[
               new GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => Home4()),
-                    (route) => false,
-                  );
+                onTap: () async {
+                  Navigator.pop(context);
                 },
                 child: Text("Yes"),
               ),
@@ -120,6 +114,7 @@ class _audioCreateState extends State<audioCreate> {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
+
     ]);
     return WillPopScope(
       onWillPop: _onBackPressed,
@@ -147,13 +142,8 @@ class _audioCreateState extends State<audioCreate> {
                         ),
                       ),
                       onTap: () {
-                        // Navigator.pushAndRemoveUntil(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (BuildContext context) => Home4()),
-                        //   (route) => false,
-                        // );
-                        Navigator.of(context).pushAndRemoveUntil(
+                        Navigator.pushAndRemoveUntil(
+                          context,
                           MaterialPageRoute(
                               builder: (BuildContext context) => Home4()),
                           (route) => false,
@@ -184,6 +174,20 @@ class _audioCreateState extends State<audioCreate> {
               ),
               assetsAudioPlayer.builderRealtimePlayingInfos(
                   builder: (context, RealtimePlayingInfos infos) {
+                Future x = getSec();
+                x.then((value) {
+                  int temp = int.parse(value.toString());
+                  if(temp<0){
+                    assetsAudioPlayer.pause();
+                    seekTo(Duration(seconds: temp.abs()));
+                  }
+                  else if ((temp.abs() - ct).abs() > 5) {
+                    ct = temp.abs();
+                    seekTo(Duration(seconds: temp.abs()));
+                  }
+                  else if (assetsAudioPlayer.current.value != null)
+                    assetsAudioPlayer.play();
+                });
                 if (infos == null || assetsAudioPlayer.current.value == null) {
                   return Column(
                     children: [
@@ -256,8 +260,6 @@ class _audioCreateState extends State<audioCreate> {
                                     setState(() {
                                       prev();
                                     });
-                                    final _scaffoldKey =
-                                        GlobalKey<ScaffoldState>();
                                   },
                                   child: Icon(
                                     Icons.skip_previous,
@@ -356,12 +358,6 @@ class _audioCreateState extends State<audioCreate> {
                     ],
                   );
                 }
-                if (assetsAudioPlayer.isPlaying.value)
-                  updateCurrentSec(
-                      assetsAudioPlayer.currentPosition.value.inSeconds);
-                else
-                  updateCurrentSec(
-                      -assetsAudioPlayer.currentPosition.value.inSeconds);
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -600,20 +596,6 @@ class _audioCreateState extends State<audioCreate> {
   }
 
   void open() async {
-    // Future<FilePickerResult> result = FilePicker.platform
-    //     .pickFiles(withReadStream: true, allowMultiple: true);
-    // result.then((value) {
-    //   if (value != null) {
-    //     List<File> files = value.paths.map((path) => File(path)).toList();
-    //     for (int i = 0; i < files.length; i++) {
-    //       audios.add(Audio.file(files[i].path));
-    //     }
-    //     setState(() {
-    //       assetsAudioPlayer.open(Playlist(audios: audios),
-    //           autoStart: false, loopMode: LoopMode.playlist);
-    //     });
-    //   }
-    // });
     FilePickerResult result = await FilePicker.platform
         .pickFiles(withReadStream: true, allowMultiple: true);
     if (result != null) {

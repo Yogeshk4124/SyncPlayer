@@ -54,17 +54,21 @@ class _videoPlayerState extends State<videoPlayer> {
     super.dispose();
     if (flickManager != null) flickManager.dispose();
     _clearCachedFiles();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   @override
   void deactivate() {
     _clearCachedFiles();
     super.deactivate();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     // if (flickManager != null) flickManager.dispose();
   }
+
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
     flickManager = widget.flickManager;
     // dataManager = widget.dataManager;
    }

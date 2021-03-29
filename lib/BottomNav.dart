@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'Configuration.dart';
 import 'audioPlayers/audioCreate.dart';
+import 'audioPlayers/audioJoin.dart';
 import 'audioPlayers/audioPlayer.dart';
 
 Future<Map<String, dynamic>> getData() async {
@@ -42,8 +43,9 @@ class _Home4State extends State<Home4> {
           print('C1');
           return new audioPlayer();
         } else if (data['Join'] != '-1')
-          return new audioPlayerJoin(
-            RoomId: int.parse(data['Join']),
+          // return new audioPlayerJoin(
+          //   RoomId: int.parse(data['Join']),
+          return audioJoin(RoomId:int.parse(data['Join']),
           );
         else
           return new audioCreate(RoomId: int.parse(data['Create']));

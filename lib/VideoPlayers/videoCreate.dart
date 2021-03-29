@@ -53,17 +53,20 @@ class _videoCreateState extends State<videoCreate> {
     super.dispose();
     if (flickManager != null) flickManager.dispose();
     _clearCachedFiles();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   @override
   void deactivate() {
     _clearCachedFiles();
     super.deactivate();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     // if (flickManager != null) flickManager.dispose();
   }
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
     flickManager = widget.flickManager;
     Timer.periodic(Duration(seconds: 1), (Timer t) async {
       if (complete == 0) {
@@ -71,7 +74,8 @@ class _videoCreateState extends State<videoCreate> {
         String time = flickManager.flickVideoManager.videoPlayerValue.isPlaying
             ? flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
             .toString()
-            : '-1';
+            : (-flickManager.flickVideoManager.videoPlayerValue.position.inSeconds)
+            .toString();
         String l =
             'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/' +
                 widget.id.toString() +

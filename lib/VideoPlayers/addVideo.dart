@@ -6,6 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
@@ -36,6 +38,7 @@ class _addVideoState extends State<addVideo> {
     getUsername();
     if (widget.Roomid != -1)
       createChatRoom();
+
   }
 
   createChatRoom() {
@@ -109,11 +112,23 @@ class _addVideoState extends State<addVideo> {
                   ),
                   MaterialButton(
                     onPressed: () async {
+
+                      BuildContext dialogContext;
+                      showDialog(
+                          context: context,
+                          builder: (dcontext) {
+                            dialogContext=dcontext;
+                            return SpinKitChasingDots(color: Colors.red,size: 50,);
+                          });
                       final file = await pickVideoFile();
-                      if (file == null) return;
+                      if (file == null) {
+                        Navigator.of(dialogContext).pop();
+                        return;
+                      }
                       controller = VideoPlayerController.file(file);
                       setVideo(controller);
                       selected = !selected;
+                      Navigator.of(dialogContext).pop();
                       Navigator.push(
                         context,
                         MaterialPageRoute(

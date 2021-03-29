@@ -45,25 +45,26 @@ class _videoJoinState extends State<videoJoin> {
     super.dispose();
     if (flickManager != null) flickManager.dispose();
     _clearCachedFiles();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   }
 
   @override
   void deactivate() {
     _clearCachedFiles();
     super.deactivate();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
     // if (flickManager != null) flickManager.dispose();
   }
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
     flickManager = widget.flickManager;
     Timer.periodic(Duration(seconds: 1), (Timer t) async {
       if (complete == 0) {
         complete = 1;
-        String time = flickManager.flickVideoManager.videoPlayerValue.isPlaying
-            ? flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
-                .toString()
-            : '-1';
         String l =
             'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
                 widget.id.toString();
@@ -72,23 +73,13 @@ class _videoJoinState extends State<videoJoin> {
           setState(() {
             complete = 0;
             var decodedData = jsonDecode(value.body);
-            // print("jcur:" + decodedData['second'].toString());
-            // print("diff" +
-            //     (int.parse(flickManager
-            //                 .flickVideoManager.videoPlayerValue.position.inSeconds
-            //                 .toString()) -
-            //             int.parse(decodedData['second'].toString()))
-            //         .abs()
-            //         .toString());
-            if (decodedData['second'].toString() == '-1'.toString()) {
+            if (int.parse(decodedData['second'].toString()) < 0) {
               // print("pausing");
               flickManager.flickControlManager.pause();
-            } else if ((int.parse(flickManager.flickVideoManager
-                            .videoPlayerValue.position.inSeconds
-                            .toString()) -
-                        int.parse(decodedData['second'].toString()))
-                    .abs() >
-                3) {
+              flickManager.flickControlManager.seekTo(Duration(seconds: 0-int.parse(decodedData['second'].toString())));
+            } else if ((flickManager.flickVideoManager
+                            .videoPlayerValue.position.inSeconds-
+                        int.parse(decodedData['second'].toString())).abs() > 4) {
               // print('here2');
               flickManager.flickControlManager.seekTo(Duration(
                   seconds: int.parse(decodedData['second'].toString())));
