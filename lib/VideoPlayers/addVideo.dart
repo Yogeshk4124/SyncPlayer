@@ -65,6 +65,11 @@ class _addVideoState extends State<addVideo> {
     });
     print("username On Call:" + username);
   }
+  @override
+  void dispose(){
+    if(flickManager!=null)flickManager.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

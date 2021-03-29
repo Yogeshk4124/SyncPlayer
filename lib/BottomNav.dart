@@ -10,7 +10,7 @@ import 'audioPlayers/audioCreate.dart';
 import 'audioPlayers/audioJoin.dart';
 import 'audioPlayers/audioPlayer.dart';
 
-Future<Map<String, dynamic>> getData() async {
+Future<Map<String, String>> getData() async {
   return Future.delayed(
       Duration(seconds: 0), () => {'Create': '-1', 'Join': '-1'});
   // return Future.value({'Create':'-1','Join':'-1'});

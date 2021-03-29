@@ -16,6 +16,7 @@ import '../Utils/SliderInnerWidget.dart';
 
 class audioPlayer extends StatefulWidget {
   audioPlayer({Key key}) : super(key: key);
+
   @override
   _audioPlayerState createState() => _audioPlayerState();
 }
@@ -35,6 +36,7 @@ class _audioPlayerState extends State<audioPlayer> {
   void _clearCachedFiles() {
     FilePicker.platform.clearTemporaryFiles();
   }
+
 //Listen to the current playing song
   Duration _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -46,6 +48,7 @@ class _audioPlayerState extends State<audioPlayer> {
         seconds: int.parse(twoDigitSeconds));
     return d;
   }
+
   String _printDurationAsString(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
@@ -54,6 +57,7 @@ class _audioPlayerState extends State<audioPlayer> {
       return "$twoDigitMinutes:$twoDigitSeconds";
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
+
   String getSong() {
     final Playing playing = assetsAudioPlayer.current.value;
     if (playing == null)
@@ -71,27 +75,27 @@ class _audioPlayerState extends State<audioPlayer> {
 
   Future<bool> _onBackPressed() {
     return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit an App'),
-        actions: <Widget>[
-          new GestureDetector(
-            onTap: () async {
-              Navigator.pop(context);
-            },
-            child: Text("Yes"),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit an App'),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () async {
+                  Navigator.pop(context);
+                },
+                child: Text("Yes"),
+              ),
+              SizedBox(height: 16),
+              new GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: Text("No"),
+              ),
+            ],
           ),
-          SizedBox(height: 16),
-          new GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop(false);
-            },
-            child: Text("No"),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 
@@ -109,7 +113,7 @@ class _audioPlayerState extends State<audioPlayer> {
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(20),
@@ -126,9 +130,11 @@ class _audioPlayerState extends State<audioPlayer> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                            builder: (BuildContext context) => Home4()),
-                              (route) => false,
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => Home4()),
+                          (route) => false,
                         );
                       },
                     ),
@@ -154,250 +160,19 @@ class _audioPlayerState extends State<audioPlayer> {
                   ],
                 ),
               ),
+              SliderInnerWidget(),
               assetsAudioPlayer.builderRealtimePlayingInfos(
                   builder: (context, RealtimePlayingInfos infos) {
-                    if (infos == null || assetsAudioPlayer.current.value == null) {
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child:
-                            Text(_printDurationAsString(Duration(seconds: 0))),
-                          ),
-                          SleekCircularSlider(
-                            min: 0,
-                            max: 1,
-                            initialValue: 0,
-                            appearance: CircularSliderAppearance(
-                              angleRange: 360,
-                              animationEnabled: false,
-                              size: MediaQuery.maybeOf(context).size.width * 0.60,
-                              startAngle: 270,
-                              animDurationMultiplier: 300,
-                              customWidths: CustomSliderWidths(
-                                  trackWidth: 2,
-                                  progressBarWidth: 3,
-                                  handlerSize: 4),
-                              customColors: CustomSliderColors(progressBarColors: [
-                                Color(0xffF9657F),
-                                Color(0xffF61976)
-                              ], trackColors: [
-                                Color(0x66F9657F),
-                                Color(0x66F61976)
-                              ]),
-                              //#F9657F->#F61976
-                            ),
-                            innerWidget: (double value) {
-                              return SliderInnerWidget();
-                            },
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                assetsAudioPlayer.current.value != null
-                                    ? Container(
-                                  height: 46,
-                                  width:
-                                  MediaQuery.maybeOf(context).size.width *
-                                      0.8,
-                                  child: MarqueeText(
-                                    text: getSong(),
-                                    textStyle: GoogleFonts.poiretOne(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 30,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                )
-                                    : Container(
-                                  height: 46,
-                                  child: Text(
-                                    "Nothing to Play?",
-                                    style: GoogleFonts.poiretOne(
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 30),
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          prev();
-                                        });
-                                      },
-                                      child: Icon(
-                                        Icons.skip_previous,
-                                        size: 40,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          skipprev();
-                                        });
-                                      },
-                                      child: Icon(
-                                        CupertinoIcons.backward_fill,
-                                        size: 30,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          playOrpause();
-                                        });
-                                      },
-                                      child: RadiantGradientMask(
-                                        child: Icon(
-                                          (!assetsAudioPlayer.isPlaying.value)
-                                              ? Icons.play_circle_fill
-                                              : Icons.pause_circle_filled,
-                                          size: 80,
-                                          color: Colors.white,
-                                        ),
-                                        c2: Color(0xffff0000),
-                                        c1: Color(0xAAd70000),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          skipnext();
-                                        });
-                                      },
-                                      child: Icon(
-                                        CupertinoIcons.forward_fill,
-                                        size: 30,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          next();
-                                        });
-                                      },
-                                      child: Icon(
-                                        Icons.skip_next,
-                                        size: 40,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 15),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            if (assetsAudioPlayer.volume.value
-                                                .toInt() ==
-                                                0)
-                                              assetsAudioPlayer.setVolume(1);
-                                            else
-                                              assetsAudioPlayer.setVolume(0);
-                                          });
-                                        },
-                                        child: getVolume(),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            loop();
-                                          });
-                                        },
-                                        child: Icon(
-                                          CupertinoIcons.repeat,
-                                          size: 30,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    return Column(
+                if (infos == null || assetsAudioPlayer.current.value == null) {
+                  return Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Text(_printDurationAsString(Duration(
-                              seconds: assetsAudioPlayer
-                                  .currentPosition.value.inSeconds))),
-                        ),
-                        SleekCircularSlider(
-                          appearance: CircularSliderAppearance(
-                            angleRange: 360,
-                            size: MediaQuery.maybeOf(context).size.width * 0.60,
-                            startAngle: 270,
-                            animDurationMultiplier: 300,
-                            customWidths: CustomSliderWidths(
-                                trackWidth: 2, progressBarWidth: 3, handlerSize: 4),
-                            customColors: CustomSliderColors(progressBarColors: [
-                              Colors.red,
-                              Color(0xffff0000),
-                            ], trackColors: [
-                              Colors.redAccent.withOpacity(0.3),
-                              Colors.red.withOpacity(0.3)
-                            ]),
-                            //#F9657F->#F61976
-                          ),
-                          min: 0,
-                          max: assetsAudioPlayer
-                              .current.value.audio.duration.inSeconds
-                              .toDouble(),
-                          initialValue: assetsAudioPlayer
-                              .currentPosition.value.inSeconds
-                              .toDouble() >
-                              assetsAudioPlayer
-                                  .current.value.audio.duration.inSeconds
-                                  .toDouble()
-                              ? 0
-                              : assetsAudioPlayer.currentPosition.value.inSeconds
-                              .toDouble(),
-                          onChange: (double value) {
-                            setState(
-                                  () {
-                                Duration d = new Duration(seconds: value.toInt());
-                                d = _printDuration(d);
-                                seekTo(d);
-                              },
-                            );
-                          },
-                          onChangeEnd: (double value) {
-                            setState(
-                                  () {
-                                Duration d = new Duration(seconds: value.toInt());
-                                d = _printDuration(d);
-                                seekTo(d);
-                              },
-                            );
-                          },
-                          onChangeStart: (double value) {},
-                          innerWidget: (double value) {
-                            return SliderInnerWidget();
-                          },
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              assetsAudioPlayer.current.value != null
-                                  ? Container(
+                      children: <Widget>[
+                        assetsAudioPlayer.current.value != null
+                            ? Container(
                                 height: 46,
-                                width:
-                                MediaQuery.maybeOf(context).size.width *
+                                width: MediaQuery.maybeOf(context).size.width *
                                     0.8,
                                 child: MarqueeText(
                                   text: getSong(),
@@ -408,7 +183,7 @@ class _audioPlayerState extends State<audioPlayer> {
                                   ),
                                 ),
                               )
-                                  : Container(
+                            : Container(
                                 height: 46,
                                 child: Text(
                                   "Nothing to Play?",
@@ -417,110 +192,301 @@ class _audioPlayerState extends State<audioPlayer> {
                                       fontSize: 30),
                                 ),
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        prev();
-                                      });
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(_printDurationAsString(Duration(
+                                seconds: 0))),
+                            Expanded(
+                              child: Slider(
+                                min: 0,
+                                max: 1,
+                                onChanged: (value) {
+                                  setState(
+                                        () {
+                                      Duration d =
+                                      new Duration(seconds: value.toInt());
+                                      d = _printDuration(d);
+                                      seekTo(d);
                                     },
-                                    child: Icon(
-                                      Icons.skip_previous,
-                                      size: 40,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        skipprev();
-                                      });
-                                    },
-                                    child: Icon(
-                                      CupertinoIcons.backward_fill,
-                                      size: 30,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        playOrpause();
-                                      });
-                                    },
-                                    child: RadiantGradientMask(
-                                      child: Icon(
-                                        (!assetsAudioPlayer.isPlaying.value)
-                                            ? Icons.play_circle_fill
-                                            : Icons.pause_circle_filled,
-                                        size: 80,
-                                        color: Colors.white,
-                                      ),
-                                      c2: Color(0xffff0000),
-                                      c1: Color(0xAAd70000),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        skipnext();
-                                      });
-                                    },
-                                    child: Icon(
-                                      CupertinoIcons.forward_fill,
-                                      size: 30,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        next();
-                                      });
-                                    },
-                                    child: Icon(
-                                      Icons.skip_next,
-                                      size: 40,
-                                    ),
-                                  ),
-                                ],
+                                  );
+                                },
+                                value: 0,
+                                activeColor: Color(0xffff0000),
+                                inactiveColor: Colors.red.withOpacity(0.3),
                               ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          if (assetsAudioPlayer.volume.value
-                                              .toInt() ==
-                                              0)
-                                            assetsAudioPlayer.setVolume(1);
-                                          else
-                                            assetsAudioPlayer.setVolume(0);
-                                        });
-                                      },
-                                      child: getVolume(),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        print("calling loop toggle");
-                                        setState(() {
-                                          loop();
-                                        });
-                                      },
-                                      child: getLoopIcon(),
-                                      // Icons.loop_outlined,
-                                    ),
-                                  ],
+                            ),
+                            Text(_printDurationAsString(Duration(
+                                seconds: 0))),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  prev();
+                                });
+                              },
+                              child: Icon(
+                                Icons.skip_previous,
+                                size: 40,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  skipprev();
+                                });
+                              },
+                              child: Icon(
+                                CupertinoIcons.backward_fill,
+                                size: 30,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  playOrpause();
+                                });
+                              },
+                              child: RadiantGradientMask(
+                                child: Icon(
+                                  (!assetsAudioPlayer.isPlaying.value)
+                                      ? Icons.play_circle_fill
+                                      : Icons.pause_circle_filled,
+                                  size: 80,
+                                  color: Colors.white,
+                                ),
+                                c2: Color(0xffff0000),
+                                c1: Color(0xAAd70000),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  skipnext();
+                                });
+                              },
+                              child: Icon(
+                                CupertinoIcons.forward_fill,
+                                size: 30,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  next();
+                                });
+                              },
+                              child: Icon(
+                                Icons.skip_next,
+                                size: 40,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (assetsAudioPlayer.volume.value
+                                            .toInt() ==
+                                        0)
+                                      assetsAudioPlayer.setVolume(1);
+                                    else
+                                      assetsAudioPlayer.setVolume(0);
+                                  });
+                                },
+                                child: getVolume(),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    loop();
+                                  });
+                                },
+                                child: Icon(
+                                  CupertinoIcons.repeat,
+                                  size: 30,
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ],
-                    );
-                  }),
+                    ),
+                  );
+                }
+                return Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      assetsAudioPlayer.current.value != null
+                          ? Container(
+                              height: 46,
+                              width:
+                                  MediaQuery.maybeOf(context).size.width * 0.8,
+                              child: MarqueeText(
+                                text: getSong(),
+                                textStyle: GoogleFonts.poiretOne(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 30,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              height: 46,
+                              child: Text(
+                                "Nothing to Play?",
+                                style: GoogleFonts.poiretOne(
+                                    fontWeight: FontWeight.w900, fontSize: 30),
+                              ),
+                            ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(_printDurationAsString(Duration(
+                              seconds: assetsAudioPlayer
+                                  .currentPosition.value.inSeconds))),
+                          Expanded(
+                            child: Slider(
+                              min: 0,
+                              max: assetsAudioPlayer
+                                  .current.value.audio.duration.inSeconds
+                                  .toDouble(),
+                              onChanged: (value) {
+                                setState(
+                                  () {
+                                    Duration d =
+                                        new Duration(seconds: value.toInt());
+                                    d = _printDuration(d);
+                                    seekTo(d);
+                                  },
+                                );
+                              },
+                              value: assetsAudioPlayer
+                                  .currentPosition.value.inSeconds
+                                  .toDouble(),
+                              activeColor: Color(0xffff0000),
+                              inactiveColor: Colors.red.withOpacity(0.3),
+                              label:
+                                  "${assetsAudioPlayer.currentPosition.value.inMinutes}",
+                            ),
+                          ),
+                          Text(_printDurationAsString(Duration(
+                              seconds: assetsAudioPlayer
+                                  .current.value.audio.duration.inSeconds))),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                prev();
+                              });
+                            },
+                            child: Icon(
+                              Icons.skip_previous,
+                              size: 40,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                skipprev();
+                              });
+                            },
+                            child: Icon(
+                              CupertinoIcons.backward_fill,
+                              size: 30,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                playOrpause();
+                              });
+                            },
+                            child: RadiantGradientMask(
+                              child: Icon(
+                                (!assetsAudioPlayer.isPlaying.value)
+                                    ? Icons.play_circle_fill
+                                    : Icons.pause_circle_filled,
+                                size: 80,
+                                color: Colors.white,
+                              ),
+                              c2: Color(0xffff0000),
+                              c1: Color(0xAAd70000),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                skipnext();
+                              });
+                            },
+                            child: Icon(
+                              CupertinoIcons.forward_fill,
+                              size: 30,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                next();
+                              });
+                            },
+                            child: Icon(
+                              Icons.skip_next,
+                              size: 40,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (assetsAudioPlayer.volume.value.toInt() ==
+                                      0)
+                                    assetsAudioPlayer.setVolume(1);
+                                  else
+                                    assetsAudioPlayer.setVolume(0);
+                                });
+                              },
+                              child: getVolume(),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                print("calling loop toggle");
+                                setState(() {
+                                  loop();
+                                });
+                              },
+                              child: getLoopIcon(),
+                              // Icons.loop_outlined,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
               ModalTrigger(
                 audios: audios,
                 ap: assetsAudioPlayer,

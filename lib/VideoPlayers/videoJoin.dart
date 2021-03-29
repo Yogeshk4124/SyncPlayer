@@ -29,16 +29,7 @@ class _videoJoinState extends State<videoJoin> {
   TextEditingController msgController;
   int complete = 0;
   void _clearCachedFiles() {
-    FilePicker.platform.clearTemporaryFiles().then((result) {
-      // _scaffoldKey.currentState.showSnackBar(
-      //   SnackBar(
-      //     backgroundColor: result ? Colors.green : Colors.red,
-      //     content: Text((result
-      //         ? 'Temporary files removed with success.'
-      //         : 'Failed to clean temporary files')),
-      //   ),
-      // );
-    });
+    FilePicker.platform.clearTemporaryFiles();
   }
   @override
   void dispose() {
@@ -54,7 +45,7 @@ class _videoJoinState extends State<videoJoin> {
     _clearCachedFiles();
     super.deactivate();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
+    // if (flickManager != null) flickManager.dispose();
     // if (flickManager != null) flickManager.dispose();
   }
   @override
@@ -62,7 +53,7 @@ class _videoJoinState extends State<videoJoin> {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
     flickManager = widget.flickManager;
-    Timer.periodic(Duration(seconds: 1), (Timer t) async {
+    Timer.periodic(Duration(seconds: 1), (Timer t) {
       if (complete == 0) {
         complete = 1;
         String l =
@@ -70,26 +61,24 @@ class _videoJoinState extends State<videoJoin> {
                 widget.id.toString();
         Future<http.Response> response = http.get(l);
         response.then((value) {
-          setState(() {
-            complete = 0;
+          // setState(() {
             var decodedData = jsonDecode(value.body);
-            if (int.parse(decodedData['second'].toString()) < 0) {
-              // print("pausing");
+            int time=int.parse(decodedData['second'].toString());
+            if (time < 0) {
               flickManager.flickControlManager.pause();
-              flickManager.flickControlManager.seekTo(Duration(seconds: 0-int.parse(decodedData['second'].toString())));
+              flickManager.flickControlManager.seekTo(Duration(seconds: time.abs()));
             } else if ((flickManager.flickVideoManager
                             .videoPlayerValue.position.inSeconds-
-                        int.parse(decodedData['second'].toString())).abs() > 4) {
-              // print('here2');
+                        time).abs() > 4) {
+              print('here2');
               flickManager.flickControlManager.seekTo(Duration(
-                  seconds: int.parse(decodedData['second'].toString())));
+                  seconds: time+1));
               flickManager.flickControlManager.play();
-            } else {
-              // print("here3");
+            } else
               flickManager.flickControlManager.play();
-            }
+            complete = 0;
           });
-        });
+        // });
       }
     });
   }

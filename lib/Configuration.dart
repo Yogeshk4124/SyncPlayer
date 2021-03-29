@@ -81,7 +81,6 @@ class _Home2State extends State<Home2> {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
-
     ]);
     Widget createDestroy() {
       print("error:" + widget.data.toString());
@@ -107,8 +106,11 @@ class _Home2State extends State<Home2> {
                 showDialog(
                     context: context,
                     builder: (dcontext) {
-                      dialogContext=dcontext;
-                      return SpinKitChasingDots(color: Colors.red,size: 50,);
+                      dialogContext = dcontext;
+                      return SpinKitChasingDots(
+                        color: Colors.red,
+                        size: 50,
+                      );
                     });
                 response.then((value) {
                   var decodedData = jsonDecode(value.body);
@@ -133,7 +135,6 @@ class _Home2State extends State<Home2> {
                   });
                   Navigator.pop(dialogContext);
                 });
-
               },
               child: Container(
                   padding: EdgeInsets.all(20),
@@ -146,12 +147,10 @@ class _Home2State extends State<Home2> {
         );
       else {
         return Container(
-          child: Center(
-            child: Text(
-                'You have already Joined a room Disconnect first then create',
-                style: GoogleFonts.roboto(),
-                textAlign: TextAlign.center),
-          ),
+          alignment: Alignment.center,
+          child: Text('You have already joined a room.',
+              style: GoogleFonts.roboto(fontSize: 16),
+              textAlign: TextAlign.center),
         );
       }
     }
@@ -161,7 +160,7 @@ class _Home2State extends State<Home2> {
       if (widget.data['Create'] == '-1') {
         print("per");
         return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
               Jjoining,
@@ -170,40 +169,38 @@ class _Home2State extends State<Home2> {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox.fromSize(
-              size: Size(10, 10),
-            ),
-            Container(
-              width: 100,
-              height: 40,
-              child: Center(
-                  child: TextField(
-                textAlignVertical: TextAlignVertical.center,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  filled: true,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                      style: BorderStyle.solid,
+            if (widget.data['Join'] == '-1')
+              Container(
+                width: 100,
+                height: 40,
+                child: Center(
+                    child: TextField(
+                  textAlignVertical: TextAlignVertical.center,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    filled: true,
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.transparent,
+                        style: BorderStyle.solid,
+                      ),
+                    ),
+                    fillColor: Color(0xff404040),
+                    // disabledBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.all(5),
+                    // enabledBorder: InputBorder.none,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                        style: BorderStyle.solid,
+                      ),
                     ),
                   ),
-                  fillColor: Color(0xff404040),
-                  // disabledBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.all(5),
-                  // enabledBorder: InputBorder.none,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      style: BorderStyle.solid,
-                    ),
-                  ),
-                ),
-                textAlign: TextAlign.center,
-                controller: _joinController,
-              )),
-            ),
+                  textAlign: TextAlign.center,
+                  controller: _joinController,
+                )),
+              ),
             if (get == 1)
               Container(
                 margin: EdgeInsets.only(bottom: 20, top: 5),
@@ -211,10 +208,6 @@ class _Home2State extends State<Home2> {
                   "Room Not Found",
                   style: TextStyle(color: Colors.red),
                 ),
-              )
-            else
-              SizedBox.fromSize(
-                size: Size(40, 30),
               ),
             MaterialButton(
               onPressed: () {
@@ -226,8 +219,11 @@ class _Home2State extends State<Home2> {
                   showDialog(
                       context: context,
                       builder: (dcontext) {
-                        dialogContext=dcontext;
-                        return SpinKitChasingDots(color: Colors.red,size: 50,);
+                        dialogContext = dcontext;
+                        return SpinKitChasingDots(
+                          color: Colors.red,
+                          size: 50,
+                        );
                       });
 
                   response.then((value) {
@@ -273,10 +269,10 @@ class _Home2State extends State<Home2> {
         );
       } else {
         return Container(
-          child: Center(
-            child: Text(
-                'You have already hosting a room Disconnect first then join'),
-          ),
+          alignment: Alignment.center,
+          child: Text('You have already hosting a room',
+              style: GoogleFonts.roboto(fontSize: 16),
+              textAlign: TextAlign.center),
         );
       }
     }
