@@ -36,7 +36,6 @@ class _videoJoinState extends State<videoJoin> {
   void dispose() {
     super.dispose();
     timer.cancel();
-    // if (flickManager != null) flickManager.dispose();
     _clearCachedFiles();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
@@ -58,42 +57,18 @@ class _videoJoinState extends State<videoJoin> {
     flickManager = widget.flickManager;
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
       if (complete == 0) {
-        print("joining call");
         complete = 1;
         String l =
             'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
                 widget.id.toString();
-        // Future<http.Response> response = http.get(l);
-        // response.then((value) {
-        //     var decodedData = jsonDecode(value.body);
-        //     int time=int.parse(decodedData['second'].toString());
-        //     if (time < 0) {
-        //       print("video -negative");
-        //       flickManager.flickControlManager.pause();
-        //       flickManager.flickControlManager.seekTo(Duration(seconds: time.abs()));
-        //     } else if ((flickManager.flickVideoManager
-        //                     .videoPlayerValue.position.inSeconds-
-        //                 time).abs() > 4) {
-        //       print("video +positive");
-        //       flickManager.flickControlManager.seekTo(Duration(
-        //           seconds: time+1));
-        //       flickManager.flickControlManager.play();
-        //     } else {
-        //       print("video =neutral");
-        //       flickManager.flickControlManager.play();
-        //     }complete = 0;
-        //   });
         Future<http.Response> r = http.get(l);
         r.timeout(Duration(seconds: 1), onTimeout: () {
           complete = 0;
-          print("timeout");
           return;
         }).then((value) {
-          print("success");
           var decodedData = jsonDecode(value.body);
           int time = int.parse(decodedData['second'].toString());
           if (time <= 0) {
-            // print("video -negative");
             flickManager.flickControlManager.pause();
             flickManager.flickControlManager
                 .seekTo(Duration(seconds: time.abs()));
@@ -102,12 +77,10 @@ class _videoJoinState extends State<videoJoin> {
                       time)
                   .abs() >
               4) {
-            // print("video +positive");
             flickManager.flickControlManager
                 .seekTo(Duration(seconds: time + 1));
             flickManager.flickControlManager.play();
           } else {
-            // print("video =neutral");
             flickManager.flickControlManager.play();
           }
           complete = 0;

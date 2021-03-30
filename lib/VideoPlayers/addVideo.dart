@@ -6,7 +6,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,9 +35,7 @@ class _addVideoState extends State<addVideo> {
   void initState() {
     super.initState();
     getUsername();
-    if (widget.Roomid != -1)
-      createChatRoom();
-
+    if (widget.Roomid != -1) createChatRoom();
   }
 
   createChatRoom() {
@@ -49,13 +46,8 @@ class _addVideoState extends State<addVideo> {
   }
 
   void setVideo(VideoPlayerController controller) {
-    flickManager = FlickManager(
-        videoPlayerController: controller,
-        onVideoEnd: () {
-          // dataManager.skipToNextVideo(Duration(seconds: 5));
-          // controller.dispose();
-        });
-
+    flickManager =
+        FlickManager(videoPlayerController: controller, onVideoEnd: () {});
   }
 
   getUsername() async {
@@ -63,14 +55,12 @@ class _addVideoState extends State<addVideo> {
     setState(() {
       username = sharedPreferences.getString("Username");
     });
-    print("username On Call:" + username);
-  }
-  @override
-  void dispose(){
-    super.dispose();
-    // if(flickManager!=null)flickManager.dispose();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,96 +69,94 @@ class _addVideoState extends State<addVideo> {
       body: SafeArea(
         top: false,
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Text('MOVIE NIGHT !!',style: GoogleFonts.bungee(),),
             Column(
-                children: <Widget>[
-                  Image.asset(
-                    "assets/images/video.jpeg",
-                    fit: BoxFit.fill,
-                    height: MediaQuery
-                        .maybeOf(context)
-                        .size
-                        .height * 0.60,
+              children: <Widget>[
+                Image.asset(
+                  "assets/images/video.jpeg",
+                  fit: BoxFit.fill,
+                  height: MediaQuery.maybeOf(context).size.height * 0.60,
+                ),
+                Text(
+                  'Get Ready!!',
+                  style: GoogleFonts.bungee(fontSize: 32),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text(
+                        'Stream',
+                        style: GoogleFonts.roboto(),
+                      ),
+                      Text(
+                        'Movie',
+                        style: GoogleFonts.roboto(),
+                      ),
+                      Text(
+                        'Enjoy',
+                        style: GoogleFonts.roboto(),
+                      ),
+                    ],
                   ),
-                  Text(
-                    'Get Ready!!',
-                    style: GoogleFonts.bungee(fontSize: 32),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Text(
-                          'Stream',
-                          style: GoogleFonts.roboto(),
-                        ),
-                        Text(
-                          'Movie',
-                          style: GoogleFonts.roboto(),
-                        ),
-                        Text(
-                          'Enjoy',
-                          style: GoogleFonts.roboto(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  MaterialButton(
-                    onPressed: () async {
-
-                      BuildContext dialogContext;
-                      showDialog(
-                          context: context,
-                          builder: (dcontext) {
-                            dialogContext=dcontext;
-                            return SpinKitChasingDots(color: Colors.red,size: 50,);
-                          });
-                      final file = await pickVideoFile();
-                      if (file == null) {
-                        Navigator.of(dialogContext).pop();
-                        return;
-                      }
-                      controller = VideoPlayerController.file(file);
-                      setVideo(controller);
-                      selected = !selected;
+                ),
+                MaterialButton(
+                  onPressed: () async {
+                    BuildContext dialogContext;
+                    showDialog(
+                        context: context,
+                        builder: (dcontext) {
+                          dialogContext = dcontext;
+                          return SpinKitChasingDots(
+                            color: Colors.red,
+                            size: 50,
+                          );
+                        });
+                    final file = await pickVideoFile();
+                    if (file == null) {
                       Navigator.of(dialogContext).pop();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              if (widget.type == 3)
-                                return videoCreate(
-                                  flickManager: flickManager,
-                                  username: username,
-                                  id: widget.Roomid,
-                                );
-                              else if (widget.type == 2)
-                                return videoJoin(
-                                  flickManager: flickManager,
-                                  username: username,
-                                  id: widget.Roomid,);
-                              else
-                                return videoPlayer(
-                                  flickManager: flickManager,
-                                  username: username,
-                                  id: widget.Roomid,);
-                            }),
-                      );
-                    },
-                    child: Container(
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Color(0xffFF2929),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                        ),
-                        child: Text('ADD VIDEO')),
-                  ),
-                ],
-              ),
+                      return;
+                    }
+                    controller = VideoPlayerController.file(file);
+                    setVideo(controller);
+                    selected = !selected;
+                    Navigator.of(dialogContext).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                        if (widget.type == 3)
+                          return videoCreate(
+                            flickManager: flickManager,
+                            username: username,
+                            id: widget.Roomid,
+                          );
+                        else if (widget.type == 2)
+                          return videoJoin(
+                            flickManager: flickManager,
+                            username: username,
+                            id: widget.Roomid,
+                          );
+                        else
+                          return videoPlayer(
+                            flickManager: flickManager,
+                            username: username,
+                            id: widget.Roomid,
+                          );
+                      }),
+                    );
+                  },
+                  child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Color(0xffFF2929),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      child: Text('ADD VIDEO')),
+                ),
+              ],
+            ),
           ],
         ),
       ),

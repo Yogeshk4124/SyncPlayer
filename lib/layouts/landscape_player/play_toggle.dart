@@ -32,7 +32,9 @@ class LandscapePlayToggle extends StatelessWidget {
 
     Widget child = videoManager.isVideoEnded
         ? replayWidget
-        : videoManager.isPlaying ? pauseWidget : playWidget;
+        : videoManager.isPlaying
+            ? pauseWidget
+            : playWidget;
 
     return Material(
       color: Colors.transparent,

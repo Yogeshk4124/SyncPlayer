@@ -30,13 +30,11 @@ class _audioPlayerState extends State<audioPlayer> {
   int i = 0, j = 0;
   ValueNotifier<double> valueNotifier = ValueNotifier<double>(0);
   final audios = <Audio>[];
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _clearCachedFiles() {
     FilePicker.platform.clearTemporaryFiles();
   }
 
-//Listen to the current playing song
   Duration _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
@@ -97,11 +95,13 @@ class _audioPlayerState extends State<audioPlayer> {
         ) ??
         false;
   }
+
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     assetsAudioPlayer.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -198,17 +198,16 @@ class _audioPlayerState extends State<audioPlayer> {
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Text(_printDurationAsString(Duration(
-                                seconds: 0))),
+                            Text(_printDurationAsString(Duration(seconds: 0))),
                             Expanded(
                               child: Slider(
                                 min: 0,
                                 max: 1,
                                 onChanged: (value) {
                                   setState(
-                                        () {
+                                    () {
                                       Duration d =
-                                      new Duration(seconds: value.toInt());
+                                          new Duration(seconds: value.toInt());
                                       d = _printDuration(d);
                                       seekTo(d);
                                     },
@@ -219,8 +218,7 @@ class _audioPlayerState extends State<audioPlayer> {
                                 inactiveColor: Colors.red.withOpacity(0.3),
                               ),
                             ),
-                            Text(_printDurationAsString(Duration(
-                                seconds: 0))),
+                            Text(_printDurationAsString(Duration(seconds: 0))),
                           ],
                         ),
                         Row(
@@ -475,7 +473,6 @@ class _audioPlayerState extends State<audioPlayer> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                print("calling loop toggle");
                                 setState(() {
                                   loop();
                                 });
@@ -540,7 +537,6 @@ class _audioPlayerState extends State<audioPlayer> {
       for (int i = 0; i < files.length; i++) {
         audios.add(Audio.file(files[i].path));
       }
-
       await assetsAudioPlayer.open(Playlist(audios: audios),
           autoStart: false, loopMode: LoopMode.playlist);
 
@@ -551,16 +547,12 @@ class _audioPlayerState extends State<audioPlayer> {
   void next() async {
     await assetsAudioPlayer.next();
 
-    setState(() {
-      print("current:" + assetsAudioPlayer.current.value.index.toString());
-    });
+    setState(() {});
   }
 
   void prev() async {
     await assetsAudioPlayer.previous();
-    setState(() {
-      print("current:" + assetsAudioPlayer.current.value.index.toString());
-    });
+    setState(() {});
   }
 
   void seekTo(Duration duration) async {

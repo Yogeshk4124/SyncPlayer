@@ -24,12 +24,13 @@ class videoCreate extends StatefulWidget {
 class _videoCreateState extends State<videoCreate> {
   FlickManager flickManager;
   TextEditingController msgController;
-  int complete=0;
+  int complete = 0;
   Timer timer;
 
   void _clearCachedFiles() {
     FilePicker.platform.clearTemporaryFiles();
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -46,40 +47,40 @@ class _videoCreateState extends State<videoCreate> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     // if (flickManager != null) flickManager.dispose();
   }
+
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     flickManager = widget.flickManager;
-    timer=Timer.periodic(Duration(seconds: 1), (Timer t){
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
       if (complete == 0) {
         complete = 1;
         String time = flickManager.flickVideoManager.videoPlayerValue.isPlaying
             ? flickManager.flickVideoManager.videoPlayerValue.position.inSeconds
-            .toString()
-            : (-flickManager.flickVideoManager.videoPlayerValue.position.inSeconds)
-            .toString();
+                .toString()
+            : (-flickManager
+                    .flickVideoManager.videoPlayerValue.position.inSeconds)
+                .toString();
         String l =
             'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/' +
                 widget.id.toString() +
                 '/' +
                 time;
-
-        // Future<http.Response> response = http.get(l);
         Future<http.Response> r = http.post(l);
-        r.timeout(Duration(seconds: 1),onTimeout: (){complete=0;return;}).then((value){
+        r.timeout(Duration(seconds: 1), onTimeout: () {
+          complete = 0;
+          return;
+        }).then((value) {
           complete = 0;
         });
-        // response.then((value) {
-        //   complete = 0;
-        // });
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: FlickVideoPlayer(
         flickManager: flickManager,
@@ -89,7 +90,11 @@ class _videoCreateState extends State<videoCreate> {
         ],
         systemUIOverlay: [],
         flickVideoWithControls: FlickVideoWithControls(
-          controls: LandscapePlayerControls(id:widget.id,username:widget.username,chatEnabled: true,),
+          controls: LandscapePlayerControls(
+            id: widget.id,
+            username: widget.username,
+            chatEnabled: true,
+          ),
         ),
       ),
     );

@@ -1,7 +1,4 @@
 import 'dart:ui';
-import 'package:provider/provider.dart';
-
-import '../../Chats.dart';
 import '../../Msg.dart';
 import 'play_toggle.dart';
 import 'package:flick_video_player/flick_video_player.dart';
@@ -15,8 +12,7 @@ class LandscapePlayerControls extends StatelessWidget {
       this.fontSize = 12,
       @required this.id,
       @required this.username,
-      @required this.chatEnabled
-      });
+      @required this.chatEnabled});
 
   final bool chatEnabled;
   final int id;
@@ -129,55 +125,54 @@ class LandscapePlayerControls extends StatelessWidget {
                       SizedBox(
                         width: 10,
                       ),
-                      if(chatEnabled)
-                      Center(
-                        child: PopupWindowButton(
-                          // offset: Offset(
-                          //     MediaQuery.of(context).size.longestSide - 200,
-                          //     50 - MediaQuery.of(context).size.shortestSide),
-                          // offset: Offset(50,0),
-                          offset: Offset(
-                              MediaQuery.of(context).size.width/1.35,
-                             -MediaQuery.of(context).size.height+2),
-                          // offset: Offset(50,0),
-                          buttonBuilder: (BuildContext context) {
-                            return Icon(Icons.chat);
-                          },
-                          windowBuilder: (BuildContext context,
-                              Animation<double> animation,
-                              Animation<double> secondaryAnimation) {
-                            return Center(
-                              child: FadeTransition(
-                                opacity: animation,
-                                child: SizeTransition(
-                                  sizeFactor: animation,
-                                  child: Container(
-                                    width: 250,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(Radius.circular(100)),
-                                    ),
-                                    height: MediaQuery.of(context).size.height*0.80,
-                                    // height: MediaQuery.of(context).size.width - 435,
-                                    child: Msg(
-                                      roomid: id,username:username,
+                      if (chatEnabled)
+                        Center(
+                          child: PopupWindowButton(
+                            offset: Offset(
+                                MediaQuery.of(context).size.width / 1.35,
+                                -MediaQuery.of(context).size.height + 2),
+                            buttonBuilder: (BuildContext context) {
+                              return Icon(Icons.chat);
+                            },
+                            windowBuilder: (BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation) {
+                              return Center(
+                                child: FadeTransition(
+                                  opacity: animation,
+                                  child: SizeTransition(
+                                    sizeFactor: animation,
+                                    child: Container(
+                                      width: 250,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(100)),
+                                      ),
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.80,
+                                      // height: MediaQuery.of(context).size.width - 435,
+                                      child: Msg(
+                                        roomid: id,
+                                        username: username,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                          onWindowShow: () {
-                            print('PopupWindowButton window show');
-                          },
-                          onWindowDismiss: () {
-                            print('PopupWindowButton window dismiss');
-                          },
+                              );
+                            },
+                            onWindowShow: () {
+                              print('PopupWindowButton window show');
+                            },
+                            onWindowDismiss: () {
+                              print('PopupWindowButton window dismiss');
+                            },
+                          ),
                         ),
-                      ),
-                      if(chatEnabled)
-                      SizedBox(
-                        width: 10,
-                      ),
+                      if (chatEnabled)
+                        SizedBox(
+                          width: 10,
+                        ),
                       FlickSoundToggle(
                         size: 20,
                       ),

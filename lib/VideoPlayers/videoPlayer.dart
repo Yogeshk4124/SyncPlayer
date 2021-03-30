@@ -12,8 +12,8 @@ class videoPlayer extends StatefulWidget {
 
   videoPlayer(
       {@required this.flickManager,
-        @required this.username,
-        @required this.id});
+      @required this.username,
+      @required this.id});
 
   @override
   _videoPlayerState createState() => _videoPlayerState();
@@ -23,18 +23,11 @@ class _videoPlayerState extends State<videoPlayer> {
   FlickManager flickManager;
   TextEditingController msgController;
   int complete = 0;
+
   void _clearCachedFiles() {
-    FilePicker.platform.clearTemporaryFiles().then((result) {
-      // _scaffoldKey.currentState.showSnackBar(
-      //   SnackBar(
-      //     backgroundColor: result ? Colors.green : Colors.red,
-      //     content: Text((result
-      //         ? 'Temporary files removed with success.'
-      //         : 'Failed to clean temporary files')),
-      //   ),
-      // );
-    });
+    FilePicker.platform.clearTemporaryFiles().then((result) {});
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -48,16 +41,15 @@ class _videoPlayerState extends State<videoPlayer> {
     _clearCachedFiles();
     super.deactivate();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    // if (flickManager != null) flickManager.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft,DeviceOrientation.landscapeRight]);
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     flickManager = widget.flickManager;
-    // dataManager = widget.dataManager;
-   }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +62,11 @@ class _videoPlayerState extends State<videoPlayer> {
         ],
         systemUIOverlay: [],
         flickVideoWithControls: FlickVideoWithControls(
-          controls:
-          LandscapePlayerControls(id: widget.id, username: widget.username,chatEnabled: false,),
+          controls: LandscapePlayerControls(
+            id: widget.id,
+            username: widget.username,
+            chatEnabled: false,
+          ),
         ),
       ),
     );

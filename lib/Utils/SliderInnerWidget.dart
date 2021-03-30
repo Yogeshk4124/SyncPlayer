@@ -21,23 +21,13 @@ class SliderInnerWidget extends StatelessWidget {
             // borderRadius: BorderRadius.all(Radius.circular(20)),
             gradient: new LinearGradient(
               colors: [
-                // Color(0xffF61976),
-                // Color(0xffF9657F),
-                // Colors.red, Colors.deepOrange,
-                // Color(0xffff0000),
-                // Color(0xAAd70000),
-                // Color(0x88c60000),
-                // Color(0xAAb70000),
-                // Color(0xff9b0000)
                 Color(0x559b0000),
                 Colors.red,
                 Color(0x559b0000),
               ],
               begin: Alignment.topRight,
-              end:Alignment.bottomLeft,
-
+              end: Alignment.bottomLeft,
             ),
-            // color: Colors.white,
           ),
           child: Center(
             child: Container(
@@ -47,24 +37,12 @@ class SliderInnerWidget extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: new LinearGradient(
                   colors: [
-                    // Color(0xffF9657F),
-                    // Color(0xffF61976)
-                    // Color(0xff9b0000),
-                    // Color(0xAAb70000),
-                    // Color(0x88c60000),
-                    // Color(0xAAd70000),
-                    // Color(0xffff0000),
-
-                    // Color(0xffff0000),
                     Colors.red,
                     Color(0x559b0000),
                     Colors.red,
-
-                    // Color(0xffff0000),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  // color: Colors.pink,
                 ),
               ),
               child: Center(

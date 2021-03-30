@@ -25,6 +25,11 @@ class _SplashScreenState extends State<SplashScreen> {
     return Container(
         alignment: Alignment.center,
         color: Colors.black,
-        child: Image.asset("assets/images/logo.png",width: MediaQuery.maybeOf(context).size.width*0.5,fit: BoxFit.fill,height: MediaQuery.maybeOf(context).size.width*0.5,));
+        child: Image.asset(
+          "assets/images/logo.png",
+          width: MediaQuery.maybeOf(context).size.width * 0.5,
+          fit: BoxFit.fill,
+          height: MediaQuery.maybeOf(context).size.width * 0.5,
+        ));
   }
 }

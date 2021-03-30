@@ -18,6 +18,7 @@ import '../Utils/SliderInnerWidget.dart';
 class audioJoin extends StatefulWidget {
   audioJoin({Key key, @required this.RoomId}) : super(key: key);
   int RoomId;
+
   @override
   _audioJoinState createState() => _audioJoinState();
 }
@@ -33,13 +34,11 @@ class _audioJoinState extends State<audioJoin> {
   int i = 0, j = 0;
   ValueNotifier<double> valueNotifier = ValueNotifier<double>(0);
   final audios = <Audio>[];
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _clearCachedFiles() {
     FilePicker.platform.clearTemporaryFiles();
   }
 
-//Listen to the current playing song
   Duration _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
@@ -77,18 +76,21 @@ class _audioJoinState extends State<audioJoin> {
     var decodedData = jsonDecode(response.body);
     return decodedData['second'];
   }
-int complete;
+
+  int complete;
+
   @override
   void initState() {
-    complete=0;
-    print("join");
+    complete = 0;
     super.initState();
   }
+
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     assetsAudioPlayer.dispose();
   }
+
   Future<bool> _onBackPressed() {
     return showDialog(
           context: context,
@@ -119,7 +121,6 @@ int complete;
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
-
     ]);
     return WillPopScope(
       onWillPop: _onBackPressed,
@@ -180,51 +181,34 @@ int complete;
               SliderInnerWidget(),
               assetsAudioPlayer.builderRealtimePlayingInfos(
                   builder: (context, RealtimePlayingInfos infos) {
-                // Future x = getSec();
-                // x.then((value) {
-                //   int temp = int.parse(value.toString());
-                //   if(temp<0){
-                //     assetsAudioPlayer.pause();
-                //     seekTo(Duration(seconds: temp.abs()));
-                //   }
-                //   else if ((temp - assetsAudioPlayer.currentPosition.value.inSeconds).abs() > 5) {
-                //     print("temp2:${(temp.abs() - assetsAudioPlayer.currentPosition.value.inSeconds).abs()}\ntemper:${temp}");
-                //     seekTo(Duration(seconds: temp));
-                //     // assetsAudioPlayer.play();
-                //   }
-                //   else if (assetsAudioPlayer.current.value != null)
-                //     assetsAudioPlayer.play();
-                // });
-                    if (complete == 0) {
-                      complete = 1;
-                      String l =
-                          'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
-                              widget.RoomId.toString();
-                      Future<http.Response> response = http.get(l);
-                      response.timeout(Duration(seconds: 1), onTimeout: () {
-                        complete = 0;
-                        return;
-                      }).then((value) {
-                        var decodedData = jsonDecode(value.body);
-                        int time=int.parse(decodedData['second'].toString());
-                          if ( time <= 0) {
-                            assetsAudioPlayer.pause();
-                            seekTo(Duration(seconds: time.abs()));
-                            print("audio -negative");
-                          }
-                          else if ((assetsAudioPlayer.currentPosition.value.inSeconds-
-                              time).abs() > 4) {
-                              seekTo(Duration(seconds: time));
-                              assetsAudioPlayer.play();
-                              print("audio +positive");
-                          }
-                          else {
-                            print("audio =neutral");
-                            play();
-                          }
-                          complete = 0;
-                      });
+                if (complete == 0) {
+                  complete = 1;
+                  String l =
+                      'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
+                          widget.RoomId.toString();
+                  Future<http.Response> response = http.get(l);
+                  response.timeout(Duration(seconds: 1), onTimeout: () {
+                    complete = 0;
+                    return;
+                  }).then((value) {
+                    var decodedData = jsonDecode(value.body);
+                    int time = int.parse(decodedData['second'].toString());
+                    if (time <= 0) {
+                      assetsAudioPlayer.pause();
+                      seekTo(Duration(seconds: time.abs()));
+                    } else if ((assetsAudioPlayer
+                                    .currentPosition.value.inSeconds -
+                                time)
+                            .abs() >
+                        4) {
+                      seekTo(Duration(seconds: time));
+                      assetsAudioPlayer.play();
+                    } else {
+                      play();
                     }
+                    complete = 0;
+                  });
+                }
                 if (infos == null || assetsAudioPlayer.current.value == null) {
                   return Padding(
                     padding: EdgeInsets.all(20),
@@ -233,41 +217,40 @@ int complete;
                       children: <Widget>[
                         assetsAudioPlayer.current.value != null
                             ? Container(
-                          height: 46,
-                          width: MediaQuery.maybeOf(context).size.width *
-                              0.8,
-                          child: MarqueeText(
-                            text: getSong(),
-                            textStyle: GoogleFonts.poiretOne(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 30,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
+                                height: 46,
+                                width: MediaQuery.maybeOf(context).size.width *
+                                    0.8,
+                                child: MarqueeText(
+                                  text: getSong(),
+                                  textStyle: GoogleFonts.poiretOne(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 30,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )
                             : Container(
-                          height: 46,
-                          child: Text(
-                            "Nothing to Play?",
-                            style: GoogleFonts.poiretOne(
-                                fontWeight: FontWeight.w900,
-                                fontSize: 30),
-                          ),
-                        ),
+                                height: 46,
+                                child: Text(
+                                  "Nothing to Play?",
+                                  style: GoogleFonts.poiretOne(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 30),
+                                ),
+                              ),
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Text(_printDurationAsString(Duration(
-                                seconds: 0))),
+                            Text(_printDurationAsString(Duration(seconds: 0))),
                             Expanded(
                               child: Slider(
                                 min: 0,
                                 max: 1,
                                 onChanged: (value) {
                                   setState(
-                                        () {
+                                    () {
                                       Duration d =
-                                      new Duration(seconds: value.toInt());
+                                          new Duration(seconds: value.toInt());
                                       d = _printDuration(d);
                                       seekTo(d);
                                     },
@@ -278,8 +261,7 @@ int complete;
                                 inactiveColor: Colors.red.withOpacity(0.3),
                               ),
                             ),
-                            Text(_printDurationAsString(Duration(
-                                seconds: 0))),
+                            Text(_printDurationAsString(Duration(seconds: 0))),
                           ],
                         ),
                         Row(
@@ -358,7 +340,7 @@ int complete;
                                 onTap: () {
                                   setState(() {
                                     if (assetsAudioPlayer.volume.value
-                                        .toInt() ==
+                                            .toInt() ==
                                         0)
                                       assetsAudioPlayer.setVolume(1);
                                     else
@@ -392,26 +374,26 @@ int complete;
                     children: <Widget>[
                       assetsAudioPlayer.current.value != null
                           ? Container(
-                        height: 46,
-                        width:
-                        MediaQuery.maybeOf(context).size.width * 0.8,
-                        child: MarqueeText(
-                          text: getSong(),
-                          textStyle: GoogleFonts.poiretOne(
-                            fontWeight: FontWeight.w900,
-                            fontSize: 30,
-                            color: Colors.white,
-                          ),
-                        ),
-                      )
+                              height: 46,
+                              width:
+                                  MediaQuery.maybeOf(context).size.width * 0.8,
+                              child: MarqueeText(
+                                text: getSong(),
+                                textStyle: GoogleFonts.poiretOne(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 30,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
                           : Container(
-                        height: 46,
-                        child: Text(
-                          "Nothing to Play?",
-                          style: GoogleFonts.poiretOne(
-                              fontWeight: FontWeight.w900, fontSize: 30),
-                        ),
-                      ),
+                              height: 46,
+                              child: Text(
+                                "Nothing to Play?",
+                                style: GoogleFonts.poiretOne(
+                                    fontWeight: FontWeight.w900, fontSize: 30),
+                              ),
+                            ),
                       Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -426,9 +408,9 @@ int complete;
                                   .toDouble(),
                               onChanged: (value) {
                                 setState(
-                                      () {
+                                  () {
                                     Duration d =
-                                    new Duration(seconds: value.toInt());
+                                        new Duration(seconds: value.toInt());
                                     d = _printDuration(d);
                                     seekTo(d);
                                   },
@@ -440,7 +422,7 @@ int complete;
                               activeColor: Color(0xffff0000),
                               inactiveColor: Colors.red.withOpacity(0.3),
                               label:
-                              "${assetsAudioPlayer.currentPosition.value.inMinutes}",
+                                  "${assetsAudioPlayer.currentPosition.value.inMinutes}",
                             ),
                           ),
                           Text(_printDurationAsString(Duration(
@@ -534,7 +516,6 @@ int complete;
                             ),
                             GestureDetector(
                               onTap: () {
-                                print("calling loop toggle");
                                 setState(() {
                                   loop();
                                 });
@@ -560,9 +541,9 @@ int complete;
     );
   }
 
-  void playOrpause()async {
+  void playOrpause() async {
     await assetsAudioPlayer.playOrPause();
-    setState(() {    });
+    setState(() {});
   }
 
   getVolume() {
@@ -607,31 +588,29 @@ int complete;
       setState(() {});
     }
   }
+
   void play() async {
     await assetsAudioPlayer.play();
-    setState(() {print("set");});
+    setState(() {});
   }
+
   void pause() async {
     await assetsAudioPlayer.pause();
     setState(() {});
   }
+
   void next() async {
     await assetsAudioPlayer.next();
-    setState(() {
-      print("current:" + assetsAudioPlayer.current.value.index.toString());
-    });
+    setState(() {});
   }
 
   void prev() async {
     await assetsAudioPlayer.previous();
-    setState(() {
-      print("current:" + assetsAudioPlayer.current.value.index.toString());
-    });
+    setState(() {});
   }
 
   void seekTo(Duration duration) async {
     await assetsAudioPlayer.seek(duration);
-
   }
 
   void loop() async {

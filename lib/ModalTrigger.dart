@@ -19,8 +19,7 @@ class _ModalTriggerState extends State<ModalTrigger> {
         context: context,
         builder: (context) {
           return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState
-                  /*You can rename this!*/) {
+              builder: (BuildContext context, StateSetter setState) {
             return Container(
               color: Color(0xff121212),
               child: Column(
@@ -36,19 +35,14 @@ class _ModalTriggerState extends State<ModalTrigger> {
                       ),
                     ),
                   ),
-
-                  // Expanded(
-                  //   child: ListView(
-                  //     children: ListTile.divideTiles(context:context,tiles: getPendingAudio(setState).toList()),
-                  //   ),
-                  // ),
                   Expanded(
                       child: ListView.builder(
                           itemCount: widget.audios.length,
                           itemBuilder: (context, index) {
                             if (widget.ap.current.value.index == index)
                               return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal:8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Card(
                                   child: ListTile(
                                     selected: true,
@@ -58,9 +52,10 @@ class _ModalTriggerState extends State<ModalTrigger> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Container(
-                                          width:
-                                              MediaQuery.of(context).size.width *
-                                                  0.7,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.7,
                                           height: 46,
                                           child: MarqueeText(
                                             text: widget.audios[index].path
@@ -69,10 +64,8 @@ class _ModalTriggerState extends State<ModalTrigger> {
                                                         .lastIndexOf('/') +
                                                     1),
                                             textStyle: TextStyle(
-                                                color: Colors.red, fontSize: 16),
-                                            // softWrap: true,
-                                            // maxLines: 1,
-                                            // overflow: TextOverflow.ellipsis,
+                                                color: Colors.red,
+                                                fontSize: 16),
                                           ),
                                         ),
                                         GestureDetector(
@@ -91,7 +84,8 @@ class _ModalTriggerState extends State<ModalTrigger> {
                               );
                             else
                               return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal:8.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Card(
                                     child: ListTile(
                                   onTap: () async {
@@ -121,10 +115,8 @@ class _ModalTriggerState extends State<ModalTrigger> {
   }
 
   List<ListTile> getPendingAudio(setState) {
-    print("getting");
     if (widget.audios.isEmpty || widget.ap.current.value == null) return [];
     List<ListTile> l = [];
-    print("getting2:" + widget.ap.current.value.index.toString());
     for (int x = 0; x < widget.audios.length; x++)
       if (widget.ap.current.value.index == x)
         l.add(
@@ -141,9 +133,6 @@ class _ModalTriggerState extends State<ModalTrigger> {
                     text: widget.audios[x].path
                         .substring(widget.audios[x].path.lastIndexOf('/') + 1),
                     textStyle: TextStyle(color: Colors.red, fontSize: 16),
-                    // softWrap: true,
-                    // maxLines: 1,
-                    // overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 MaterialButton(
@@ -181,21 +170,6 @@ class _ModalTriggerState extends State<ModalTrigger> {
 
   @override
   Widget build(BuildContext context) {
-    // return RawMaterialButton(
-    //   onPressed: () {
-    //     _showModalBottomSheet(context);
-    //   },
-    //   fillColor: Colors.black,
-    //   elevation: 0,
-    //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-    //   textStyle: TextStyle(
-    //     fontSize: 16,
-    //     fontFamily: 'OpenSans',
-    //     color: Colors.white,
-    //     fontWeight: FontWeight.w600,
-    //   ),
-    //   child: Text('Playlist'),
-    // );
     return GestureDetector(
       onTap: () {
         _showModalBottomSheet(context);

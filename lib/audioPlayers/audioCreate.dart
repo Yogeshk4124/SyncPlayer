@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 import 'dart:ui';
 import 'package:SyncPlayer/ModalTrigger.dart';
 import 'package:SyncPlayer/Utils/RadiantGradientIcon.dart';
@@ -33,17 +32,17 @@ class _audioCreateState extends State<audioCreate> {
   int i = 0, j = 0;
   ValueNotifier<double> valueNotifier = ValueNotifier<double>(0);
   final audios = <Audio>[];
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _clearCachedFiles() {
     FilePicker.platform.clearTemporaryFiles();
   }
+
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     assetsAudioPlayer.dispose();
   }
-//Listen to the current playing song
+
   Duration _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
@@ -86,7 +85,9 @@ class _audioCreateState extends State<audioCreate> {
   void initState() {
     super.initState();
   }
-int complete=0;
+
+  int complete = 0;
+
   Future<bool> _onBackPressed() {
     return showDialog(
           context: context,
@@ -148,12 +149,6 @@ int complete=0;
                         ),
                       ),
                       onTap: () {
-                        // Navigator.pushAndRemoveUntil(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (BuildContext context) => Home4()),
-                        //   (route) => false,
-                        // );
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
                               builder: (BuildContext context) => Home4()),
@@ -186,21 +181,24 @@ int complete=0;
               SliderInnerWidget(),
               assetsAudioPlayer.builderRealtimePlayingInfos(
                   builder: (context, RealtimePlayingInfos infos) {
-                if (complete == 0){
+                if (complete == 0) {
                   complete = 1;
-                  int sec=assetsAudioPlayer.currentPosition.value.inSeconds;
+                  int sec = assetsAudioPlayer.currentPosition.value.inSeconds;
                   String l =
                       'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/' +
                           widget.RoomId.toString() +
-                          '/' +(assetsAudioPlayer.isPlaying.value?sec.toString():(0-sec).toString());
-                    Future<http.Response> response=http.post(l);
-                    response.timeout(Duration(seconds: 1), onTimeout: () {
-                      complete = 0;
-                      return;
-                    }).then((value){
-                      complete = 0;
-                    });
-                  }
+                          '/' +
+                          (assetsAudioPlayer.isPlaying.value
+                              ? sec.toString()
+                              : (0 - sec).toString());
+                  Future<http.Response> response = http.post(l);
+                  response.timeout(Duration(seconds: 1), onTimeout: () {
+                    complete = 0;
+                    return;
+                  }).then((value) {
+                    complete = 0;
+                  });
+                }
                 if (infos == null || assetsAudioPlayer.current.value == null) {
                   return Padding(
                     padding: EdgeInsets.all(20),
@@ -514,7 +512,6 @@ int complete=0;
                             ),
                             GestureDetector(
                               onTap: () {
-                                print("calling loop toggle");
                                 setState(() {
                                   loop();
                                 });
@@ -572,20 +569,6 @@ int complete=0;
   }
 
   void open() async {
-    // Future<FilePickerResult> result = FilePicker.platform
-    //     .pickFiles(withReadStream: true, allowMultiple: true);
-    // result.then((value) {
-    //   if (value != null) {
-    //     List<File> files = value.paths.map((path) => File(path)).toList();
-    //     for (int i = 0; i < files.length; i++) {
-    //       audios.add(Audio.file(files[i].path));
-    //     }
-    //     setState(() {
-    //       assetsAudioPlayer.open(Playlist(audios: audios),
-    //           autoStart: false, loopMode: LoopMode.playlist);
-    //     });
-    //   }
-    // });
     FilePickerResult result = await FilePicker.platform
         .pickFiles(withReadStream: true, allowMultiple: true);
     if (result != null) {

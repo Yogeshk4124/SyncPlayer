@@ -43,7 +43,6 @@ class _Home2State extends State<Home2> {
   sharedPrefrencesHandler() async {
     prefs = await SharedPreferences.getInstance();
     if (prefs.getString("Username") == null) {
-      print("creating random");
       String name = new Faker().person.firstName();
       setDefaultUsername(name);
     } else
@@ -82,7 +81,6 @@ class _Home2State extends State<Home2> {
     ]);
     final bottom = MediaQuery.of(context).viewInsets.bottom;
     Widget createDestroy() {
-      print("error:" + widget.data.toString());
       if (widget.data['Join'] == '-1')
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -99,7 +97,6 @@ class _Home2State extends State<Home2> {
             ),
             MaterialButton(
               onPressed: () {
-                print("link:" + link);
                 Future<http.Response> response = http.get(link);
                 BuildContext dialogContext;
                 showDialog(
@@ -115,7 +112,6 @@ class _Home2State extends State<Home2> {
                   var decodedData = jsonDecode(value.body);
                   setState(() {
                     if (widget.data['Create'] == '-1') {
-                      print("CD:1");
                       widget.data['Create'] = decodedData['Room-id'].toString();
                       creating = 'Created:' + widget.data['Create'].toString();
                       link =
@@ -124,7 +120,6 @@ class _Home2State extends State<Home2> {
                       button = "Disconnect";
                     } else {
                       widget.data['Create'] = '-1';
-                      print("CD:2");
                       creating = "Create Room?";
                       // 'You have not created/joined any room.Create Room?';
                       button = "Connect";
@@ -155,9 +150,7 @@ class _Home2State extends State<Home2> {
     }
 
     Widget join() {
-      print("error:" + widget.data.toString());
       if (widget.data['Create'] == '-1') {
-        print("per");
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -210,11 +203,10 @@ class _Home2State extends State<Home2> {
               ),
             MaterialButton(
               onPressed: () {
-                // print("link:" + link);
                 if (_joinController.text == "" || _joinController == null) {
                   setState(() {
                     get = 1;
-                    error="Please enter Room id.";
+                    error = "Please enter Room id.";
                   });
                 } else if (widget.data['Join'] == '-1') {
                   Future<http.Response> response =
@@ -232,7 +224,6 @@ class _Home2State extends State<Home2> {
 
                   response.then((value) {
                     var decodedData = jsonDecode(value.body);
-                    print("eBody:" + decodedData.toString());
                     setState(() {
                       if (decodedData['status'].toString() !=
                           "room not found") {
@@ -242,16 +233,15 @@ class _Home2State extends State<Home2> {
                         Jbutton = "Leave";
                         get = 0;
                         // }
-                      } else{
+                      } else {
                         get = 1;
-                        error="Room id not found.";
+                        error = "Room id not found.";
                       }
                     });
                     Navigator.of(dialogContext).pop();
                   });
                 } else {
                   setState(() {
-                    print("ipart:" + widget.data['Join'].toString());
                     setState(() {
                       widget.data['Join'] = '-1';
                       Jbutton = 'Join';

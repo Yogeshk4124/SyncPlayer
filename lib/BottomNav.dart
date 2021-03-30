@@ -10,7 +10,6 @@ import 'audioPlayers/audioPlayer.dart';
 Future<Map<String, String>> getData() async {
   return Future.delayed(
       Duration(seconds: 0), () => {'Create': '-1', 'Join': '-1'});
-  // return Future.value({'Create':'-1','Join':'-1'});
 }
 
 class Home4 extends StatefulWidget {
@@ -24,25 +23,17 @@ class _Home4State extends State<Home4> {
   @override
   void initState() {
     super.initState();
-    // getData().then((values) {
-    //   setState(() {
-    //     data = values;
-    //   });
-    // });
     data = {'Create': '-1', 'Join': '-1'};
   }
 
   Widget getPage(int index) {
-    // print(data.toString());
     switch (index) {
       case 0:
         if (data['Join'] == '-1' && data['Create'] == '-1') {
-          print('C1');
           return new audioPlayer();
         } else if (data['Join'] != '-1')
-          // return new audioPlayerJoin(
-          //   RoomId: int.parse(data['Join']),
-          return audioJoin(RoomId:int.parse(data['Join']),
+          return audioJoin(
+            RoomId: int.parse(data['Join']),
           );
         else
           return new audioCreate(RoomId: int.parse(data['Create']));
@@ -53,26 +44,20 @@ class _Home4State extends State<Home4> {
         );
         break;
       case 2:
-        int id,type;
+        int id, type;
         if (data['Join'] == '-1' && data['Create'] == '-1') {
-          {  id=-1;type=1;}
-          } else if (data['Join'] != '-1') {
+          {
+            id = -1;
+            type = 1;
+          }
+        } else if (data['Join'] != '-1') {
           id = int.parse(data['Join']);
-        type=2;
-        }else {
-         type=3;
-         id = int.parse(data['Create']);
+          type = 2;
+        } else {
+          type = 3;
+          id = int.parse(data['Create']);
         }
-        return new addVideo(Roomid: id,type:type);
-        // if (data['Join'] == '-1' && data['Create'] == '-1') {
-        //   print('C1');
-        //   return new VideoPlayer();
-        // } else if (data['Join'] != '-1')
-        //   return new VideoJoin(
-        //     Roomid: int.parse(data['Join']),
-        //   );
-        // else
-        //   return new VideoCreate(Roomid: int.parse(data['Create']));
+        return new addVideo(Roomid: id, type: type);
         break;
       default:
         return new Home2(
@@ -83,8 +68,6 @@ class _Home4State extends State<Home4> {
   }
 
   int _currentIndex = 1;
-
-  // final SnakeShape snakeShape = SnakeShape.rectangle;
   final SnakeShape snakeShape = SnakeShape.circle;
   final Color selectedColor = Colors.black;
 
@@ -98,27 +81,11 @@ class _Home4State extends State<Home4> {
         snakeShape: snakeShape,
         padding: EdgeInsets.all(8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-
-        //   BeveledRectangleBorder(
-        //     borderRadius: const BorderRadius.only(
-        //   topLeft: Radius.circular(25),
-        //   topRight: Radius.circular(25),
-        // )),
-
-        ///configuration for SnakeNavigationBar.color
         snakeViewColor: Colors.black,
-
         selectedItemColor: snakeShape == SnakeShape.indicator
             ? Color(0xffFF2929)
             : Color(0xffFF2929),
         unselectedItemColor: Color(0xff606060),
-
-        ///configuration for SnakeNavigationBar.gradient
-        //snakeViewGradient: selectedGradient,
-        //selectedItemGradient: snakeShape == SnakeShape.indicator ? selectedGradient : null,
-        //unselectedItemGradient: unselectedGradient,
-
-        // showUnselectedLabels: showUnselectedLabels,
         showSelectedLabels: false,
         backgroundColor: Colors.black,
         currentIndex: _currentIndex,

@@ -13,7 +13,9 @@ class MarqueeText extends StatefulWidget {
     this.textStyle,
     this.scrollAxis: Axis.horizontal,
     this.ratioOfBlankToScreen: 0.25,
-  }) : assert(text != null,);
+  }) : assert(
+          text != null,
+        );
 
   @override
   State<StatefulWidget> createState() {
@@ -54,17 +56,17 @@ class MarqueeTextState extends State<MarqueeText>
         if (pixels + _moveDistance >= maxScrollExtent) {
           if (widget.scrollAxis == Axis.horizontal) {
             position = (maxScrollExtent -
-                screenWidth * widget.ratioOfBlankToScreen +
-                widgetWidth) /
-                2 -
+                        screenWidth * widget.ratioOfBlankToScreen +
+                        widgetWidth) /
+                    2 -
                 widgetWidth +
                 pixels -
                 maxScrollExtent;
           } else {
             position = (maxScrollExtent -
-                screenHeight * widget.ratioOfBlankToScreen +
-                widgetHeight) /
-                2 -
+                        screenHeight * widget.ratioOfBlankToScreen +
+                        widgetHeight) /
+                    2 -
                 widgetHeight +
                 pixels -
                 maxScrollExtent;
@@ -98,9 +100,9 @@ class MarqueeTextState extends State<MarqueeText>
     }
     return Center(
         child: Text(
-          widget.text,
-          style: widget.textStyle,
-        ));
+      widget.text,
+      style: widget.textStyle,
+    ));
   }
 
   Widget getCenterChild() {
