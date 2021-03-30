@@ -9,7 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import '../BottomNav.dart';
@@ -202,10 +201,13 @@ int complete;
                           'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/getCurrentSecond/' +
                               widget.RoomId.toString();
                       Future<http.Response> response = http.get(l);
-                      response.then((value) {
+                      response.timeout(Duration(seconds: 1), onTimeout: () {
+                        complete = 0;
+                        return;
+                      }).then((value) {
                         var decodedData = jsonDecode(value.body);
                         int time=int.parse(decodedData['second'].toString());
-                          if ( time < 0) {
+                          if ( time <= 0) {
                             assetsAudioPlayer.pause();
                             seekTo(Duration(seconds: time.abs()));
                             print("audio -negative");
@@ -219,8 +221,8 @@ int complete;
                           else {
                             print("audio =neutral");
                             play();
-                          }complete = 0;
-
+                          }
+                          complete = 0;
                       });
                     }
                 if (infos == null || assetsAudioPlayer.current.value == null) {

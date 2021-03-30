@@ -9,11 +9,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../BottomNav.dart';
-import '../Configuration.dart';
 import '../Utils/MarqueeText.dart';
 import '../Utils/SliderInnerWidget.dart';
 import 'package:http/http.dart' as http;
@@ -196,8 +193,11 @@ int complete=0;
                       'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/seekTo/' +
                           widget.RoomId.toString() +
                           '/' +(assetsAudioPlayer.isPlaying.value?sec.toString():(0-sec).toString());
-                    Future<http.Response> response=http.get(l);
-                    response.then((value){
+                    Future<http.Response> response=http.post(l);
+                    response.timeout(Duration(seconds: 1), onTimeout: () {
+                      complete = 0;
+                      return;
+                    }).then((value){
                       complete = 0;
                     });
                   }

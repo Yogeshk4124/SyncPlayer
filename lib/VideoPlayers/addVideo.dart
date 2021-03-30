@@ -53,7 +53,7 @@ class _addVideoState extends State<addVideo> {
         videoPlayerController: controller,
         onVideoEnd: () {
           // dataManager.skipToNextVideo(Duration(seconds: 5));
-          controller.dispose();
+          // controller.dispose();
         });
 
   }

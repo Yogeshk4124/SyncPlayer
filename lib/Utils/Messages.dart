@@ -22,9 +22,9 @@ class _MessagesState extends State<Messages> {
   Column column;
   ScrollController scroller = new ScrollController();
   dynamic curScroll;
-
+  Timer timer;
   void initState() {
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    timer=Timer.periodic(Duration(seconds: 1), (timer) {
       Provider.of<Chats>(context, listen: false)
           .getChats(context, widget.roomid, scroller);
     });
@@ -38,9 +38,13 @@ class _MessagesState extends State<Messages> {
     // });
     super.initState();
   }
+  @override
+  void dispose(){
+    timer.cancel();
+    super.dispose();
+  }
 
   @override
-  // ignore: missing_return
   Widget build(BuildContext context) {
     // return
     // SingleChildScrollView(

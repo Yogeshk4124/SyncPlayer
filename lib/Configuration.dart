@@ -9,7 +9,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class Home2 extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -34,6 +33,7 @@ class _Home2State extends State<Home2> {
           'http://harmonpreet012.centralindia.cloudapp.azure.com:8000/addUser/';
   int get = 0;
   SharedPreferences prefs;
+  String error;
 
   setDefaultUsername(String name) async {
     _nameController.text = name;
@@ -75,13 +75,12 @@ class _Home2State extends State<Home2> {
     super.dispose();
   }
 
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+    final bottom = MediaQuery.of(context).viewInsets.bottom;
     Widget createDestroy() {
       print("error:" + widget.data.toString());
       if (widget.data['Join'] == '-1')
@@ -205,14 +204,19 @@ class _Home2State extends State<Home2> {
               Container(
                 margin: EdgeInsets.only(bottom: 20, top: 5),
                 child: Text(
-                  "Room Not Found",
+                  error,
                   style: TextStyle(color: Colors.red),
                 ),
               ),
             MaterialButton(
               onPressed: () {
                 // print("link:" + link);
-                if (widget.data['Join'] == '-1') {
+                if (_joinController.text == "" || _joinController == null) {
+                  setState(() {
+                    get = 1;
+                    error="Please enter Room id.";
+                  });
+                } else if (widget.data['Join'] == '-1') {
                   Future<http.Response> response =
                       http.get(Jlink + _joinController.text);
                   BuildContext dialogContext;
@@ -238,8 +242,10 @@ class _Home2State extends State<Home2> {
                         Jbutton = "Leave";
                         get = 0;
                         // }
-                      } else
+                      } else{
                         get = 1;
+                        error="Room id not found.";
+                      }
                     });
                     Navigator.of(dialogContext).pop();
                   });
@@ -255,7 +261,7 @@ class _Home2State extends State<Home2> {
                 }
               },
               child: Container(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(18),
                   decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -283,155 +289,166 @@ class _Home2State extends State<Home2> {
     else
       w = join();
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Configuration",
-              style: GoogleFonts.robotoSlab(
-                fontSize: MediaQuery.maybeOf(context).size.width * 0.1,
-              ),
-              maxLines: 1,
-            ),
-            SizedBox.fromSize(
-              size: Size(10, 40),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Text('Sync Player Setting',style: GoogleFonts.poiretOne(fontSize: 30),),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selected = 1;
-                    });
-                  },
-                  child: Container(
-                    height: MediaQuery.maybeOf(context).size.height * 0.20,
-                    width: MediaQuery.maybeOf(context).size.height * 0.20,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 40),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(
-                          MediaQuery.maybeOf(context).size.width * 0.02)),
-                      // color: Color(0xff2C353D),
-                      color:
-                          _selected == 1 ? Colors.redAccent : Color(0xff181818),
-                    ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(CupertinoIcons.person_add_solid),
-                          Text(
-                            "Create",
-                            style: TextStyle(
-                                fontSize:
-                                    MediaQuery.maybeOf(context).size.height *
-                                        0.038),
-                          ),
-                        ]),
-                  ),
-                ),
-                SizedBox.fromSize(
-                  size: Size(10, 10),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // Configuration c = new Configuration(data: widget.data);
-                    setState(() {
-                      _selected = 2;
-                    });
-                  },
-                  child: Container(
-                    height: MediaQuery.maybeOf(context).size.height * 0.20,
-                    width: MediaQuery.maybeOf(context).size.height * 0.20,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 40),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(
-                          MediaQuery.maybeOf(context).size.width * 0.02)),
-                      // color: Color(0xff2C353D),
-                      color:
-                          _selected == 2 ? Colors.redAccent : Color(0xff181818),
-                    ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(CupertinoIcons.dot_radiowaves_left_right),
-                          Text(
-                            "Join",
-                            style: TextStyle(
-                                fontSize:
-                                    MediaQuery.maybeOf(context).size.height *
-                                        0.038),
-                          ),
-                        ]),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              width: 10,
-              height: 10,
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(
-                    MediaQuery.maybeOf(context).size.width * 0.02)),
-                color: Color(0xff181818),
-              ),
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
               child: Column(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(
-                    controller: _nameController,
-                    textAlign: TextAlign.center,
-                    decoration: new InputDecoration(
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
+                  Text(
+                    "Configuration",
+                    style: GoogleFonts.robotoSlab(
+                      fontSize: MediaQuery.maybeOf(context).size.width * 0.1,
+                    ),
+                    maxLines: 1,
+                  ),
+                  SizedBox.fromSize(
+                    size: Size(10, 40),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Text('Sync Player Setting',style: GoogleFonts.poiretOne(fontSize: 30),),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selected = 1;
+                          });
+                        },
+                        child: Container(
+                          height:
+                              MediaQuery.maybeOf(context).size.height * 0.20,
+                          width: MediaQuery.maybeOf(context).size.height * 0.20,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 40),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(
+                                MediaQuery.maybeOf(context).size.width * 0.02)),
+                            // color: Color(0xff2C353D),
+                            color: _selected == 1
+                                ? Colors.redAccent
+                                : Color(0xff181818),
+                          ),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(CupertinoIcons.person_add_solid),
+                                Text(
+                                  "Create",
+                                  style: TextStyle(
+                                      fontSize: MediaQuery.maybeOf(context)
+                                              .size
+                                              .height *
+                                          0.038),
+                                ),
+                              ]),
+                        ),
                       ),
-                      contentPadding: EdgeInsets.only(bottom: -15),
+                      SizedBox.fromSize(
+                        size: Size(10, 10),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // Configuration c = new Configuration(data: widget.data);
+                          setState(() {
+                            _selected = 2;
+                          });
+                        },
+                        child: Container(
+                          height:
+                              MediaQuery.maybeOf(context).size.height * 0.20,
+                          width: MediaQuery.maybeOf(context).size.height * 0.20,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 40),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(
+                                MediaQuery.maybeOf(context).size.width * 0.02)),
+                            // color: Color(0xff2C353D),
+                            color: _selected == 2
+                                ? Colors.redAccent
+                                : Color(0xff181818),
+                          ),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(CupertinoIcons.dot_radiowaves_left_right),
+                                Text(
+                                  "Join",
+                                  style: TextStyle(
+                                      fontSize: MediaQuery.maybeOf(context)
+                                              .size
+                                              .height *
+                                          0.038),
+                                ),
+                              ]),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 40),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(
+                          MediaQuery.maybeOf(context).size.width * 0.02)),
+                      color: Color(0xff181818),
+                    ),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _nameController,
+                          textAlign: TextAlign.center,
+                          decoration: new InputDecoration(
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.red),
+                            ),
+                            contentPadding: EdgeInsets.only(bottom: -15),
+                          ),
+                        ),
+                        MaterialButton(
+                          onPressed: () {
+                            if (_nameController.text == "" ||
+                                _nameController == null) return;
+                            setDefaultUsername(_nameController.text);
+                          },
+                          child: Container(
+                              margin: EdgeInsets.only(top: 10),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              child: Text(
+                                "Set Name",
+                                style: GoogleFonts.roboto(),
+                                textAlign: TextAlign.center,
+                              )),
+                        ),
+                      ],
                     ),
                   ),
-                  MaterialButton(
-                    onPressed: () {
-                      setDefaultUsername(_nameController.text);
-                    },
-                    child: Container(
-                        margin: EdgeInsets.only(top: 10),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        child: Text(
-                          "Set Name",
-                          style: GoogleFonts.roboto(),
-                          textAlign: TextAlign.center,
-                        )),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.27,
+                    width: double.infinity,
+                    margin: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                    decoration: BoxDecoration(
+                      color: Color(0xff181818),
+                      borderRadius: BorderRadius.all(Radius.circular(7)),
+                    ),
+                    child: w,
                   ),
                 ],
               ),
             ),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                margin: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                decoration: BoxDecoration(
-                  color: Color(0xff181818),
-                  borderRadius: BorderRadius.all(Radius.circular(7)),
-                ),
-                child: w,
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }

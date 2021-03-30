@@ -1,22 +1,9 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:SyncPlayer/layouts/landscape_player/landscape_player_controls.dart';
-import 'package:adv_fab/adv_fab.dart';
-import 'package:emojis/emoji.dart';
-import 'package:emojis/emojis.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_widgets/flutter_widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-
-import '../BottomNav.dart';
-import '../Chats.dart';
 
 class videoPlayer extends StatefulWidget {
   final FlickManager flickManager;
@@ -33,7 +20,6 @@ class videoPlayer extends StatefulWidget {
 }
 
 class _videoPlayerState extends State<videoPlayer> {
-  AdvFabController FABcontroller;
   FlickManager flickManager;
   TextEditingController msgController;
   int complete = 0;
