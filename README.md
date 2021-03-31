@@ -9,7 +9,7 @@ This project contains some extra functionality as normal multimedia app does not
 
 ## APK
 
-` `
+` https://github.com/Yogeshk4124/SyncPlayer/blob/main/APK/SyncPlayer.apk?raw=true `
 
 ### Show some :heart: and star the repository to support the project
 
