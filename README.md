@@ -22,11 +22,10 @@ For more contact me @[Gmail](mailto::yogeshk4124@gmail.com),
 # Screenshots
 
 <img src="./ScreenShots/Splash.png" height="300em" /> <img src="./ScreenShots/ConfCreate.png" height="300em" />
-<img src="./ScreenShots/ConfJoin.png" height="300em" /><img src="./ScreenShots/music.png" height="300em" />
-<img src="./ScreenShots/musicPlaylist.png" height="300em" /><img src="./ScreenShots/video.png" height="300em" />
+<img src="./ScreenShots/ConfJoin.png" height="300em" /> <img src="./ScreenShots/music.png" height="300em" />
+<img src="./ScreenShots/musicPlaylist.png" height="300em" /> <img src="./ScreenShots/video.png" height="300em" />
 <img src="./ScreenShots/videoFull.png" height="300em" />
 <img src="./ScreenShots/videochat.png" height="300em" />
-
 # Backend
 
 Syncplayer is a multi platform app. That is why we built API endpoints to connect all those platforms to backend servers for cross-platform communication.
