@@ -21,25 +21,21 @@ For more contact me @[Gmail](mailto::yogeshk4124@gmail.com),
 
 # Screenshots
 
-<img src="./ScreenShots/Splash.png" height="300em" /> 
-<img src="./ScreenShots/ConfCreate.png" height="300em" />
-<img src="./ScreenShots/ConfJoin.png" height="300em" />
-<img src="./ScreenShots/music.png" height="300em" />
-<img src="./ScreenShots/musicPlaylist.png" height="300em" />
-<img src="./ScreenShots/video.png" height="300em" />
-<img src="./ScreenShots/videoFull.png" height="300em" />
-<img src="./ScreenShots/videochat.png" height="300em" />
-
+<img src="./ScreenShots/Splash.png" height="400em" /> <img src="./ScreenShots/ConfCreate.png" height="400em" /> <br>
+<img src="./ScreenShots/ConfJoin.png" height="400em" /> <img src="./ScreenShots/music.png" height="400em" /> <br>
+<img src="./ScreenShots/musicPlaylist.png" height="400em" /> <img src="./ScreenShots/video.png" height="400em" /> <br>
+<img src="./ScreenShots/videoFull.png" height="450em" />
+<img src="./ScreenShots/videochat.png" height="450em" />
 # Backend
 
 Syncplayer is a multi platform app. That is why we built API endpoints to connect all those platforms to backend servers for cross-platform communication.
 
 SyncPlayer backend comprises of:
 
-1. SyncPlayer Web:
-   A. Website for using syncplayer in internet browser and without any installations.
-   B. Contains all the same functionality as of mobile apps.
-   C. Light, faster and more portable in usage.
+1. SyncPlayer Web: <br>
+   A. Website for using syncplayer in internet browser and without any installations.<br>
+   B. Contains all the same functionality as of mobile apps.<br>
+   C. Light, faster and more portable in usage.<br>
    Link: http://harmonpreet012.centralindia.cloudapp.azure.com:8000/player
 
 2. SyncPlayer API: API endpoints build for syncplayer functions.
@@ -82,8 +78,8 @@ I welcome and encourage all pull requests. Here are some basic rules to follow t
 
 ### Harmonpreet Singh(Backend)
 
-<img src="https://img.icons8.com/fluent/25/000000/github.png"/>[Github](https://github.com/Yogeshk4124)<br>
-<img src="https://img.icons8.com/fluent/25/000000/linkedin.png"/>[Linkedin](https://www.linkedin.com/in/yogeshk4124/)
+<img src="https://img.icons8.com/fluent/25/000000/github.png"/>[Github](https://github.com/Harmonpreet012)<br>
+<img src="https://img.icons8.com/fluent/25/000000/linkedin.png"/>[Linkedin](https://www.linkedin.com/in/harmonpreet-singh-78b02293/)
 
 ### iOS implementation
 
